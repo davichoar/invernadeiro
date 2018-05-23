@@ -1,0 +1,46 @@
+{% extends "app/base_site.html" %}
+
+{% block title %} Login {% endblock title %}
+
+{% block stylesheets %}
+  {{ block.super }}
+  <!-- Animate.css -->
+  <link href="/static/vendors/animate.css/animate.min.css" rel="stylesheet">
+{% endblock stylesheets %}
+
+{% block body_class %}login{% endblock body_class %}
+
+{% block body %}
+  <div>
+    <a class="hiddenanchor" id="signup"></a>
+    <a class="hiddenanchor" id="signin"></a>
+
+    <div class="login_wrapper">
+      <div class="animate form login_form">
+        <section class="login_content">
+	<center><img src="/static/images/logo.png" class="img-responsive" width="200dp"  alt="Cinque Terre"></center>
+          <form action="{% url 'loginIndex' %}" method="POST" data-toggle="validator">
+            {% csrf_token %}
+            <h1>GreenHome</h1>
+            <div>
+              <input name ="nombreUsuario"  type="text" class="form-control" placeholder="Nombre de Usuario" required="" />
+            </div>
+            <div>
+              <input name ="contraseña" type="password" class="form-control" placeholder="Contrasena" required="" />
+            </div>
+            <div>
+              <button type="submit" name="b_submit" class="btn btn-default submit" href="index.html">Ingresar</button>
+            </div>
+
+            <div class="clearfix"></div>
+
+          
+          </form>
+        </section>
+      </div>
+
+
+    </div>
+  </div>
+{% endblock body %}
+
