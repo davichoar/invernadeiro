@@ -1,4 +1,3 @@
-from django.shortcuts import render
 from django.template import loader
 from django.http import HttpResponse
 
@@ -18,4 +17,6 @@ def gentella_html(request):
     load_template = request.path.split('/')[-1]
     template = loader.get_template('app/' + load_template)
     return HttpResponse(template.render(context, request))
+
+
 
