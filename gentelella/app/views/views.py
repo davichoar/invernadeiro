@@ -22,7 +22,7 @@ def index(request,nombreInvernadero):
 
     #nombreInvernadero = nombreInvernadero.replace(" ","")
     context = {
-        'nombreUsuario': usuario.nombres,
+        'nombreUsuario': usuario.getnombrecompleto(),
         'nombreInvernadero': nombreInvernadero,
     }
     return HttpResponse(template.render(context, request))

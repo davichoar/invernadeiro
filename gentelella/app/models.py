@@ -282,6 +282,8 @@ class Usuario(models.Model):
     correo = models.CharField(max_length=255)
     fechacreacion = models.DateTimeField()
     idusuarioauditado = models.IntegerField(blank=True, null=True)
+    def getnombrecompleto(self):
+        return self.nombres + ' ' + self.apellidopaterno
 
 
 

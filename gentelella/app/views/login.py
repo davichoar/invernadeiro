@@ -8,8 +8,9 @@ def index(request,
           template='app/loginShido.html',
           extra_context=None):
 
-    print(type(Usuario.objects.raw('Select * from app.usuario')))
-    print(type(Usuario.objects.all()))
+    #print(type(Usuario.objects.raw('Select * from app.usuario')))
+    #print(type(Usuario.objects.all()))
+    #print(request.method + ' q1 se la come')
     if request.method == 'POST':
         print('LLEGO POST')
         nombreUsuario = request.POST['nombreUsuario']

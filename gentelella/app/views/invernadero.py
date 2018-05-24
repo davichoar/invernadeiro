@@ -33,7 +33,7 @@ def escoger(request,
             listaInvernaderos.append(invernadero)
         context = {
             'listaInvernaderos': listaInvernaderos,
-            'nombreUsuario': usuario.nombres,
+            'nombreUsuario': usuario.getnombrecompleto(),
         }
 
         print(usuario.nombres)
