@@ -1,4 +1,6 @@
 from django.shortcuts import render, redirect
+from django.template import loader
+from django.http import HttpResponse
 
 from app.models import Usuario
 
@@ -39,4 +41,18 @@ def index(request,
      }
     if extra_context is not None:
         context.update(extra_context)
+    if request.method == 'GET':
+        if 'idUsuarioActual' in request.session:
+            print(request.session['idUsuarioActual'])
+            usuario = Usuario.objects.get(idusuario=request.session['idUsuarioActual'])
+            if 'nombreInvernadero' in request.session:
+                context = {
+                    'nombreUsuario': usuario.getnombrecompleto(),
+                    'nombreInvernadero': request.session['nombreInvernadero'],
+                }
+                template = loader.get_template('app/index.html')
+                return HttpResponse(template.render(context, request))
+            else:
+                return redirect('escogerInvernadero')
+
     return render(request, template, context)
