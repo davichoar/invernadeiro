@@ -194,7 +194,6 @@ class Invernadero(models.Model):
     area = models.FloatField()
     habilitado = models.BooleanField()
     idusuarioauditado = models.IntegerField(blank=True, null=True)
-    shachacampo = models.CharField(max_length=255)
 
 
 class Modulosemilla(models.Model):

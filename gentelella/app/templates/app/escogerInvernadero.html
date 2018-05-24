@@ -1,0 +1,64 @@
+{% extends "app/base_siteSinSidebar.html" %}
+
+
+{% block title %} Media Gallery {% endblock title %}
+
+{% block stylesheets %}
+  {{ block.super }}
+{% endblock stylesheets %}
+
+{% block content %}
+  <div class="right_col" role="main">
+    <div class="">
+      <div class="page-title">
+        <div class="title_left">
+          <h3> Escoge tus invernaderos </h3>
+        </div>
+
+
+      </div>
+
+      <div class="clearfix"></div>
+
+      <div class="row">
+        <div class="col-md-12">
+          <div class="x_panel">
+            <div class="x_title">
+              <h2>Selecciona un invernadero para acceder al sistema<small>  </small></h2>
+
+              <div class="clearfix"></div>
+            </div>
+            <div class="x_content">
+
+              <div class="row">
+                {% for invernadero in listaInvernaderos%}
+                <div class="col-md-6">
+                  <div class="thumbnail">
+                    <div class="image view view-first">
+                      <img style="height: 100%; width: 100%; display: block;" src="/static/images/invernadero.jpg" alt="image" />
+                      <div class="mask">
+                        <p>{{invernadero.nombre}}</p>
+                        <p></p><p></p>
+                      </div>
+                    </div>
+                    <div class="caption">
+                        <p></p><p></p><p></p><p></p>
+                      <a href="{% url 'index' nombreInvernadero=invernadero.nombre %}">{{invernadero.nombre}}</a>
+                    </div>
+                  </div>
+                </div>
+                {% endfor %}
+
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock content %}
+
+{% block javascripts %}
+  {{ block.super }}
+{% endblock javascripts %}
