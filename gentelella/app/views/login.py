@@ -1,6 +1,4 @@
 from django.shortcuts import render, redirect
-from django.template import loader
-from django.http import HttpResponse
 
 from app.models import Usuario
 
@@ -9,6 +7,7 @@ from app.models import Usuario
 def index(request,
           template='app/loginShido.html',
           extra_context=None):
+
     print(type(Usuario.objects.raw('Select * from app.usuario')))
     print(type(Usuario.objects.all()))
     if request.method == 'POST':
@@ -27,7 +26,8 @@ def index(request,
         if usuario is not None:
             print(usuario.nombres)
             print(usuario.apellidopaterno)
-            return redirect('index')
+            request.session['idUsuarioActual'] = usuario.idusuario
+            return redirect('escogerInvernadero')
 
 
     ##context = {
