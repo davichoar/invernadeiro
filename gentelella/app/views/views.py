@@ -4,6 +4,14 @@ from django.http import HttpResponse
 from app.models import Usuario
 
 
+def cerrarSesion(request):
+    request.session.pop('idUsuarioActual', None)
+    request.session.pop('nombreInvernadero', None)
+    template = loader.get_template('app/loginShido.html')
+    context = {}
+    return HttpResponse(template.render(context, request))
+
+
 def index(request,nombreInvernadero):
 
     print('INDEX')

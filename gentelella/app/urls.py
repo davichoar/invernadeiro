@@ -24,4 +24,6 @@ urlpatterns = [
 
     # The home page
     url(r'^index/(?P<nombreInvernadero>.*)$', views.index, name='index'),
+
+    url(r'^cerrarSesion/$', views.cerrarSesion, name='cerrarSesion'),
 ]
