@@ -21,6 +21,11 @@ def escoger(request,
 
         listaInvernaderoXUsuario = Usuarioxinvernadero.objects.filter(idusuario=idUsuario)
         listaInvernaderos = []
+
+        if len(listaInvernaderoXUsuario) == 0:
+            print('NINGUN INVERNADERO ASOCIADO A ESE USUARIO')
+            return
+
         for item in listaInvernaderoXUsuario:
             print(item.idinvernadero)
             invernadero = Invernadero.objects.get(idinvernadero=item.idinvernadero)
@@ -30,7 +35,13 @@ def escoger(request,
             'listaInvernaderos': listaInvernaderos,
             'nombreUsuario': usuario.nombres,
         }
+
         print(usuario.nombres)
+        ## si solo hay un invernadero
+        if len(listaInvernaderos) == 1:
+            return redirect('index',nombreInvernadero= listaInvernaderos[0].nombre)
+
+
         if extra_context is not None:
             context.update(extra_context)
         return render(request, template, context)
