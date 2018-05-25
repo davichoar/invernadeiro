@@ -18,6 +18,10 @@ urlpatterns = [
     url('^invernadero/$',
         views.invernadero.escoger,
         name='escogerInvernadero'),
+        
+    url('^usuario/$',
+        views.usuario.crear,
+        name='usuarioCrear'),
 
 ###
     url(r'^.*\.html', views.views.gentella_html, name='gentella'),

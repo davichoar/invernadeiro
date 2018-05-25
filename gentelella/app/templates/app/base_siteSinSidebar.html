@@ -36,10 +36,10 @@
   <body class="{% block body_class %}nav-md {% endblock body_class %}">
     {% block body %}
       <div class="container body">
-        <div class="main_container">
+        <div class="main_container" style="margin-left: 70px" >
           {% block top_navigation %}
-            <div class="top_nav">
-              {% include "app/top_navigation.html" %}
+            <div class="top_nav" style="margin-left: 0px" >
+              {% include "app/top_navigationSinMenu.html" %}
             </div>
           {% endblock top_navigation %}
 
@@ -48,9 +48,7 @@
           {% endblock content %}
 
           {% block footer %}
-            <footer>
-              {% include "app/footer.html" %}
-            </footer>
+            
           {% endblock footer %}
         </div>
       </div>

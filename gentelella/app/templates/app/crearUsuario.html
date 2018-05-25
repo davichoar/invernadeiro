@@ -1,0 +1,124 @@
+{% extends "app/base_site.html" %}
+
+
+{% block title %} Crear Usuario {% endblock title %}
+
+{% block stylesheets %}
+ {{ block.super }}
+{% endblock stylesheets %}
+
+{% block content %}
+<div class="right_col" role="main">
+   <div class="">
+     <div class="page-title">
+       <div class="title_left">
+         <h3>Usuario</h3>
+       </div>
+
+     </div>
+     <div class="clearfix"></div>
+
+     <div class="row">
+       <div class="col-md-12 col-sm-12 col-xs-12">
+         <div class="x_panel">
+
+           <div class="x_title">
+             <h2>Crear Usuario<small></small></h2>
+                  <div class="clearfix"></div>
+           </div>
+
+
+           <div class="x_content">
+
+             <form class="form-horizontal form-label-left" method="POST">
+                                                                {% csrf_token %}
+
+               <div class="item form-group">
+                 <label class="control-label col-md-3 col-sm-3 col-xs-12" for="nombre">Nombres <span class="required">*</span>
+                 </label>
+                 <div class="col-md-6 col-sm-6 col-xs-12">
+                   <input id="nombre" class="form-control col-md-7 col-xs-12" name="nombre" required="required" type="text">
+                 </div>
+               </div>
+			   <div class="item form-group">
+                 <label class="control-label col-md-3 col-sm-3 col-xs-12" for="nombre">Apellido Paterno <span class="required">*</span>
+                 </label>
+                 <div class="col-md-6 col-sm-6 col-xs-12">
+                   <input id="apepato" class="form-control col-md-7 col-xs-12" name="apepato" required="required" type="text">
+                 </div>
+               </div>
+			   <div class="item form-group">
+                 <label class="control-label col-md-3 col-sm-3 col-xs-12" for="nombre">Apellido Materno <span class="required">*</span>
+                 </label>
+                 <div class="col-md-6 col-sm-6 col-xs-12">
+                   <input id="apemato" class="form-control col-md-7 col-xs-12" name="apemato" type="text" required="required">
+                 </div>
+               </div>
+			   <div class="form-group">
+                  <label class="control-label col-md-3 col-sm-3 col-xs-12">Sexo <span class="required">*</span></label>
+                  <div class="col-md-6 col-sm-6 col-xs-12">
+                    <label class="radio-inline">
+					<input type="radio" name="sexo" id="sexom" value="option1" checked> Masculino</label>
+					<div class="visible-lg-inline visible-md-inline visible-sm-inline">&emsp;</div>&emsp;
+					<label class="radio-inline">
+					<input type="radio" name="sexo" id="sexof" value="option2"> Femenino </label>
+                  </div>
+                </div>
+               <div class="item form-group">
+                 <label class="control-label col-md-3 col-sm-3 col-xs-12" for="codigoZona">Fecha de Nacimiento <span class="required">*</span>
+                 </label>
+                 <div class="col-md-6 col-sm-6 col-xs-12">
+                    <input id="fechanac" name="fechanac" type="text" class="form-control" required="required" data-inputmask="'mask': '99/99/9999'">
+                 </div>
+               </div>
+			   <div class="item form-group">
+                 <label class="control-label col-md-3 col-sm-3 col-xs-12" for="nombre">Nombre de Usuario <span class="required">*</span>
+                 </label>
+                 <div class="col-md-6 col-sm-6 col-xs-12">
+                   <input id="nombreUsuario" class="form-control col-md-7 col-xs-12" name="nombreUsuario" required="required" type="text">
+                 </div>
+               </div>
+			   <div class="item form-group">
+                 <label class="control-label col-md-3 col-sm-3 col-xs-12" for="nombre">Contraseña <span class="required">*</span>
+                 </label>
+                 <div class="col-md-6 col-sm-6 col-xs-12">
+                   <input id="contrasena" type="password" name="contrasena" data-validate-length="6,8" class="form-control col-md-7 col-xs-12" required="required">
+                 </div>
+               </div>
+			   <div class="item form-group">
+                 <label class="control-label col-md-3 col-sm-3 col-xs-12" for="nombre">Confirmar Contraseña <span class="required">*</span>
+                 </label>
+                 <div class="col-md-6 col-sm-6 col-xs-12">
+                   <input id="contrasena2" type="password" name="contrasena2"  data-validate-linked="password" class="form-control col-md-7 col-xs-12" required="required">
+                 </div>
+               </div>
+			   <div class="item form-group">
+                 <label class="control-label col-md-3 col-sm-3 col-xs-12" for="nombre">Correo <span class="required">*</span>
+                 </label>
+                 <div class="col-md-6 col-sm-6 col-xs-12">
+                   <input id="correo" type="email" class="form-control col-md-7 col-xs-12" name="correo" required="required" type="text">
+                 </div>
+               </div>
+               <div class="ln_solid"></div>
+               <div class="form-group">
+                 <div class="col-xs-12">
+				 <center>
+                   <button id="send" name="b_aceptar" type="submit" class="btn btn-success">Aceptar</button>
+                   <button id="cancel" name="b_cancelar" type="submit" class="btn btn-danger">Cancelar</button>
+				  </center>
+                 </div>
+               </div>
+             </form>
+           </div>
+         </div>
+       </div>
+     </div>
+   </div>
+ </div>
+{% endblock content %}
+
+{% block javascripts %}
+ {{ block.super }}
+  <script src="/static/vendors/jquery.inputmask/dist/min/jquery.inputmask.bundle.min.js"></script>
+{% endblock javascripts %}
+
