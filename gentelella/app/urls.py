@@ -18,10 +18,20 @@ urlpatterns = [
     url('^invernadero/$',
         views.invernadero.escoger,
         name='escogerInvernadero'),
+        
+    url('^usuario/$',
+        views.usuario.crear,
+        name='usuarioCrear'),
+        
+    url('^pruebajson/$',
+        views.pruebajson.prueba,
+        name='pruebajson'),
 
 ###
     url(r'^.*\.html', views.views.gentella_html, name='gentella'),
 
     # The home page
     url(r'^index/(?P<nombreInvernadero>.*)$', views.index, name='index'),
+
+    url(r'^cerrarSesion/$', views.cerrarSesion, name='cerrarSesion'),
 ]
