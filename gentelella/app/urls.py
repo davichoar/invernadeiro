@@ -22,6 +22,10 @@ urlpatterns = [
     url('^usuario/$',
         views.usuario.crear,
         name='usuarioCrear'),
+        
+    url('^pruebajson/$',
+        views.pruebajson.prueba,
+        name='pruebajson'),
 
 ###
     url(r'^.*\.html', views.views.gentella_html, name='gentella'),
