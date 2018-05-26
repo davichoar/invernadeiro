@@ -1,5 +1,7 @@
 from django.http import HttpResponse
+from django.views.decorators.csrf import csrf_exempt
 
+@csrf_exempt
 def prueba(request, template=None, extra_context=None):
     if request.method == 'GET':
         content = 'prueba del servidor'
@@ -8,4 +10,4 @@ def prueba(request, template=None, extra_context=None):
     if request.method == 'POST':
         cadena = request.body
         print(cadena)
-        return HTTPResponse('ok', content_type='text/plain')
+        return HttpResponse('ok', content_type='text/plain')
