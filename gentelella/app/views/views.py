@@ -1,24 +1,27 @@
 from django.template import loader
 from django.http import HttpResponse
 
-from app.models import Usuario
+from app.models import Usuario, Invernadero
 
 
 def cerrarSesion(request):
     request.session.pop('idUsuarioActual', None)
     request.session.pop('nombreInvernadero', None)
+    request.session.pop('idInvernadero', None)
     template = loader.get_template('app/loginShido.html')
     context = {}
     return HttpResponse(template.render(context, request))
 
 
-def index(request,nombreInvernadero):
+def index(request,idInvernadero):
 
     print('INDEX')
-    print(nombreInvernadero)
+    print('IdInvernadero: '+idInvernadero)
     print('--------')
     print(request.session.get('idUsuarioActual'))
-    request.session['nombreInvernadero'] = nombreInvernadero
+    request.session['idInvernadero'] = idInvernadero
+    invernadero = Invernadero.objects.get(idinvernadero=idInvernadero)
+    request.session['nombreInvernadero'] = invernadero.nombre
     template = loader.get_template('app/index.html')
     idUsuario = request.session.get('idUsuarioActual')
     usuario = None
@@ -31,7 +34,7 @@ def index(request,nombreInvernadero):
     #nombreInvernadero = nombreInvernadero.replace(" ","")
     context = {
         'nombreUsuario': usuario.getnombrecompleto(),
-        'nombreInvernadero': nombreInvernadero,
+        'nombreInvernadero':  invernadero.nombre,
     }
     return HttpResponse(template.render(context, request))
 

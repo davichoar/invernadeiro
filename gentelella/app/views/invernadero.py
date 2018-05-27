@@ -39,7 +39,9 @@ def escoger(request,
         print(usuario.nombres)
         ## si solo hay un invernadero
         if len(listaInvernaderos) == 1:
-            return redirect('index',nombreInvernadero= listaInvernaderos[0].nombre)
+            idInvernadero = listaInvernaderos[0].idinvernadero
+            request.session["idInvernadero"] = idInvernadero
+            return redirect('index', idInvernadero=idInvernadero)
 
 
         if extra_context is not None:

@@ -47,10 +47,10 @@ def index(request,
         if 'idUsuarioActual' in request.session:
             print(request.session['idUsuarioActual'])
             usuario = Usuario.objects.get(idusuario=request.session['idUsuarioActual'])
-            if 'nombreInvernadero' in request.session:
+            if 'idInvernadero' in request.session:
                 context = {
                     'nombreUsuario': usuario.getnombrecompleto(),
-                    'nombreInvernadero': request.session['nombreInvernadero'],
+                    'idInvernadero': request.session['idInvernadero'],
                 }
                 template = loader.get_template('app/index.html')
                 return HttpResponse(template.render(context, request))
