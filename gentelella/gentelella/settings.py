@@ -25,7 +25,7 @@ SECRET_KEY = '8*md2t)o**67@*yhc(d=f@j95kl(dnf^rmm4s00$-mh_vurb2b'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['200.16.7.158']
 
 
 # Application definition
@@ -77,10 +77,10 @@ WSGI_APPLICATION = 'gentelella.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'postgres',
+        'NAME': 'dp2Local',
 		'USER': 'postgres',
-		'PASSWORD':'inv2018',
-		'HOST': '200.16.7.158',
+		'PASSWORD':'postgres',
+		'HOST': 'localhost',
 		'PORT':'5432',
     }
 }

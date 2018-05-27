@@ -18,6 +18,14 @@ urlpatterns = [
     url('^invernadero/$',
         views.invernadero.escoger,
         name='escogerInvernadero'),
+        
+    url('^usuario/$',
+        views.usuario.crear,
+        name='usuarioCrear'),
+        
+    url('^pruebajson/$',
+        views.pruebajson.prueba,
+        name='pruebajson'),
 
 ## ZONA INVERNADERO
     url('^zonainvernadero/crear/$',

@@ -1,6 +1,6 @@
 <div class="left_col scroll-view">
   <div class="navbar nav_title" style="border: 0;">
-    <a href="index.html" class="site_title"><i class="fa fa-home"></i> <span>{{nombreInvernadero}}</span></a>
+    <a href="/" class="site_title"><i class="fa fa-home"></i> <span>{{nombreInvernadero}}</span></a>
   </div>
 
   <div class="clearfix"></div>
@@ -28,7 +28,7 @@
         <li><a href="editarSemillero.html"><i class="fa fa-leaf"></i> Módulos de Semillas </a></li>
         <li><a href="planta.html"><i class="fa fa-tree"></i> Plantas </a></li>
         <li><a href="form.html"><i class="fa fa-bar-chart"></i> Estadísticas </a></li>
-        <li><a><i class="fa fa-users"></i> Usuarios </a></li>
+        <li><a href="/usuario/"><i class="fa fa-users"></i> Usuarios </a></li>
       </ul>
     </div>
   </div>
@@ -45,7 +45,7 @@
     <a data-toggle="tooltip" data-placement="top" title="Lock">
       <span class="glyphicon glyphicon-eye-close" aria-hidden="true"></span>
     </a>
-    <a data-toggle="tooltip" data-placement="top" title="Logout" href="login.html">
+    <a data-toggle="tooltip" data-placement="top" title="Logout" href="{% url 'cerrarSesion' %}">
       <span class="glyphicon glyphicon-off" aria-hidden="true"></span>
     </a>
   </div>
