@@ -69,7 +69,7 @@
                 </thead>
                 <tbody>
                   {% for item, usuario in listaUsuarios %}
-                  <tr onclick="location.href='http://www.google.com';">
+                  <tr onclick="location.href='/usuario/{{ usuario.idusuario }}';">
                     <th scope="row">{{item}}</th>
                     <td>{{ usuario.nombres }} {{ usuario.apellidopaterno }}</td>
                   </tr>
@@ -134,5 +134,33 @@
     });
   </script>
   {% endif %}
+  <script>
+  $(document).ready(function() {
+    $('#datatable').DataTable( {
+        "language": {
+            "emptyTable": "No hay datos para mostrar",
+            "thousands": "",
+            "search": "Buscar:\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0",
+            "loadingRecords": "Cargando...",
+            "processing": "Procesando...",
+            "lengthMenu": "Mostrar _MENU_ registros",
+            "zeroRecords": "No se encontro ningún registro",
+            "info": "Mostrando del _START_ al _END_ de _TOTAL_ registros",
+            "infoEmpty": "Ningún registro disponible",
+            "infoFiltered": "(filtrado del total de _MAX_ registros)",
+            "paginate": {
+                "first":      "Primero",
+                "last":       "Último",
+                "next":       "Siguiente",
+                "previous":   "Anterior"
+            },
+            "aria": {
+                "sortAscending":  ": activar para ordenar ascendentemente",
+                "sortDescending": ": activar para ordenar descendentemente"
+            }
+        }
+    } );
+} );
+  </script>
 {% endblock javascripts %}
 

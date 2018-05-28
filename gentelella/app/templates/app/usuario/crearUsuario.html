@@ -61,75 +61,75 @@
                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="nombre">Nombres <span class="required">*</span>
                  </label>
                  <div class="col-md-6 col-sm-6 col-xs-12">
-                   <input id="nombre" class="form-control col-md-7 col-xs-12" name="nombre" type="text">
+                   <input id="nombre" class="form-control col-md-7 col-xs-12" name="nombre"  value="{{ usuario.nombres }}" type="text">
                  </div>
                </div>
 			   <div class="item form-group">
                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="apepato">Apellido Paterno <span class="required">*</span>
                  </label>
                  <div class="col-md-6 col-sm-6 col-xs-12">
-                   <input id="apepato" class="form-control col-md-7 col-xs-12" name="apepato" type="text">
+                   <input id="apepato" class="form-control col-md-7 col-xs-12" name="apepato" value="{{ usuario.apellidopaterno }}" type="text">
                  </div>
                </div>
 			   <div class="item form-group">
                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="apemato">Apellido Materno <span class="required">*</span>
                  </label>
                  <div class="col-md-6 col-sm-6 col-xs-12">
-                   <input id="apemato" class="form-control col-md-7 col-xs-12" name="apemato" type="text" oninvalid="mostrarModal('Debe ingresar el nombre completo del usuario.');" required="required">
+                   <input id="apemato" class="form-control col-md-7 col-xs-12" name="apemato" value="{{ usuario.apellidomaterno }}" type="text">
                  </div>
                </div>
 			   <div class="form-group">
                   <label class="control-label col-md-3 col-sm-3 col-xs-12">Sexo <span class="required">*</span></label>
                   <div class="col-md-6 col-sm-6 col-xs-12">
                     <label class="radio-inline">
-					<input type="radio" name="sexo" id="sexom" value="M" checked> Masculino</label>
+					<input type="radio" name="sexo" id="sexom" value="M" {% if usuario.sexo == 'M' %} checked {% endif %}> Masculino</label>
 					<div class="visible-lg-inline visible-md-inline visible-sm-inline">&emsp;</div>&emsp;
 					<label class="radio-inline">
-					<input type="radio" name="sexo" id="sexof" value="F"> Femenino </label>
+					<input type="radio" name="sexo" id="sexof" value="F" {% if usuario.sexo == 'F' %} checked {% endif %}> Femenino </label>
                   </div>
                 </div>
                <div class="item form-group">
                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="fechanac">Fecha de Nacimiento <span class="required">*</span>
                  </label>
                  <div class="col-md-6 col-sm-6 col-xs-12">
-                    <input id="fechanac" name="fechanac" type="text" class="form-control" data-inputmask="'mask': '99/99/9999'">
+                    <input id="fechanac" name="fechanac" type="text" class="form-control" data-inputmask="'mask': '99/99/9999'" value="{{usuario.fechanacimiento}}">
                  </div>
                </div>
 			   <div class="item form-group">
                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="nombreUsuario">Nombre de Usuario <span class="required">*</span>
                  </label>
                  <div class="col-md-6 col-sm-6 col-xs-12">
-                   <input id="nombreUsuario" class="form-control col-md-7 col-xs-12" name="nombreUsuario" type="text">
+                   <input id="nombreUsuario" class="form-control col-md-7 col-xs-12" name="nombreUsuario" type="text" value="{{ usuario.nombreusuario }}">
                  </div>
                </div>
 			   <div class="item form-group">
                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="contrasena">Contraseña <span class="required">*</span>
                  </label>
                  <div class="col-md-6 col-sm-6 col-xs-12">
-                   <input id="contrasena" type="password" name="contrasena" data-validate-length="6,8" class="form-control col-md-7 col-xs-12">
+                   <input id="contrasena" type="password" name="contrasena" data-validate-length="6,8" class="form-control col-md-7 col-xs-12" value="{{ usuario.contrasena }}">
                  </div>
                </div>
 			   <div class="item form-group">
                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="contrasena2">Confirmar Contraseña <span class="required">*</span>
                  </label>
                  <div class="col-md-6 col-sm-6 col-xs-12">
-                   <input id="contrasena2" type="password" name="contrasena2"  data-validate-linked="password" class="form-control col-md-7 col-xs-12">
+                   <input id="contrasena2" type="password" name="contrasena2"  data-validate-linked="password" class="form-control col-md-7 col-xs-12" value="{{ usuario.contrasena }}">
                  </div>
                </div>
 			   <div class="item form-group">
                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="correo">Correo <span class="required">*</span>
                  </label>
                  <div class="col-md-6 col-sm-6 col-xs-12">
-                   <input id="correo" type="email" class="form-control col-md-7 col-xs-12" name="correo" type="text">
+                   <input id="correo" class="form-control col-md-7 col-xs-12" name="correo" type="text" value="{{ usuario.correo }}">
                  </div>
                </div>
                <div class="form-group">
                   <label class="control-label col-md-3 col-sm-3 col-xs-12">Rol *</label>
                   <div class="col-md-6 col-sm-6 col-xs-12">
                     <select id = "rol" class="form-control" name="rol">
-                      <option value="-1" selected disabled>- Seleccione -</option>
+                      <option value="-1" {% if  usuario.idrol  == -1 %} selected {% endif %} disabled>- Seleccione -</option>
                       {% for rol in listaRoles %}
-                      <option value="{{rol.idrol}}">{{rol.nombrerol}}</option>
+                      <option value="{{rol.idrol}}" {% if usuario.idrol == rol.idrol %} selected {% endif %} >{{rol.nombrerol}}</option>
                       {% endfor %}
                     </select>
                   </div>
@@ -139,7 +139,7 @@
                   <div class="col-md-6 col-sm-6 col-xs-12">
                     <select name="invernaderos" size="{{ listaInvernaderos.len }}" class="select2_multiple form-control" multiple="multiple">
                     {% for invernadero in listaInvernaderos %}
-                      <option value = "{{invernadero.idinvernadero}}">{{invernadero.nombre}}</option>
+                      <option value = "{{invernadero.idinvernadero}}" {% if invernadero.idinvernadero in listaInvernaderosUsuario %} selected {% endif %}>{{invernadero.nombre}}</option>
                     {% endfor %}
                     </select>
                   </div>
@@ -170,7 +170,6 @@
   <script src="/static/vendors/pnotify/dist/pnotify.nonblock.js"></script>
   <script>
   function validarContrasenasYRol() {
-    if (document.getElementById("nuevoUsuario").checkValidity()){
         if (document.getElementById("nombre").value == '' || document.getElementById("apepato").value == '' || document.getElementById("apemato").value == '') {
            mostrarModal('Debe ingresar el nombre completo del usuario.');
            return;
@@ -200,11 +199,11 @@
            mostrarModal('Debe ingresar el correo del usuario.');
            return;
         }
-        var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-        if (re.test(document.getElementById("correo"))) {
-           mostrarModal('El correo ingresado no es válido');
-           return;
-        }
+        //var re = /\S+@\S+\.\S+/;
+        //if (!re.test(document.getElementById("correo"))) {
+        //   mostrarModal('El correo ingresado no es válido.');
+        //   return;
+        //}
         if (document.getElementById("rol").value == -1) {
            mostrarModal('Debe seleccionar un rol para el usuario.');
            return;
@@ -212,7 +211,7 @@
        document.getElementById("nuevoUsuario").submit();
        return;        
     }
-  }
+  
   </script>
   <script>
   function mostrarModal(cadena) {
@@ -246,5 +245,10 @@
     return day > 0 && day <= monthLength[month - 1];
   }
   </script>
+  {% if mensajeError != None %}
+  <script>
+  mostrarModal("{{mensajeError}}");
+  </script>
+  {% endif %}
 {% endblock javascripts %}
 
