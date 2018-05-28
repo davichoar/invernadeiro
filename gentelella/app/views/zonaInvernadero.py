@@ -24,11 +24,26 @@ def crear(request,
         idInvernadero = int(request.session.get('idInvernadero'))
         if "b_aceptar" in request.POST:
 
+            mensajeError = None
             try:
-                grabarData(request,None)
+               mensajeError = grabarData(request,None)
             except Exception as e:
+                mensajeError = "No se puede crear la zona en este momento"
                 print(e)
-        request.session['mensajeZonaCrear'] = True
+
+            if mensajeError is not None:
+                print("MENSAJE ERROR CREAR ZONA")
+                zona = obtenerZonaRequest(request)
+                listaTipoZonas = Tipozona.objects.filter(habilitado=True)
+                context = {"zona":zona,
+                            "listaTipoZonas": listaTipoZonas,
+                           'nombreUsuario': request.session.get('nomreUsuario'),
+                           'nombreInvernadero': request.session.get('nombreInvernadero'),
+                           'mensajeError': mensajeError,
+                           }
+                return render(request, template, context)
+            else:
+                request.session['mensajeZonaCrear'] = True
         return redirect('zonaInvernaderoListar')
     else:
         return redirect('zonaInvernaderoListar')
@@ -104,11 +119,20 @@ def detalle(request,idZona):
             return render(request, template, context)
         if "b_aceptar" in request.POST:
             print('Aceptar Zona Invernadero')
+            mensajeError = None
             try:
-                grabarData(request,idZona)
+               mensajeError = grabarData(request,idZona)
             except Exception as e:
+                mensajeError = "No se puede crear la zona en este momento"
                 print(e)
-            return redirect('zonaInvernaderoListar')
+            zona = obtenerZonaRequest(request)
+            if mensajeError:
+                context = {"historiaZona": historiaZona, "listaTipoZonas": listaTipoZonas, "zona": zona,
+                           'nombreUsuario': request.session.get('nomreUsuario'),
+                           'nombreInvernadero': request.session.get('nombreInvernadero'), "editable": True, "mensajeError":mensajeError}
+                return render(request, template, context)
+            else:
+                return redirect('zonaInvernaderoListar')
 
         if "b_cancelar" in request.POST :
             context = {"historiaZona": historiaZona, "listaTipoZonas": listaTipoZonas, "zona": zona,
@@ -136,11 +160,12 @@ def eliminarZona(request,idZona):
     return
 
 
-def grabarData(request,idZona):
-    print('GRABAR DATA')
-    nombre = str(request.POST.get('nombre'))
-    codigoZona = int(request.POST.get('codigoZona'))
-    tipoZona = int(request.POST.get("tipoZona"))
+def obtenerZonaRequest(request):
+    zonaDataLlenada = Zona()
+
+    nombreObtenido = request.POST.get('nombre')
+    codigoZonaObtenido = request.POST.get('codigoZona')
+    tipoZonaEscogido = request.POST.get("tipoZona")
     area = request.POST.get('area')
     tempIdeal = request.POST.get('tempIdeal')
     tempMin = request.POST.get('tempMin')
@@ -148,8 +173,89 @@ def grabarData(request,idZona):
     co2Ideal = request.POST.get('co2Ideal')
     co2Min = request.POST.get('co2Min')
     co2Max = request.POST.get('co2Max')
-    idInvernadero = int(request.session.get('idInvernadero'))
-    idUsuarioActual = int(request.session.get('idUsuarioActual'))
+
+    zonaDataLlenada.nombre = nombreObtenido
+    zonaDataLlenada.codigozonajson = codigoZonaObtenido
+    zonaDataLlenada.idtipozona = tipoZonaEscogido
+    zonaDataLlenada.area = area
+    zonaDataLlenada.temperaturaideal = tempIdeal
+    zonaDataLlenada.temperaturamin = tempMin
+    zonaDataLlenada.temperaturamax = tempMax
+    zonaDataLlenada.concentracionco2ideal = co2Ideal
+    zonaDataLlenada.concentracionco2min = co2Min
+    zonaDataLlenada.concentracionco2max = co2Max
+    return zonaDataLlenada
+
+def grabarData(request,idZona):
+    print('GRABAR DATA')
+
+    nombreObtenido = request.POST.get('nombre')
+    codigoZonaObtenido = request.POST.get('codigoZona')
+    tipoZonaEscogido = request.POST.get("tipoZona")
+    area = request.POST.get('area')
+    tempIdeal = request.POST.get('tempIdeal')
+    tempMin = request.POST.get('tempMin')
+    tempMax = request.POST.get('tempMax')
+    co2Ideal = request.POST.get('co2Ideal')
+    co2Min = request.POST.get('co2Min')
+    co2Max = request.POST.get('co2Max')
+
+    if nombreObtenido:
+        nombre = str(nombreObtenido)
+    else:
+        return "Falta ingresar el nombre de la zona."
+
+
+    if codigoZonaObtenido:
+        codigoZona = int(codigoZonaObtenido)
+    else:
+        return "Falta ingresar el codigo para la zona."
+
+
+    if tipoZonaEscogido:
+        tipoZona = int(tipoZonaEscogido)
+    else:
+        return "Falta seleccionar la zona."
+
+
+    if area == "":
+        return "Falta ingresar el área de la zona."
+
+
+    if tempIdeal == "":
+        return "Falta ingresar la temperatura ideal para la zona."
+
+
+    if tempMin == "":
+        return "Falta ingresar la temperatura mínima para la zona."
+
+
+    if tempMax == "":
+        return "Falta ingresar la temperatura máxima para la zona."
+
+
+    if co2Ideal == "":
+        return "Falta ingresar la concentración de CO2 ideal para la zona."
+
+
+    if co2Min == "":
+        return "Falta ingresar la concentración de CO2 mínima para la zona."
+
+
+    if co2Max == "":
+        return "Falta ingresar la concentración de CO2 máxima para la zona."
+
+    idInvernaderoObtenido =  request.session.get('idInvernadero')
+    if idInvernaderoObtenido == "" or idInvernaderoObtenido == None:
+        return "Ocurrió un error al tratar de crear la zona. Intente de nuevo en un momento."
+
+    idInvernadero = int(idInvernaderoObtenido)
+
+    idUsuarioObtenido = request.session.get('idUsuarioActual')
+    if idUsuarioObtenido == "" or idUsuarioObtenido == None:
+        return "Ocurrió un error al tratar de crear la zona. Intente de nuevo en un momento."
+    idUsuarioActual = int(idUsuarioObtenido)
+
     print('Nombre: ' + nombre)
     print('Codigo Zona: ' + str(codigoZona))
     print('Tipo Zona:' + str(tipoZona))
@@ -163,13 +269,21 @@ def grabarData(request,idZona):
     print('Id Invernadero: ' + str(idInvernadero))
     print('Id Usuario Actual: ' + str(idUsuarioActual))
 
-
+    zonaObtenidaBd = None
     if idZona is None:
         idMax = Zona.objects.all().aggregate(Max('idzona'))['idzona__max']
         if idMax is None:
             idZona = 1
         else:
             idZona = idMax + 1
+        zonaObtenidaBd = Zona.objects.filter(codigozonajson=codigoZona, habilitado=True)
+
+    else:
+        zonaObtenidaBd = Zona.objects.filter(codigozonajson=codigoZona, habilitado=True).exclude(idzona=idZona)
+        print(zonaObtenidaBd)
+    if zonaObtenidaBd.exists():
+        return "Ya existe el codigo de zona. Ingrese un codigo de zona distinto"
+
 
     zona,created = Zona.objects.update_or_create(
         idzona=idZona, defaults={ "idtipozona" :tipoZona,
@@ -190,6 +304,6 @@ def grabarData(request,idZona):
 
     zona.save()
 
-    return
+    return None
 
 

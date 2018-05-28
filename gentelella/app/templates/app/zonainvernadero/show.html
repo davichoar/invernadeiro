@@ -5,6 +5,9 @@
 
 {% block stylesheets %}
   {{ block.super }}
+  <link href="/static/vendors/pnotify/dist/pnotify.css" rel="stylesheet">
+  <link href="/static/vendors/pnotify/dist/pnotify.buttons.css" rel="stylesheet">
+  <link href="/static/vendors/pnotify/dist/pnotify.nonblock.css" rel="stylesheet">
 {% endblock stylesheets %}
 
 {% block content %}
@@ -17,10 +20,10 @@
         <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span>
           </button>
-          <h4 class="modal-title" id="myModalLabel2">Error</h4>
+          <h4 class="modal-title" id="myModalLabel2">Confirmación de Eliminación</h4>
         </div>
         <div class="modal-body">
-          <p>¿ Está seguro que desea eliminar la zona?</p>
+          <p>¿Está seguro que desea eliminar la zona?</p>
         </div>
         <div class="modal-footer">
             {% csrf_token %}
@@ -215,6 +218,21 @@
 {% endblock content %}
 {% block javascripts %}
   {{ block.super }}
+
+  <script src="/static/vendors/pnotify/dist/pnotify.js"></script>
+  <script src="/static/vendors/pnotify/dist/pnotify.buttons.js"></script>
+  <script src="/static/vendors/pnotify/dist/pnotify.nonblock.js"></script>
+
+    {% if mensajeError != None %}
+        <script>
+            new PNotify({
+                                title: 'Error',
+                                text: "{{mensajeError}}",
+                                type: 'error',
+                                styling: 'bootstrap3'
+                            });
+        </script>
+    {% endif %}
 
   <script>
     function activate_modal() {
