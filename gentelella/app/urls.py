@@ -31,6 +31,12 @@ urlpatterns = [
     url('^zonainvernadero/crear/$',
         views.zonaInvernadero.crear,
         name='zonaInvernaderoCrear'),
+    url('^zonainvernadero/$',
+        views.zonaInvernadero.listar,
+        name='zonaInvernaderoListar'),
+    url('^zonainvernadero/(?P<idZona>.*)$',
+        views.zonaInvernadero.mostrar,
+        name='zonaInvernaderoMostrar'),
 
     ###
 

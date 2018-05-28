@@ -208,6 +208,7 @@ class Usuario(models.Model):
     correo = models.CharField(max_length=255)
     fechacreacion = models.DateTimeField()
     idusuarioauditado = models.IntegerField(blank=True, null=True)
+    habilitado = models.BooleanField(default=True)
 
     def getnombrecompleto(self):
         return self.nombres + ' ' + self.apellidopaterno
@@ -227,6 +228,9 @@ class Zona(models.Model):
     temperaturaideal = models.FloatField()
     temperaturamin = models.FloatField()
     temperaturamax = models.FloatField()
+    concentracionco2ideal = models.FloatField()
+    concentracionco2min = models.FloatField()
+    concentracionco2max = models.FloatField()
     fechacreacion = models.DateTimeField()
     habilitado = models.BooleanField()
     idusuarioauditado = models.IntegerField(blank=True, null=True)
