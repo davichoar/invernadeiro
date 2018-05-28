@@ -34,17 +34,17 @@
                 {% csrf_token %}
 
                 <div class="item form-group">
-                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="nombre">Nombre <span class="required">*</span>
+                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="nombre">Nombre<span class="required">*</span>
                   </label>
                   <div class="col-md-6 col-sm-6 col-xs-12">
-                    <input id="nombre" name="nombre" class="form-control col-md-7 col-xs-12" data-validate-length-range="6" data-validate-words="2" name="name" placeholder="" required="required" type="text">
+                    <input id="nombre" name="nombre" value = "{{zona.nombre}}" class="form-control col-md-7 col-xs-12" data-validate-length-range="6" data-validate-words="2" name="name" placeholder="" required="required" type="text"  {% if not editable %} disabled {% endif %} >
                   </div>
                 </div>
                 <div class="item form-group">
                   <label class="control-label col-md-3 col-sm-3 col-xs-12" for="codigoZona">Código de Zona <span class="required">*</span>
                   </label>
                   <div class="col-md-6 col-sm-6 col-xs-12">
-                    <input  type="number" id="codigoZona" name="codigoZona" required="required" class="form-control col-md-7 col-xs-12">
+                    <input  type="number" id="codigoZona" name="codigoZona"  value ="{{zona.codigozonajson}}" required="required" class="form-control col-md-7 col-xs-12" {% if not editable %} disabled {% endif %}>
                   </div>
                 </div>
                 <div class="item form-group">
@@ -52,9 +52,9 @@
                     class="control-label col-md-3 col-sm-3 col-xs-12" for="tipoZona">Tipo de zona <span class="required">*</span>
                   </label>
                   <div class="col-md-6 col-sm-6 col-xs-12">
-                    <select id="tipoZona" name="tipoZona" class="form-control" required>
+                    <select id="tipoZona" name="tipoZona"  class="form-control" required {% if not editable %} disabled {% endif %}>
                       {% for tipoZona in listaTipoZonas %}
-                        <option value="{{tipoZona.idtipozona}}">{{tipoZona.nombre}}</option>
+                        <option value="{{tipoZona.idtipozona}}" {% if tipoZona.idtipozona == zona.idtipozona %}selected{% endif %}>{{tipoZona.nombre}}</option>
                       {% endfor %}
                     </select>
                   </div>
@@ -63,28 +63,28 @@
                   <label class="control-label col-md-3 col-sm-3 col-xs-12" for="area">Área (m<sup>2</sup>)<span class="required">*</span>
                   </label>
                   <div class="col-md-6 col-sm-6 col-xs-12">
-                    <input type="number" id="area" name="area" required="required" data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12">
+                    <input type="number" id="area" name="area" value="{{zona.area}}" required="required" data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12" {% if not editable %} disabled {% endif %}>
                   </div>
                 </div>
                 <div class="item form-group">
                   <label class="control-label col-md-3 col-sm-3 col-xs-12" for="tempIdeal">Temperatura Ideal (°C)<span class="required">*</span>
                   </label>
                   <div class="col-md-6 col-sm-6 col-xs-12">
-                    <input type="number" id="tempIdeal" name="tempIdeal" required="required" data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12">
+                    <input type="number" id="tempIdeal" name="tempIdeal" value="{{zona.temperaturaideal}}" required="required" data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12" {% if not editable %} disabled {% endif %}>
                   </div>
                 </div>
                 <div class="item form-group">
                   <label class="control-label col-md-3 col-sm-3 col-xs-12" for="tempIdeal">Temperatura Mínima (°C)<span class="required">*</span>
                   </label>
                   <div class="col-md-6 col-sm-6 col-xs-12">
-                    <input type="number" id="tempMin" name="tempMin" required="required" data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12">
+                    <input type="number" id="tempMin" name="tempMin" value="{{zona.temperaturamin}}" required="required" data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12" {% if not editable %} disabled {% endif %}>
                   </div>
                 </div>
                 <div class="item form-group">
                   <label class="control-label col-md-3 col-sm-3 col-xs-12" for="tempIdeal">Temperatura Máxima (°C)<span class="required">*</span>
                   </label>
                   <div class="col-md-6 col-sm-6 col-xs-12">
-                    <input type="number" id="tempMax" name="tempMax" required="required" data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12">
+                    <input type="number" id="tempMax" name="tempMax" value="{{zona.temperaturamax}}" required="required" data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12" {% if not editable %} disabled {% endif %}>
                   </div>
                 </div>
 
@@ -92,21 +92,21 @@
                   <label class="control-label col-md-3 col-sm-3 col-xs-12" for="tempIdeal">Concentración de CO2 Ideal (%)<span class="required">*</span>
                   </label>
                   <div class="col-md-6 col-sm-6 col-xs-12">
-                    <input type="number" id="co2Ideal" name="co2Ideal" required="required" data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12">
+                    <input type="number" id="co2Ideal" name="co2Ideal" value="{{zona.concentracionco2ideal}}" required="required" data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12" {% if not editable %} disabled {% endif %}>
                   </div>
                 </div>
                 <div class="item form-group">
                   <label class="control-label col-md-3 col-sm-3 col-xs-12" for="tempIdeal">Concentración de CO2 Mínima (%)<span class="required">*</span>
                   </label>
                   <div class="col-md-6 col-sm-6 col-xs-12">
-                    <input type="number" id="co2Min" name="co2Min" required="required" data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12">
+                    <input type="number" id="co2Min" name="co2Min" required="required" value="{{zona.concentracionco2min}}" data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12" {% if not editable %} disabled {% endif %}>
                   </div>
                 </div>
                 <div class="item form-group">
                   <label class="control-label col-md-3 col-sm-3 col-xs-12" for="tempIdeal">Concentración de CO2 Máxima (%)<span class="required">*</span>
                   </label>
                   <div class="col-md-6 col-sm-6 col-xs-12">
-                    <input type="number" id="co2Max" name="co2Max" required="required" data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12">
+                    <input type="number" id="co2Max" name="co2Max" required="required" value="{{zona.concentracionco2max}}" data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12" {% if not editable %} disabled {% endif %}>
                   </div>
                 </div>
 
@@ -115,8 +115,11 @@
                 <div class="form-group">
                   <div class="col-xs-12">
                     <center>
-                    <button id="send" name="b_aceptar" type="submit" class="btn btn-success">Aceptar</button>
-                    <button id="cancel" type="submit" class="btn btn-danger">Cancelar</button>
+                    {% if editable %}
+                       <button id="b_aceptar" name="b_aceptar" type="submit" class="btn btn-primary">Aceptar</button>
+                    {% endif %}
+                    <button id="b_editar" name="b_editar" type="submit" class="btn btn-success">Editar</button>
+                    <button id="b_regresar" name="b_regresar" type="submit" class="btn btn-danger">Regresar</button>
                     </center>
                   </div>
                 </div>
@@ -131,15 +134,4 @@
 
 {% block javascripts %}
   {{ block.super }}
-  <script>
-    var ageInput = document.getElementById("age")
-
-  ageInput.addEventListener("keydown", function(e) {
-    // prevent: "e", "=", ",", "-", "."
-    if ([69, 187, 188, 189, 190].includes(e.keyCode)) {
-      e.preventDefault();
-    }
-  })
-  </script>
-
 {% endblock javascripts %}

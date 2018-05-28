@@ -8,6 +8,7 @@ def cerrarSesion(request):
     request.session.pop('idUsuarioActual', None)
     request.session.pop('nombreInvernadero', None)
     request.session.pop('idInvernadero', None)
+    request.session.pop('nomreUsuario', None)
     template = loader.get_template('app/loginShido.html')
     context = {}
     return HttpResponse(template.render(context, request))
@@ -18,12 +19,12 @@ def index(request,idInvernadero):
     print('INDEX')
     print('IdInvernadero: '+idInvernadero)
     print('--------')
-    print(request.session.get('idUsuarioActual'))
+    idUsuario = int (request.session.get('idUsuarioActual'))
+    print('IdUsuario Logueado:'+ (str (idUsuario)))
     request.session['idInvernadero'] = idInvernadero
     invernadero = Invernadero.objects.get(idinvernadero=idInvernadero)
     request.session['nombreInvernadero'] = invernadero.nombre
     template = loader.get_template('app/index.html')
-    idUsuario = request.session.get('idUsuarioActual')
     usuario = None
     try:
         usuario = Usuario.objects.get(idusuario=idUsuario)
@@ -31,9 +32,11 @@ def index(request,idInvernadero):
         print('Error al consultar base de datos')
         return
 
+    nombreUsuarioCompleto = usuario.getnombrecompleto()
+    request.session['nomreUsuario'] = nombreUsuarioCompleto
     #nombreInvernadero = nombreInvernadero.replace(" ","")
     context = {
-        'nombreUsuario': usuario.getnombrecompleto(),
+        'nombreUsuario': nombreUsuarioCompleto,
         'nombreInvernadero':  invernadero.nombre,
     }
     return HttpResponse(template.render(context, request))
