@@ -144,7 +144,7 @@ html , body{
     padding: 0 0 4px 0
 }
 .left_col {
-    background: #2A3F54
+    background: #3CB371
 }
 .nav-sm .container.body .col-md-3.left_col {
     min-height: 100%;
@@ -274,7 +274,7 @@ html , body{
 .profile_info span {
     font-size: 13px;
     line-height: 30px;
-    color: #BAB8B8
+    color: #F5FFFA
 }
 .profile_info h2 {
     font-size: 14px;
@@ -356,7 +356,7 @@ body .container.body .right_col {
 .nav_title {
     width: 230px;
     float: left;
-    background: #2A3F54;
+    background: #3CB371;
     border-radius: 0;
     height: 57px
 }
@@ -488,7 +488,7 @@ body .container.body .right_col {
 }
 body {
     color: #73879C;
-    background: #2A3F54;
+    background: #3CB371;
     font-family: "Helvetica Neue", Roboto, Arial, "Droid Sans", sans-serif;
     font-size: 13px;
     font-weight: 400;
@@ -647,7 +647,7 @@ h3,
     margin-bottom: 10px
 }
 a {
-    color: #5A738E;
+    color: #3CB371;
     text-decoration: none
 }
 a,
@@ -1665,7 +1665,7 @@ span.right {
     padding: 5px 0 0 0;
     position: fixed;
     width: 230px;
-    background: #2A3F54;
+    background: #3CB371;
 	z-index:999;
 }
 .sidebar-footer a {
@@ -1675,11 +1675,11 @@ span.right {
     font-size: 17px;
     display: block;
     float: left;
-    background: #172D44;
+    background: #E0EEE0;
     cursor: pointer;
 }
 .sidebar-footer a:hover {
-    background: #425567
+    background: #3CB371
 }
 .tile_count {
     margin-bottom: 20px;

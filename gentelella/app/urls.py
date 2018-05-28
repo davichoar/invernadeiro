@@ -35,8 +35,8 @@ urlpatterns = [
         views.zonaInvernadero.listar,
         name='zonaInvernaderoListar'),
     url('^zonainvernadero/(?P<idZona>.*)$',
-        views.zonaInvernadero.mostrar,
-        name='zonaInvernaderoMostrar'),
+        views.zonaInvernadero.detalle,
+        name='zonaInvernaderoDetalle'),
 
     ###
 
