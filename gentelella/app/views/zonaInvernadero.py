@@ -5,7 +5,7 @@ from datetime import datetime
 from django.template import loader
 from django.urls import reverse
 
-from app.models import Usuario, Invernadero, Usuarioxinvernadero, Zona, Tipozona, Historiainvernadero
+from app.models import Usuario, Invernadero, Usuarioxinvernadero, Zona, Tipozona, Historiainvernadero, Historiazona
 
 
 def crear(request,
@@ -80,16 +80,22 @@ def detalle(request,idZona):
     zona = Zona.objects.get(idzona=idZona)
     listaTipoZonas = Tipozona.objects.filter(habilitado=True)
 
+    try:
+        historiaZona = Historiazona.objects.filter(idzona=idZona).order_by('-fecharegistro')[0]
+    except Exception as e:
+        historiaZona = None
+        print(e)
+
     if request.method == 'GET':
         print('Mostrar Zona Invernadero')
-        context = {"listaTipoZonas":listaTipoZonas,"zona": zona, 'nombreUsuario': request.session.get('nomreUsuario'),
+        context = {"historiaZona":historiaZona,"listaTipoZonas":listaTipoZonas,"zona": zona, 'nombreUsuario': request.session.get('nomreUsuario'),
                    'nombreInvernadero': request.session.get('nombreInvernadero'), "editable":False,}
         return render(request, template, context)
 
     elif request.method == 'POST':
         if "b_editar" in request.POST:
             print('Editar Zona Invernadero')
-            context = {"listaTipoZonas":listaTipoZonas,"zona": zona, 'nombreUsuario': request.session.get('nomreUsuario'),
+            context = {"historiaZona":historiaZona,"listaTipoZonas":listaTipoZonas,"zona": zona, 'nombreUsuario': request.session.get('nomreUsuario'),
                        'nombreInvernadero': request.session.get('nombreInvernadero'), "editable": True, }
             return render(request, template, context)
         if "b_aceptar" in request.POST:
@@ -100,14 +106,18 @@ def detalle(request,idZona):
                 print(e)
             return redirect('zonaInvernaderoListar')
 
-        if "b_eliminar" in request.POST:
-            print('Eliminar Zona Invernadero')
+        if "b_cancelar" in request.POST :
+            context = {"historiaZona": historiaZona, "listaTipoZonas": listaTipoZonas, "zona": zona,
+                       'nombreUsuario': request.session.get('nomreUsuario'),
+                       'nombreInvernadero': request.session.get('nombreInvernadero'), "editable": False, }
+            return render(request, template, context)
+        if "b_aceptar_modal" in request.POST:
+            print("Aceptar Modal")
             try:
                 eliminarZona(request, idZona)
             except Exception as e:
                 print(e)
             return redirect('zonaInvernaderoListar')
-
         else:
             return redirect('zonaInvernaderoListar')
 
