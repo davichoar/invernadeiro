@@ -5,6 +5,9 @@
 
 {% block stylesheets %}
   {{ block.super }}
+  <link href="/static/vendors/pnotify/dist/pnotify.css" rel="stylesheet">
+  <link href="/static/vendors/pnotify/dist/pnotify.buttons.css" rel="stylesheet">
+  <link href="/static/vendors/pnotify/dist/pnotify.nonblock.css" rel="stylesheet">
 {% endblock stylesheets %}
 
 {% block content %}
@@ -170,4 +173,31 @@
 
 {% block javascripts %}
   {{ block.super }}
+
+  <script src="/static/vendors/pnotify/dist/pnotify.js"></script>
+  <script src="/static/vendors/pnotify/dist/pnotify.buttons.js"></script>
+  <script src="/static/vendors/pnotify/dist/pnotify.nonblock.js"></script>
+
+    {% if mensajeCreacion %}
+        <script>
+            new PNotify({
+                                title: 'Creación Exitosa',
+                                text: "Se creó la zona correctamente.",
+                                type: 'success',
+                                styling: 'bootstrap3'
+                            });
+        </script>
+    {% endif %}
+
+    {% if mensajeEliminacion %}
+        <script>
+            new PNotify({
+                                title: 'Eliminación Exitosa',
+                                text: "Se eliminó la zona correctamente.",
+                                type: 'success',
+                                styling: 'bootstrap3'
+                            });
+        </script>
+    {% endif %}
+
 {% endblock javascripts %}

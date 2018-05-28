@@ -1,13 +1,43 @@
 {% extends "app/base_site.html" %}
 
 
-{% block title %} Crear Zona de Invernadero {% endblock title %}
+{% block title %} {% if editable %} Editar {% else %} Ver {% endif %} Zona del Invernadero{% endblock title %}
 
 {% block stylesheets %}
   {{ block.super }}
 {% endblock stylesheets %}
 
 {% block content %}
+
+<form class="form-horizontal form-label-left"  method="POST" novalidate>
+  <div id="modalxd" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-hidden="true" >
+    <div class="modal-dialog modal-sm">
+      <div class="modal-content">
+
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span>
+          </button>
+          <h4 class="modal-title" id="myModalLabel2">Error</h4>
+        </div>
+        <div class="modal-body">
+          <p>¿ Está seguro que desea eliminar la zona?</p>
+        </div>
+        <div class="modal-footer">
+            {% csrf_token %}
+            <center>
+              <button id="b_aceptar_modal" name="b_aceptar_modal" type="submit" class="btn btn-success" data-dismiss="modal">Aceptar</button>
+              <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+            </center>
+
+        </div>
+
+      </div>
+    </div>
+  </div>
+</form>
+
+
+
  <div class="right_col" role="main">
     <div class="">
       <div class="page-title">
@@ -18,13 +48,62 @@
       </div>
       <div class="clearfix"></div>
 
+
+      <div class="x_panel">
+
+        <div class="x_title">
+          <h2>Condiciones Actuales <small></small></h2>
+              <ul class="nav navbar-right panel_toolbox" >
+                <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                </li>
+              </ul>
+          <div class="clearfix"></div>
+        </div>
+
+
+        <div class="x_content">
+            {% if historiaZona  %}
+            <form class="form-horizontal form-label-left">
+              <div class="item form-group">
+                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="tempIdeal">Temperatura Actual<span class="required">*</span>
+                </label>
+                <div class="col-md-6 col-sm-6 col-xs-12">
+                  <input required="required" value="{{historiaZona.temperatura}}" data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12"  disabled >
+                </div>
+              </div>
+
+              <div class="item form-group">
+                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="tempIdeal">PH Actual<span class="required">*</span>
+                </label>
+                <div class="col-md-6 col-sm-6 col-xs-12">
+                  <input required="required" value="{{historiaZona.ph}}" data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12"  disabled >
+                </div>
+              </div>
+
+              <div class="item form-group">
+                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="tempIdeal">Concentración de CO2 Actual<span class="required">*</span>
+                </label>
+                <div class="col-md-6 col-sm-6 col-xs-12">
+                  <input required="required" value="{{historiaZona.concentracionco2}}" data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12"  disabled >
+                </div>
+              </div>
+            </form>
+            {% endif %}
+        </div>
+      </div>
+
+
       <div class="row">
         <div class="col-md-12 col-sm-12 col-xs-12">
           <div class="x_panel">
 
             <div class="x_title">
               <h2>Crear Zona Invernadero<small></small></h2>
-                   <div class="clearfix"></div>
+              <ul class="nav navbar-right panel_toolbox" >
+                <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                </li>
+              </ul>
+              <div class="clearfix"></div>
             </div>
 
 
@@ -32,7 +111,6 @@
 
               <form class="form-horizontal form-label-left"  method="POST" novalidate>
                 {% csrf_token %}
-
                 <div class="item form-group">
                   <label class="control-label col-md-3 col-sm-3 col-xs-12" for="nombre">Nombre<span class="required">*</span>
                   </label>
@@ -116,23 +194,42 @@
                   <div class="col-xs-12">
                     <center>
                     {% if editable %}
-                       <button id="b_aceptar" name="b_aceptar" type="submit" class="btn btn-success">Aceptar</button>
+                      <button id="b_aceptar" name="b_aceptar" type="submit" class="btn btn-success">Aceptar</button>
+                      <button id="b_cancelar" name="b_cancelar" type="submit" class="btn btn-default">Cancelar</button>
+                    {% else %}
+                       <button id="b_editar" name="b_editar" type="submit" class="btn btn-success">Editar</button>
+                       <button id="b_regresar" name="b_regresar" type="submit" class="btn btn-default">Regresar</button>
                     {% endif %}
-                    <button id="b_editar" name="b_editar" type="submit" class="btn btn-success">Editar</button>
-                    <button id="b_regresar" name="b_regresar" type="submit" class="btn btn-default">Regresar</button>
-                    <button id="b_eliminar" name="b_eliminar" type="submit" class="btn btn-danger" style="float:right">Eliminar</button>
+                    <button id="b_eliminar" name="b_eliminar"  type="button" class="btn btn-danger" style="float:right">Eliminar</button>
                     </center>
                   </div>
                 </div>
               </form>
             </div>
           </div>
+
         </div>
       </div>
     </div>
   </div>
 {% endblock content %}
-
 {% block javascripts %}
   {{ block.super }}
+
+  <script>
+    function activate_modal() {
+      $("#modalxd").modal()
+    }
+
+    document.getElementById("b_eliminar").addEventListener("click", activate_modal);
+  </script>
+
+  <script>
+
+  function deletO(){
+    document.getElementById("b_aceptar_modal").click();
+    }
+
+  document.getElementById("b_aceptar_modal").addEventListener("click", deletO);
+  </script>
 {% endblock javascripts %}
