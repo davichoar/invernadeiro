@@ -28,7 +28,7 @@ def crear(request,
                 grabarData(request,None)
             except Exception as e:
                 print(e)
-
+        request.session['mensajeZonaCrear'] = True
         return redirect('zonaInvernaderoListar')
     else:
         return redirect('zonaInvernaderoListar')
@@ -62,9 +62,13 @@ def listar(request,
         else:
             listaZonas = Zona.objects.filter(habilitado=True)
 
+
+        mensajeCreacion = request.session.pop('mensajeZonaCrear',False)
+        mensajeEliminar = request.session.pop('mensajeZonaEliminar', False)
+
         print(listaZonas)
         context = {"historia":ultimaHistoria,"listaZonas": listaZonas.order_by('idzona'), 'nombreUsuario': request.session.get('nomreUsuario'),
-                   'nombreInvernadero': request.session.get('nombreInvernadero'),}
+                   'nombreInvernadero': request.session.get('nombreInvernadero'),"mensajeCreacion": mensajeCreacion,"mensajeEliminacion": mensajeEliminar,}
         return render(request, template, context)
 
     elif request.method == 'POST':
@@ -115,8 +119,10 @@ def detalle(request,idZona):
             print("Aceptar Modal")
             try:
                 eliminarZona(request, idZona)
+                request.session['mensajeZonaEliminar'] = True
             except Exception as e:
                 print(e)
+
             return redirect('zonaInvernaderoListar')
         else:
             return redirect('zonaInvernaderoListar')
