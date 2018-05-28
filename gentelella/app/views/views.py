@@ -1,3 +1,4 @@
+from django.shortcuts import redirect
 from django.template import loader
 from django.http import HttpResponse
 
@@ -40,6 +41,7 @@ def index(request,idInvernadero):
         'nombreInvernadero':  invernadero.nombre,
     }
     return HttpResponse(template.render(context, request))
+    #return redirect('zonaInvernaderoListar')
 
 
 def gentella_html(request):

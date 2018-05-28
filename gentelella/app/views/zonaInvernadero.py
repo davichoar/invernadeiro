@@ -58,9 +58,9 @@ def listar(request,
             print(valorBusqueda)
             if(valorBusqueda is None):
                 valorBusqueda = ""
-            listaZonas = Zona.objects.filter(nombre__icontains=valorBusqueda)
+            listaZonas = Zona.objects.filter(nombre__icontains=valorBusqueda,habilitado=True)
         else:
-            listaZonas = Zona.objects.all()
+            listaZonas = Zona.objects.filter(habilitado=True)
 
         print(listaZonas)
         context = {"historia":ultimaHistoria,"listaZonas": listaZonas.order_by('idzona'), 'nombreUsuario': request.session.get('nomreUsuario'),
@@ -74,7 +74,7 @@ def listar(request,
     return render(request, template, context)
 
 
-def mostrar(request,idZona):
+def detalle(request,idZona):
 
     template = 'app/zonainvernadero/show.html'
     zona = Zona.objects.get(idzona=idZona)
@@ -99,8 +99,25 @@ def mostrar(request,idZona):
             except Exception as e:
                 print(e)
             return redirect('zonaInvernaderoListar')
+
+        if "b_eliminar" in request.POST:
+            print('Eliminar Zona Invernadero')
+            try:
+                eliminarZona(request, idZona)
+            except Exception as e:
+                print(e)
+            return redirect('zonaInvernaderoListar')
+
         else:
             return redirect('zonaInvernaderoListar')
+
+def eliminarZona(request,idZona):
+    idUsuarioActual = int(request.session.get('idUsuarioActual'))
+    zona,created = Zona.objects.update_or_create(
+        idzona=idZona, defaults={"habilitado":False,"idusuarioauditado":idUsuarioActual})
+    print(created)
+    zona.save()
+    return
 
 
 def grabarData(request,idZona):
@@ -138,7 +155,7 @@ def grabarData(request,idZona):
         else:
             idZona = idMax + 1
 
-    zona = Zona.objects.update_or_create(
+    zona,created = Zona.objects.update_or_create(
         idzona=idZona, defaults={ "idtipozona" :tipoZona,
         "idinvernadero" : idInvernadero,
         "codigozonajson": codigoZona,
