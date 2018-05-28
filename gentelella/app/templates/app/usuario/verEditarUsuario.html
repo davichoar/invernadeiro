@@ -12,25 +12,32 @@
 
 {% block content %}
 
-<div id="modalxd" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-hidden="true" >
-  <div class="modal-dialog modal-sm">
-    <div class="modal-content">
+<form class="form-horizontal form-label-left"  method="POST" novalidate>
+  <div id="modalxd" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-hidden="true" >
+    <div class="modal-dialog modal-sm">
+      <div class="modal-content">
 
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span>
-        </button>
-        <h4 class="modal-title" id="myModalLabel2">Error</h4>
-      </div>
-      <div class="modal-body">
-        <p>Los datos ingresados no son válidos.</p>
-      </div>
-      <div class="modal-footer">
-        <center><button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button></center>
-      </div>
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span>
+          </button>
+          <h4 class="modal-title" id="myModalLabel2">Confirmación de Eliminación</h4>
+        </div>
+        <div class="modal-body">
+          <p>¿Está seguro que desea eliminar el usuario?</p>
+        </div>
+        <div class="modal-footer">
+            {% csrf_token %}
+            <center>
+              <button id="b_aceptar_modal" name="b_aceptar_modal" type="submit" class="btn btn-success" data-dismiss="modal">Aceptar</button>
+              <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+            </center>
 
+        </div>
+
+      </div>
     </div>
   </div>
-</div>
+</form>
 
 <div class="right_col" role="main">
    <div class="">
@@ -155,7 +162,7 @@
                         <button id="edit" name="b_editar" type="submit" class="btn btn-success">Editar</button>
                         <a href="/usuario/"><button id="cancel" name="b_cancelar" type="button" class="btn btn-default">Regresar</button></a>                   
                    {% endif %}
-                    <button id="b_eliminar" name="b_eliminar" type="submit" class="btn btn-danger" style="float:right">Eliminar</button>
+                    <button id="b_eliminar" name="b_eliminar"  type="button" class="btn btn-danger" style="float:right">Eliminar</button>
                    
 				  </center>
                  </div>
@@ -174,7 +181,19 @@
   <script src="/static/vendors/jquery.inputmask/dist/min/jquery.inputmask.bundle.min.js"></script>
   <script src="/static/vendors/pnotify/dist/pnotify.js"></script>
   <script src="/static/vendors/pnotify/dist/pnotify.buttons.js"></script>
-  <script src="/static/vendors/pnotify/dist/pnotify.nonblock.js"></script>
+  <script src="/static/vendors/pnotify/dist/pnotify.nonblock.js"></script>  
+  <script>
+  function activate_modal() {
+     $("#modalxd").modal()
+  }
+  document.getElementById("b_eliminar").addEventListener("click", activate_modal);
+  </script>
+  <script>
+  function deletO(){
+     document.getElementById("b_aceptar_modal").click();
+  }
+  document.getElementById("b_aceptar_modal").addEventListener("click", deletO);
+  </script>
   <script>
   function validarContrasenasYRol() {
     if (document.getElementById("nuevoUsuario").checkValidity()){
@@ -223,8 +242,12 @@
   </script>
   <script>
   function mostrarModal(cadena) {
-    $('#modalxd').find('.modal-body p').text(cadena);
-    $("#modalxd").modal()
+    new PNotify({
+        title: 'Error',
+        text: cadena,
+        type: 'error',
+        styling: 'bootstrap3'
+    });
   }
   </script>
   <script>

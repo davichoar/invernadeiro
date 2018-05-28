@@ -41,11 +41,12 @@ def crear(request, template='app/usuario/crearUsuario.html', extra_context=None)
 def listar(request, template='app/usuario/listaUsuarios.html', extra_context=None):
     if request.method == 'GET':
         mostrarModalCrear = request.session.pop('mensajeUsuarioCrear', False)
+        mostrarModalEliminar = request.session.pop('mensajeUsuarioEliminar', False)
         listaUsuarios = Usuario.objects.filter(habilitado = True)
         listaRoles = Rol.objects.filter(habilitado=True)
         context = { 'listaUsuarios': list(i for i in zip(range(1,len(listaUsuarios)+1), listaUsuarios)), 'listaRoles': listaRoles,
-                    'nombreUsuario': request.session.get('nomreUsuario'),
-                    'nombreInvernadero': request.session.get('nombreInvernadero'), 'mostrarModalCrear': mostrarModalCrear }
+                    'nombreUsuario': request.session.get('nomreUsuario'), 'nombreInvernadero': request.session.get('nombreInvernadero'), 
+                    'mostrarModalCrear': mostrarModalCrear, 'mostrarModalEliminar': mostrarModalEliminar }
         return render(request, template, context)
         
 def detalle(request,idUsuario):
@@ -69,6 +70,13 @@ def detalle(request,idUsuario):
             context = {'listaInvernaderos': listaInvernaderos, 'nombreUsuario': request.session.get('nomreUsuario'), 'fechaFormateada': fechaFormateada, 'nombreInvernadero': request.session.get('nombreInvernadero'), 
             'listaRoles': listaRoles, 'listaInvernaderos': listaInvernaderos, 'listaInvernaderosUsuario': listaInvernaderosUsuario, 'usuario': usuario, 'editable': True}
             return render(request, template, context)
+        if 'b_aceptar_modal' in request.POST:
+            try:
+                Usuario.objects.filter(idusuario = idUsuario).update(habilitado=False, idusuarioauditado=request.session['idUsuarioActual'])
+                request.session['mensajeUsuarioEliminar'] = True
+            except Exception as e:
+                print(e)
+            return redirect('usuariosLista')
         cadfecha = str(request.POST.get('fechanac'))
         dia, mes, anno = cadfecha.split('/')
         fechanacimientoshida = dt.date(int(anno),int(mes),int(dia))
@@ -83,7 +91,6 @@ def detalle(request,idUsuario):
                 nombreusuario = str(request.POST.get('nombreUsuario')),
                 contrasena = str(request.POST.get('contrasena')),
                 correo = str(request.POST.get('correo')),
-                fechacreacion = datetime.now(),
                 idusuarioauditado = request.session['idUsuarioActual']
             )
         request.session['mensajeUsuarioEditar'] = True
