@@ -1,10 +1,13 @@
 {% extends "app/base_site.html" %}
 
 
-{% block title %} Crear Usuario {% endblock title %}
+{% block title %} {% if editable %} Editar {% else %} Ver {% endif %} Usuario{% endblock title %}
 
 {% block stylesheets %}
  {{ block.super }}
+  <link href="/static/vendors/pnotify/dist/pnotify.css" rel="stylesheet">
+  <link href="/static/vendors/pnotify/dist/pnotify.buttons.css" rel="stylesheet">
+  <link href="/static/vendors/pnotify/dist/pnotify.nonblock.css" rel="stylesheet">
 {% endblock stylesheets %}
 
 {% block content %}
@@ -44,7 +47,7 @@
          <div class="x_panel">
 
            <div class="x_title">
-             <h2>Crear Usuario<small></small></h2>
+             <h2>{% if editable %} Editar {% else %} Ver {% endif %} Usuario<small></small></h2>
                   <div class="clearfix"></div>
            </div>
 
@@ -58,75 +61,75 @@
                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="nombre">Nombres <span class="required">*</span>
                  </label>
                  <div class="col-md-6 col-sm-6 col-xs-12">
-                   <input id="nombre" class="form-control col-md-7 col-xs-12" name="nombre" type="text">
+                   <input id="nombre" class="form-control col-md-7 col-xs-12" name="nombre" type="text" value="{{ usuario.nombres }}" {% if not editable %} disabled {% endif %}>
                  </div>
                </div>
 			   <div class="item form-group">
                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="apepato">Apellido Paterno <span class="required">*</span>
                  </label>
                  <div class="col-md-6 col-sm-6 col-xs-12">
-                   <input id="apepato" class="form-control col-md-7 col-xs-12" name="apepato" type="text">
+                   <input id="apepato" class="form-control col-md-7 col-xs-12" name="apepato" type="text" value="{{ usuario.apellidopaterno }}" {% if not editable %} disabled {% endif %}>
                  </div>
                </div>
 			   <div class="item form-group">
                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="apemato">Apellido Materno <span class="required">*</span>
                  </label>
                  <div class="col-md-6 col-sm-6 col-xs-12">
-                   <input id="apemato" class="form-control col-md-7 col-xs-12" name="apemato" type="text" oninvalid="mostrarModal('Debe ingresar el nombre completo del usuario.');" required="required">
+                   <input id="apemato" class="form-control col-md-7 col-xs-12" name="apemato" type="text" value="{{ usuario.apellidomaterno }}" {% if not editable %} disabled {% endif %}>
                  </div>
                </div>
 			   <div class="form-group">
                   <label class="control-label col-md-3 col-sm-3 col-xs-12">Sexo <span class="required">*</span></label>
                   <div class="col-md-6 col-sm-6 col-xs-12">
                     <label class="radio-inline">
-					<input type="radio" name="sexo" id="sexom" value="M" checked> Masculino</label>
+					<input type="radio" name="sexo" id="sexom" value="M" {% if usuario.sexo == 'M' %} checked {% endif %} {% if not editable %} disabled {% endif %}> Masculino</label>
 					<div class="visible-lg-inline visible-md-inline visible-sm-inline">&emsp;</div>&emsp;
 					<label class="radio-inline">
-					<input type="radio" name="sexo" id="sexof" value="F"> Femenino </label>
+					<input type="radio" name="sexo" id="sexof" value="F" {% if usuario.sexo == 'F' %} checked {% endif %} {% if not editable %} disabled {% endif %}> Femenino </label>
                   </div>
                 </div>
                <div class="item form-group">
                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="fechanac">Fecha de Nacimiento <span class="required">*</span>
                  </label>
                  <div class="col-md-6 col-sm-6 col-xs-12">
-                    <input id="fechanac" name="fechanac" type="text" class="form-control" data-inputmask="'mask': '99/99/9999'">
+                    <input id="fechanac" name="fechanac" type="text" class="form-control" data-inputmask="'mask': '99/99/9999'" value="{{ fechaFormateada }}" {% if not editable %} disabled {% endif %}>
                  </div>
                </div>
 			   <div class="item form-group">
                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="nombreUsuario">Nombre de Usuario <span class="required">*</span>
                  </label>
                  <div class="col-md-6 col-sm-6 col-xs-12">
-                   <input id="nombreUsuario" class="form-control col-md-7 col-xs-12" name="nombreUsuario" type="text">
+                   <input id="nombreUsuario" class="form-control col-md-7 col-xs-12" name="nombreUsuario" type="text" value="{{ usuario.nombreusuario }}" {% if not editable %} disabled {% endif %}>
                  </div>
                </div>
 			   <div class="item form-group">
                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="contrasena">Contraseña <span class="required">*</span>
                  </label>
                  <div class="col-md-6 col-sm-6 col-xs-12">
-                   <input id="contrasena" type="password" name="contrasena" data-validate-length="6,8" class="form-control col-md-7 col-xs-12">
+                   <input id="contrasena" type="password" name="contrasena" data-validate-length="6,8" class="form-control col-md-7 col-xs-12" value="{{ usuario.contrasena }}" {% if not editable %} disabled {% endif %}>
                  </div>
                </div>
 			   <div class="item form-group">
                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="contrasena2">Confirmar Contraseña <span class="required">*</span>
                  </label>
                  <div class="col-md-6 col-sm-6 col-xs-12">
-                   <input id="contrasena2" type="password" name="contrasena2"  data-validate-linked="password" class="form-control col-md-7 col-xs-12">
+                   <input id="contrasena2" type="password" name="contrasena2" value="{{ usuario.contrasena }}" data-validate-linked="password" class="form-control col-md-7 col-xs-12"  {% if not editable %} disabled {% endif %}>
                  </div>
                </div>
 			   <div class="item form-group">
                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="correo">Correo <span class="required">*</span>
                  </label>
                  <div class="col-md-6 col-sm-6 col-xs-12">
-                   <input id="correo" type="email" class="form-control col-md-7 col-xs-12" name="correo" type="text">
+                   <input id="correo" type="email" class="form-control col-md-7 col-xs-12" name="correo" type="text" value="{{ usuario.correo }}" {% if not editable %} disabled {% endif %}>
                  </div>
                </div>
                <div class="form-group">
                   <label class="control-label col-md-3 col-sm-3 col-xs-12">Rol *</label>
                   <div class="col-md-6 col-sm-6 col-xs-12">
-                    <select id = "rol" class="form-control" name="rol">
+                    <select id = "rol" class="form-control" name="rol"  {% if not editable %} disabled {% endif %}>
                       <option value="-1" selected disabled>- Seleccione -</option>
                       {% for rol in listaRoles %}
-                      <option value="{{rol.idrol}}">{{rol.nombrerol}}</option>
+                      <option value="{{rol.idrol}}" {% if usuario.idrol == rol.idrol %} selected {% endif %}>{{rol.nombrerol}}</option>
                       {% endfor %}
                     </select>
                   </div>
@@ -134,9 +137,9 @@
                 <div class="form-group">
                   <label class="control-label col-md-3 col-sm-3 col-xs-12">Invernaderos</label>
                   <div class="col-md-6 col-sm-6 col-xs-12">
-                    <select class="select2_multiple form-control" multiple="multiple">
+                    <select class="select2_multiple form-control" multiple="multiple"  {% if not editable %} disabled {% endif %}>
                     {% for invernadero in listaInvernaderos %}
-                      <option value = "{{invernadero.idinvernadero}}">{{invernadero.nombre}}</option>
+                      <option value = "{{invernadero.idinvernadero}}" {% if invernadero.idinvernadero in listaInvernaderosUsuario %} selected {% endif %}>{{invernadero.nombre}}</option>
                     {% endfor %}
                     </select>
                   </div>
@@ -145,8 +148,15 @@
                <div class="form-group">
                  <div class="col-xs-12">
 				 <center>
-                   <button id="send" name="b_aceptar" type="button" class="btn btn-success" onclick="validarContrasenasYRol()">Aceptar</button>
-                   <a href="/usuario/"><button id="cancel" name="b_cancelar" type="button" class="btn btn-danger">Cancelar</button></a>
+                   {% if editable %}
+                        <button id="send" name="b_aceptar" type="button" class="btn btn-success" onclick="validarContrasenasYRol()">Aceptar</button>
+                        <a href="/usuario/{{ usuario.idusuario }}"><button id="cancel" name="b_cancelar" type="button" class="btn btn-default">Cancelar</button></a>   
+                   {% else %}
+                        <button id="edit" name="b_editar" type="submit" class="btn btn-success">Editar</button>
+                        <a href="/usuario/"><button id="cancel" name="b_cancelar" type="button" class="btn btn-default">Regresar</button></a>                   
+                   {% endif %}
+                    <button id="b_eliminar" name="b_eliminar" type="submit" class="btn btn-danger" style="float:right">Eliminar</button>
+                   
 				  </center>
                  </div>
                </div>
@@ -162,6 +172,9 @@
 {% block javascripts %}
  {{ block.super }}
   <script src="/static/vendors/jquery.inputmask/dist/min/jquery.inputmask.bundle.min.js"></script>
+  <script src="/static/vendors/pnotify/dist/pnotify.js"></script>
+  <script src="/static/vendors/pnotify/dist/pnotify.buttons.js"></script>
+  <script src="/static/vendors/pnotify/dist/pnotify.nonblock.js"></script>
   <script>
   function validarContrasenasYRol() {
     if (document.getElementById("nuevoUsuario").checkValidity()){
@@ -236,5 +249,15 @@
     return day > 0 && day <= monthLength[month - 1];
   }
   </script>
+  {% if mostrarModalEditar %}
+  <script>
+    new PNotify({
+        title: 'Edición Exitosa',
+        text: 'Se editó el usuario satisfactoriamente.',
+        type: 'success',
+        styling: 'bootstrap3'
+    });
+  </script>
+  {% endif %}
 {% endblock javascripts %}
 
