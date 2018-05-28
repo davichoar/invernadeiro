@@ -1,26 +1,31 @@
+from django.shortcuts import redirect
 from django.template import loader
 from django.http import HttpResponse
 
-from app.models import Usuario
+from app.models import Usuario, Invernadero
 
 
 def cerrarSesion(request):
     request.session.pop('idUsuarioActual', None)
     request.session.pop('nombreInvernadero', None)
+    request.session.pop('idInvernadero', None)
+    request.session.pop('nomreUsuario', None)
     template = loader.get_template('app/loginShido.html')
     context = {}
     return HttpResponse(template.render(context, request))
 
 
-def index(request,nombreInvernadero):
+def index(request,idInvernadero):
 
     print('INDEX')
-    print(nombreInvernadero)
+    print('IdInvernadero: '+idInvernadero)
     print('--------')
-    print(request.session.get('idUsuarioActual'))
-    request.session['nombreInvernadero'] = nombreInvernadero
+    idUsuario = int (request.session.get('idUsuarioActual'))
+    print('IdUsuario Logueado:'+ (str (idUsuario)))
+    request.session['idInvernadero'] = idInvernadero
+    invernadero = Invernadero.objects.get(idinvernadero=idInvernadero)
+    request.session['nombreInvernadero'] = invernadero.nombre
     template = loader.get_template('app/index.html')
-    idUsuario = request.session.get('idUsuarioActual')
     usuario = None
     try:
         usuario = Usuario.objects.get(idusuario=idUsuario)
@@ -28,12 +33,15 @@ def index(request,nombreInvernadero):
         print('Error al consultar base de datos')
         return
 
+    nombreUsuarioCompleto = usuario.getnombrecompleto()
+    request.session['nomreUsuario'] = nombreUsuarioCompleto
     #nombreInvernadero = nombreInvernadero.replace(" ","")
     context = {
-        'nombreUsuario': usuario.getnombrecompleto(),
-        'nombreInvernadero': nombreInvernadero,
+        'nombreUsuario': nombreUsuarioCompleto,
+        'nombreInvernadero':  invernadero.nombre,
     }
     return HttpResponse(template.render(context, request))
+    #return redirect('zonaInvernaderoListar')
 
 
 def gentella_html(request):

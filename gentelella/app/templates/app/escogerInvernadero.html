@@ -1,7 +1,7 @@
 {% extends "app/base_siteSinSidebar.html" %}
 
 
-{% block title %} Media Gallery {% endblock title %}
+{% block title %}  {% endblock title %}
 
 {% block stylesheets %}
   {{ block.super }}
@@ -34,7 +34,7 @@
                 {% for invernadero in listaInvernaderos%}
                 <div class="col-md-6">
                   <div class="thumbnail">
-                    <a href="{% url 'index' nombreInvernadero=invernadero.nombre %}">
+                    <a href="{% url 'index' idInvernadero=invernadero.idinvernadero %}">
 					<div class="image view view-first">
                       <img style="height: 100%; width: 100%; display: block;" src="/static/images/invernadero.jpg" alt="image" />
                       <div class="mask">
@@ -45,7 +45,7 @@
 					</a>
                     <div class="caption">
                         <p></p><p></p><p></p><p></p>
-                      <a href="{% url 'index' nombreInvernadero=invernadero.nombre %}">{{invernadero.nombre}}</a>
+                      <a href="{% url 'index' idInvernadero=invernadero.idinvernadero %}">{{invernadero.nombre}}</a>
                     </div>
                   </div>
                 </div>

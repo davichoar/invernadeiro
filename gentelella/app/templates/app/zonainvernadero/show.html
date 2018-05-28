@@ -1,0 +1,138 @@
+{% extends "app/base_site.html" %}
+
+
+{% block title %} Crear Zona de Invernadero {% endblock title %}
+
+{% block stylesheets %}
+  {{ block.super }}
+{% endblock stylesheets %}
+
+{% block content %}
+ <div class="right_col" role="main">
+    <div class="">
+      <div class="page-title">
+        <div class="title_left">
+          <h3>Zona Invernadero</h3>
+        </div>
+
+      </div>
+      <div class="clearfix"></div>
+
+      <div class="row">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+          <div class="x_panel">
+
+            <div class="x_title">
+              <h2>Crear Zona Invernadero<small></small></h2>
+                   <div class="clearfix"></div>
+            </div>
+
+
+            <div class="x_content">
+
+              <form class="form-horizontal form-label-left"  method="POST" novalidate>
+                {% csrf_token %}
+
+                <div class="item form-group">
+                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="nombre">Nombre<span class="required">*</span>
+                  </label>
+                  <div class="col-md-6 col-sm-6 col-xs-12">
+                    <input id="nombre" name="nombre" value = "{{zona.nombre}}" class="form-control col-md-7 col-xs-12" data-validate-length-range="6" data-validate-words="2" name="name" placeholder="" required="required" type="text"  {% if not editable %} disabled {% endif %} >
+                  </div>
+                </div>
+                <div class="item form-group">
+                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="codigoZona">Código de Zona <span class="required">*</span>
+                  </label>
+                  <div class="col-md-6 col-sm-6 col-xs-12">
+                    <input  type="number" id="codigoZona" name="codigoZona"  value ="{{zona.codigozonajson}}" required="required" class="form-control col-md-7 col-xs-12" {% if not editable %} disabled {% endif %}>
+                  </div>
+                </div>
+                <div class="item form-group">
+                  <label
+                    class="control-label col-md-3 col-sm-3 col-xs-12" for="tipoZona">Tipo de zona <span class="required">*</span>
+                  </label>
+                  <div class="col-md-6 col-sm-6 col-xs-12">
+                    <select id="tipoZona" name="tipoZona"  class="form-control" required {% if not editable %} disabled {% endif %}>
+                      {% for tipoZona in listaTipoZonas %}
+                        <option value="{{tipoZona.idtipozona}}" {% if tipoZona.idtipozona == zona.idtipozona %}selected{% endif %}>{{tipoZona.nombre}}</option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                </div>
+                <div class="item form-group">
+                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="area">Área (m<sup>2</sup>)<span class="required">*</span>
+                  </label>
+                  <div class="col-md-6 col-sm-6 col-xs-12">
+                    <input type="number" id="area" name="area" value="{{zona.area}}" required="required" data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12" {% if not editable %} disabled {% endif %}>
+                  </div>
+                </div>
+                <div class="item form-group">
+                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="tempIdeal">Temperatura Ideal (°C)<span class="required">*</span>
+                  </label>
+                  <div class="col-md-6 col-sm-6 col-xs-12">
+                    <input type="number" id="tempIdeal" name="tempIdeal" value="{{zona.temperaturaideal}}" required="required" data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12" {% if not editable %} disabled {% endif %}>
+                  </div>
+                </div>
+                <div class="item form-group">
+                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="tempIdeal">Temperatura Mínima (°C)<span class="required">*</span>
+                  </label>
+                  <div class="col-md-6 col-sm-6 col-xs-12">
+                    <input type="number" id="tempMin" name="tempMin" value="{{zona.temperaturamin}}" required="required" data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12" {% if not editable %} disabled {% endif %}>
+                  </div>
+                </div>
+                <div class="item form-group">
+                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="tempIdeal">Temperatura Máxima (°C)<span class="required">*</span>
+                  </label>
+                  <div class="col-md-6 col-sm-6 col-xs-12">
+                    <input type="number" id="tempMax" name="tempMax" value="{{zona.temperaturamax}}" required="required" data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12" {% if not editable %} disabled {% endif %}>
+                  </div>
+                </div>
+
+                <div class="item form-group">
+                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="tempIdeal">Concentración de CO2 Ideal (%)<span class="required">*</span>
+                  </label>
+                  <div class="col-md-6 col-sm-6 col-xs-12">
+                    <input type="number" id="co2Ideal" name="co2Ideal" value="{{zona.concentracionco2ideal}}" required="required" data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12" {% if not editable %} disabled {% endif %}>
+                  </div>
+                </div>
+                <div class="item form-group">
+                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="tempIdeal">Concentración de CO2 Mínima (%)<span class="required">*</span>
+                  </label>
+                  <div class="col-md-6 col-sm-6 col-xs-12">
+                    <input type="number" id="co2Min" name="co2Min" required="required" value="{{zona.concentracionco2min}}" data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12" {% if not editable %} disabled {% endif %}>
+                  </div>
+                </div>
+                <div class="item form-group">
+                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="tempIdeal">Concentración de CO2 Máxima (%)<span class="required">*</span>
+                  </label>
+                  <div class="col-md-6 col-sm-6 col-xs-12">
+                    <input type="number" id="co2Max" name="co2Max" required="required" value="{{zona.concentracionco2max}}" data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12" {% if not editable %} disabled {% endif %}>
+                  </div>
+                </div>
+
+
+                <div class="ln_solid"></div>
+                <div class="form-group">
+                  <div class="col-xs-12">
+                    <center>
+                    {% if editable %}
+                       <button id="b_aceptar" name="b_aceptar" type="submit" class="btn btn-success">Aceptar</button>
+                    {% endif %}
+                    <button id="b_editar" name="b_editar" type="submit" class="btn btn-success">Editar</button>
+                    <button id="b_regresar" name="b_regresar" type="submit" class="btn btn-default">Regresar</button>
+                    <button id="b_eliminar" name="b_eliminar" type="submit" class="btn btn-danger" style="float:right">Eliminar</button>
+                    </center>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock content %}
+
+{% block javascripts %}
+  {{ block.super }}
+{% endblock javascripts %}
