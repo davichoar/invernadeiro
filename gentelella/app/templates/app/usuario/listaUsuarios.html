@@ -5,6 +5,9 @@
 
 {% block stylesheets %}
  {{ block.super }}
+  <link href="/static/vendors/pnotify/dist/pnotify.css" rel="stylesheet">
+  <link href="/static/vendors/pnotify/dist/pnotify.buttons.css" rel="stylesheet">
+  <link href="/static/vendors/pnotify/dist/pnotify.nonblock.css" rel="stylesheet">
 {% endblock stylesheets %}
 
 {% block content %}
@@ -32,10 +35,10 @@
            <div class="x_content">
               
               <div class="col-xs-12" align="right">
-                   <a href="/usuario/crear/"><button id="cancel" name="b_cancelar" type="button" class="btn btn-primary">Nuevo</button></a>
+                   <a href="/usuario/crear/"><button id="cancel" name="b_cancelar" type="button" class="btn btn-success">Crear Usuario</button></a>
               </div>
             <div class="visible-lg-inline visible-md-inline visible-sm-inline">
-              <table class="table table-bordered table-hover">
+              <table id="datatable" class="table table-bordered table-hover">
                 <thead>
                   <tr>
                     <th>#</th>
@@ -46,7 +49,7 @@
                 </thead>
                 <tbody>
                   {% for item, usuario in listaUsuarios %}
-                  <tr onclick="location.href='http://www.google.com';">
+                  <tr onclick="location.href='/usuario/{{ usuario.idusuario }}';">
                     <th scope="row">{{item}}</th>
                     <td>{{ usuario.nombres }} {{ usuario.apellidopaterno }}</td>
                     <td>{% for rol in listaRoles %} {% if rol.idrol == usuario.idrol %} {{ rol.nombrerol }} {% endif %} {% endfor %}</td>
@@ -93,5 +96,33 @@
 {% block javascripts %}
  {{ block.super }}
   <script src="/static/vendors/jquery.inputmask/dist/min/jquery.inputmask.bundle.min.js"></script>
+  <script src="/static/vendors/datatables.net/js/jquery.dataTables.min.js"></script>
+  <script src="/static/vendors/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
+  <script src="/static/vendors/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
+  <script src="/static/vendors/datatables.net-buttons-bs/js/buttons.bootstrap.min.js"></script>
+  <script src="/static/vendors/datatables.net-buttons/js/buttons.flash.min.js"></script>
+  <script src="/static/vendors/datatables.net-buttons/js/buttons.html5.min.js"></script>
+  <script src="/static/vendors/datatables.net-buttons/js/buttons.print.min.js"></script>
+  <script src="/static/vendors/datatables.net-fixedheader/js/dataTables.fixedHeader.min.js"></script>
+  <script src="/static/vendors/datatables.net-keytable/js/dataTables.keyTable.min.js"></script>
+  <script src="/static/vendors/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
+  <script src="/static/vendors/datatables.net-responsive-bs/js/responsive.bootstrap.js"></script>
+  <script src="/static/vendors/datatables.net-scroller/js/dataTables.scroller.min.js"></script>
+  <script src="/static/vendors/jszip/dist/jszip.min.js"></script>
+  <script src="/static/vendors/pdfmake/build/pdfmake.min.js"></script>
+  <script src="/static/vendors/pdfmake/build/vfs_fonts.js"></script>
+  <script src="/static/vendors/pnotify/dist/pnotify.js"></script>
+  <script src="/static/vendors/pnotify/dist/pnotify.buttons.js"></script>
+  <script src="/static/vendors/pnotify/dist/pnotify.nonblock.js"></script>
+  {% if mostrarModalCrear %}
+  <script>
+    new PNotify({
+        title: 'Creación Exitosa',
+        text: 'Se creó el usuario satisfactoriamente.',
+        type: 'success',
+        styling: 'bootstrap3'
+    });
+  </script>
+  {% endif %}
 {% endblock javascripts %}
 
