@@ -124,5 +124,15 @@
     });
   </script>
   {% endif %}
+  {% if mostrarModalEliminar %}
+  <script>
+    new PNotify({
+        title: 'Eliminación Exitosa',
+        text: 'Se eliminó el usuario satisfactoriamente.',
+        type: 'success',
+        styling: 'bootstrap3'
+    });
+  </script>
+  {% endif %}
 {% endblock javascripts %}
 
