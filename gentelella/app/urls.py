@@ -27,6 +27,10 @@ urlpatterns = [
         views.usuario.listar,
         name='usuariosLista'),
         
+    url('^usuario/(?P<idUsuario>.*)$',
+        views.usuario.detalle,
+        name='usuarioDetalle'),
+        
     url('^pruebajson/$',
         views.pruebajson.prueba,
         name='pruebajson'),
