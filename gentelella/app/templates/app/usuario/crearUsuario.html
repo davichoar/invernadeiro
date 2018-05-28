@@ -5,6 +5,9 @@
 
 {% block stylesheets %}
  {{ block.super }}
+  <link href="/static/vendors/pnotify/dist/pnotify.css" rel="stylesheet">
+  <link href="/static/vendors/pnotify/dist/pnotify.buttons.css" rel="stylesheet">
+  <link href="/static/vendors/pnotify/dist/pnotify.nonblock.css" rel="stylesheet">
 {% endblock stylesheets %}
 
 {% block content %}
@@ -162,6 +165,9 @@
 {% block javascripts %}
  {{ block.super }}
   <script src="/static/vendors/jquery.inputmask/dist/min/jquery.inputmask.bundle.min.js"></script>
+  <script src="/static/vendors/pnotify/dist/pnotify.js"></script>
+  <script src="/static/vendors/pnotify/dist/pnotify.buttons.js"></script>
+  <script src="/static/vendors/pnotify/dist/pnotify.nonblock.js"></script>
   <script>
   function validarContrasenasYRol() {
     if (document.getElementById("nuevoUsuario").checkValidity()){
@@ -210,8 +216,12 @@
   </script>
   <script>
   function mostrarModal(cadena) {
-    $('#modalxd').find('.modal-body p').text(cadena);
-    $("#modalxd").modal()
+    new PNotify({
+        title: 'Error',
+        text: cadena,
+        type: 'error',
+        styling: 'bootstrap3'
+    });
   }
   </script>
   <script>
