@@ -19,9 +19,13 @@ urlpatterns = [
         views.invernadero.escoger,
         name='escogerInvernadero'),
         
-    url('^usuario/$',
+    url('^usuario/crear/$',
         views.usuario.crear,
         name='usuarioCrear'),
+        
+    url('^usuario/$',
+        views.usuario.listar,
+        name='usuariosLista'),
         
     url('^pruebajson/$',
         views.pruebajson.prueba,
