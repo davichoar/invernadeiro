@@ -48,6 +48,10 @@ urlpatterns = [
 
     ###
 
+## HISTORIAS (RECIBIR JSONS)
+    url('^historia/$',
+            views.historia.prueba,
+            name='historia'),
 
 ###
     url(r'^.*\.html', views.views.gentella_html, name='gentella'),
