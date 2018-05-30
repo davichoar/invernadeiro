@@ -38,15 +38,15 @@ def prueba(request, template=None, extra_context=None):
 
                 #Guardando en la base de datos.
                 nuevoid = Foto.objects.all().aggregate(Max('idfoto'))['idfoto__max'] + 1
-        		nuevaFoto = Foto.objects.create(
-	                idfoto = nuevoid,
-	                idmodulo = int(jsonFoto['codigoModulo']),
-	                ruta = rutaArchivo,
-	                nombresinextension = nombreArchivo,
-	                extension = formatoDefault,
-	                nombreFoto = 'semilla_' + str(nuevoid), #nombre inicial
+                nuevaFoto = Foto.objects.create(
+                    idfoto = nuevoid,
+                    idmodulo = int(jsonFoto['codigoModulo']),
+                    ruta = rutaArchivo,
+                    nombresinextension = nombreArchivo,
+                    extension = formatoDefault,
+                    nombreFoto = 'semilla_' + str(nuevoid), #nombre inicial
 	                fechaderegistro = datetime.now() #maybe a corregir.
-	            )
+                )
 
                 
 
@@ -69,7 +69,7 @@ def prueba(request, template=None, extra_context=None):
                 )
 
         elif jsonATomar['tipoJson'] == 2:
-        	nuevoid = Historiazona.objects.all().aggregate(Max('idhistoriazona'))['idhistoriazona__max'] + 1
+            nuevoid = Historiazona.objects.all().aggregate(Max('idhistoriazona'))['idhistoriazona__max'] + 1
             nuevaHZona = Historiazona.objects.create(
                 idhistoriazona = nuevoid,
                 idzona = int(jsonATomar['codigoZona']),
@@ -101,7 +101,7 @@ def prueba(request, template=None, extra_context=None):
 
 
         elif jsonATomar['tipoJson'] == 3: #invernadero general
-        	nuevoid = Historiainvernadero.objects.all().aggregate(Max('idhistoriainvernadero'))['idhistoriainvernadero__max'] + 1
+            nuevoid = Historiainvernadero.objects.all().aggregate(Max('idhistoriainvernadero'))['idhistoriainvernadero__max'] + 1
             nuevaHInvernadero = Historiainvernadero.objects.create(
                 idhistoriainvernadero = nuevoid,
                 idinvernadero = int(jsonATomar['codigoInvernadero']),
