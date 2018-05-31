@@ -15,7 +15,7 @@ rutaFinal=rutaProyecto+rutaDefault
 
 
 def selectID(actual_id):
-    if actual_id:
+    if actual_id is None:
         return 0
     else:
         return actual_id
