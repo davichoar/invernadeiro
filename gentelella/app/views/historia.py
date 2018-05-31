@@ -39,12 +39,12 @@ def prueba(request, template=None, extra_context=None):
                 nuevoid = selectID(Foto.objects.all().aggregate(Max('idfoto'))['idfoto__max']) + 1
 
                 nombreArch = str(jsonFoto['codigoModulo']) + '_' + str(nuevoid)
-                rutaArchivo = os.path.join(rutaFinal,nombreArch,formatoDefault)
+                #rutaArchivo = os.path.join(rutaFinal,nombreArch,formatoDefault)
                 #Guardando en la carpeta
 
-                imagenCont = base64.b64decode(jsonFoto['foto'])
-                with open(rutaArchivo, 'wb') as f:
-                    f.write(imagenCont)
+                #imagenCont = base64.b64decode(jsonFoto['foto'])
+                #with open(rutaArchivo, 'wb') as f:
+                #    f.write(imagenCont)
                 
 
                 #Guardando en la base de datos.
