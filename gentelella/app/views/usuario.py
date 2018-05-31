@@ -36,6 +36,8 @@ def crear(request, template='app/usuario/crearUsuario.html', extra_context=None)
         return render(request, template, context)
     elif request.method == 'POST':
         nuevoid = Usuario.objects.all().aggregate(Max('idusuario'))['idusuario__max'] + 1
+        if nuevoid is None:
+            nuevoid = 1
         cadfecha = str(request.POST.get('fechanac'))
         dia, mes, anno = cadfecha.split('/')
         fechanacimientoshida = dt.date(int(anno),int(mes),int(dia))
