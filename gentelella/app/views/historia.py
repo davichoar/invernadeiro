@@ -45,7 +45,7 @@ def prueba(request, template=None, extra_context=None):
                     nombresinextension = nombreArchivo,
                     extension = formatoDefault,
                     nombreFoto = 'semilla_' + str(nuevoid), #nombre inicial
-	                fechaderegistro = datetime.now() #maybe a corregir.
+	                fecharegistro = datetime.now() #maybe a corregir.
                 )
 
                 
@@ -64,7 +64,7 @@ def prueba(request, template=None, extra_context=None):
                     nivelagua= float(jsonModulo['nivelAgua']),
                     concentracionco2= float(jsonModulo['concentracionCO2']),
                     luz= jsonModulo['luz'], ##no me convence lol
-                    fechaderegistro = datetime.now(), #maybe a corregir.
+                    fecharegistro = datetime.now(), #maybe a corregir.
                     comentario = 'meme'
                 )
 
@@ -76,7 +76,7 @@ def prueba(request, template=None, extra_context=None):
                 temperatura = float(jsonATomar['temperaturaZona']),
                 ph = float(jsonATomar['phZona']),
                 concentracionco2 = float(jsonATomar['concentracionCO2']),
-                fechaderegistro= datetime.now()
+                fecharegistro= datetime.now()
             )
             for jsonPlanta in jsonATomar['listaPlantas']:
                 nuevoplantaid = Historiaplanta.objects.all().aggregate(Max('idhistoriaplanta'))['idhistoriaplanta__max'] + 1
@@ -85,7 +85,7 @@ def prueba(request, template=None, extra_context=None):
                     idplanta = int(jsonPlanta['codigoPlanta']),
                     idzona = int(jsonATomar['codigoZona']),
                     humedad = float(jsonPlanta['humedadPlanta']),
-                    fechaderegistro= datetime.now(), #to change
+                    fecharegistro= datetime.now(), #to change
                     comentario='meme'
                 )
             for jsonPanel in jsonATomar['listaPanelesLuz']:
@@ -94,7 +94,7 @@ def prueba(request, template=None, extra_context=None):
                     idhistoriapanel = nuevopanelid,
                     idpanel = int(jsonPanel['codigoPanel']),
                     encendido = jsonPanel['encendido'],
-                    fechaderegistro= datetime.now(), #tochange
+                    fecharegistro= datetime.now(), #tochange
                     comentario='meme'
                 )
 
@@ -108,6 +108,6 @@ def prueba(request, template=None, extra_context=None):
                 energia = float(jsonATomar['energia']),
                 niveltanqueagua = float(jsonATomar['nivelTanque']),
                 comentario = 'meme',
-                fechaderegistro= datetime.now()
+                fecharegistro= datetime.now()
             )
         return HttpResponse('nice', content_type='text/plain')
