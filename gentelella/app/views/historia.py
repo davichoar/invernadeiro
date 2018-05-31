@@ -4,14 +4,16 @@ from datetime import datetime
 from django.db.models import Max
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.conf import settings
 import json
 import base64
 import os
 
 rutaDefault='/app/static/received_images/'
 formatoDefault='.jpg'
-rutaProyecto='/'.join(os.path.dirname(os.path.abspath(__file__)).split('/')[:-2])
-rutaFinal=rutaProyecto+rutaDefault
+#rutaProyecto='/'.join(os.path.dirname(os.path.abspath(__file__)).split('/')[:-2])
+rutaProyecto=settings.BASE_DIR
+rutaFinal=os.path.join(rutaProyecto,rutaDefault)
 
 
 def selectID(actual_id):
@@ -37,7 +39,7 @@ def prueba(request, template=None, extra_context=None):
                 nuevoid = selectID(Foto.objects.all().aggregate(Max('idfoto'))['idfoto__max']) + 1
 
                 nombreArch = str(jsonFoto['codigoModulo']) + '_' + str(nuevoid)
-                rutaArchivo = rutaFinal+nombreArch+formatoDefault
+                rutaArchivo = os.path.join(rutaFinal,nombreArch,formatoDefault)
                 #Guardando en la carpeta
 
                 imagenCont = base64.b64decode(jsonFoto['foto'])
