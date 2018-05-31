@@ -27,6 +27,8 @@ def prueba(request, template=None, extra_context=None):
         if jsonATomar['tipoJson'] == 0: #Foto
         	
             for jsonFoto in jsonATomar['listaFotos']:
+                nuevoid = Foto.objects.all().aggregate(Max('idfoto'))['idfoto__max'] + 1
+
                 nombreArch = str(jsonFoto['codigoModulo']) + '_' + str(nuevoid)
                 rutaArchivo = rutaFinal+nombreArch+formatoDefault
                 #Guardando en la carpeta
@@ -37,7 +39,7 @@ def prueba(request, template=None, extra_context=None):
                 
 
                 #Guardando en la base de datos.
-                nuevoid = Foto.objects.all().aggregate(Max('idfoto'))['idfoto__max'] + 1
+                
                 nuevaFoto = Foto.objects.create(
                     idfoto = nuevoid,
                     idmodulo = int(jsonFoto['codigoModulo']),
