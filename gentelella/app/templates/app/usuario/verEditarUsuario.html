@@ -287,5 +287,10 @@
   mostrarModal("{{mensajeError}}");
   </script>
   {% endif %}
+  {% if mostrarModalEliminarFallo %}
+  <script>
+  mostrarModal("No puede eliminar su propio usuario.");
+  </script>
+  {% endif %}
 {% endblock javascripts %}
 
