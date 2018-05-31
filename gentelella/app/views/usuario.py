@@ -39,7 +39,7 @@ def crear(request, template='app/usuario/crearUsuario.html', extra_context=None)
         cadfecha = str(request.POST.get('fechanac'))
         dia, mes, anno = cadfecha.split('/')
         fechanacimientoshida = dt.date(int(anno),int(mes),int(dia))
-        if (len(Usuario.objects.filter(nombreusuario = str(request.POST.get('nombreUsuario')))) > 0):
+        if (len(Usuario.objects.filter(habilitado=True, nombreusuario = str(request.POST.get('nombreUsuario')))) > 0):
             listaRoles = Rol.objects.filter(habilitado=True)
             listaInvernaderos = Invernadero.objects.filter(habilitado=True)
             usuarioFake = mandarWebada(request, cadfecha)
@@ -118,6 +118,7 @@ def detalle(request,idUsuario):
         listaInvernaderosUsuario.append(usuarioxinvernadero.idinvernadero)
     if request.method == 'GET':
         mostrarModalEditar = request.session.pop('mensajeUsuarioEditar', False)
+        mostrarModalEliminarFallo = request.session.pop('mensajeUsuarioEliminarFallo', False)
         context = {
             'listaInvernaderos': listaInvernaderos,
             'nombreUsuario': request.session.get('nomreUsuario'), 
@@ -128,7 +129,8 @@ def detalle(request,idUsuario):
             'listaInvernaderosUsuario': listaInvernaderosUsuario,
             'usuario': usuario,
             'editable': False, 
-            'mostrarModalEditar': mostrarModalEditar
+            'mostrarModalEditar': mostrarModalEditar,
+            'mostrarModalEliminarFallo': mostrarModalEliminarFallo
         }
         return render(request, template, context)
     if request.method == 'POST':
@@ -145,6 +147,12 @@ def detalle(request,idUsuario):
             }
             return render(request, template, context)
         if 'b_aceptar_modal' in request.POST:
+            print(request.session.get('idUsuarioActual'))
+            print(idUsuario)
+            print(request.session.get('idUsuarioActual') == idUsuario)
+            if (int(request.session.get('idUsuarioActual')) == int(idUsuario)):
+                request.session['mensajeUsuarioEliminarFallo'] = True
+                return redirect('usuarioDetalle', idUsuario)
             try:
                 Usuario.objects.filter(idusuario = idUsuario).update(habilitado=False, idusuarioauditado=request.session['idUsuarioActual'])
                 request.session['mensajeUsuarioEliminar'] = True
@@ -155,7 +163,7 @@ def detalle(request,idUsuario):
         dia, mes, anno = cadfecha.split('/')
         fechanacimientoshida = dt.date(int(anno),int(mes),int(dia))
         
-        if (len(Usuario.objects.filter(nombreusuario = str(request.POST.get('nombreUsuario'))).exclude(idusuario = idUsuario)) > 0):
+        if (len(Usuario.objects.filter(habilitado=True, nombreusuario = str(request.POST.get('nombreUsuario'))).exclude(idusuario = idUsuario)) > 0):
             listaRoles = Rol.objects.filter(habilitado=True)
             listaInvernaderos = Invernadero.objects.filter(habilitado=True)
             usuarioFake = mandarWebada(request, cadfecha, idUsuario)
