@@ -27,7 +27,7 @@ def prueba(request, template=None, extra_context=None):
         if jsonATomar['tipoJson'] == 0: #Foto
         	
             for jsonFoto in jsonATomar['listaFotos']:
-                nombreArch = jsonFoto['codigoModulo'] + '_' + str(nuevoid)
+                nombreArch = str(jsonFoto['codigoModulo']) + '_' + str(nuevoid)
                 rutaArchivo = rutaFinal+nombreArch+formatoDefault
                 #Guardando en la carpeta
 
