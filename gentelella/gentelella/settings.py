@@ -77,10 +77,10 @@ WSGI_APPLICATION = 'gentelella.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'postgres',
+        'NAME': 'dp2Local',
 		'USER': 'postgres',
-		'PASSWORD':'inv2018',
-		'HOST': '200.16.7.158',
+		'PASSWORD':'postgres',
+		'HOST': 'localhost',
 		'PORT':'5432',
     }
 }
