@@ -92,6 +92,12 @@ def listar(request,
     context = {}
     return render(request, template, context)
 
+def validarRangoCondiciones(actual,min,max):
+    if (actual > min) and (actual < max):
+        return True
+    else:
+        return False
+
 
 def detalle(request,idZona):
 
@@ -99,23 +105,28 @@ def detalle(request,idZona):
     zona = Zona.objects.get(idzona=idZona)
     listaTipoZonas = Tipozona.objects.filter(habilitado=True)
 
+
     try:
         historiaZona = Historiazona.objects.filter(idzona=idZona).order_by('-fecharegistro')[0]
     except Exception as e:
         historiaZona = None
         print(e)
 
+    temperaturaok = validarRangoCondiciones(historiaZona.temperatura,zona.temperaturamin,zona.temperaturamax)
+    phok = validarRangoCondiciones(historiaZona.ph,zona.phmin,zona.phmax)
+    co2ok = validarRangoCondiciones(historiaZona.concentracionco2, zona.concentracionco2min,zona.concentracionco2max)
+
     if request.method == 'GET':
         print('Mostrar Zona Invernadero')
         context = {"historiaZona":historiaZona,"listaTipoZonas":listaTipoZonas,"zona": zona, 'nombreUsuario': request.session.get('nomreUsuario'),
-                   'nombreInvernadero': request.session.get('nombreInvernadero'), "editable":False,}
+                   'nombreInvernadero': request.session.get('nombreInvernadero'), "editable":False, "temperaturaok" :temperaturaok,"phok":phok,"co2ok":co2ok}
         return render(request, template, context)
 
     elif request.method == 'POST':
         if "b_editar" in request.POST:
             print('Editar Zona Invernadero')
             context = {"historiaZona":historiaZona,"listaTipoZonas":listaTipoZonas,"zona": zona, 'nombreUsuario': request.session.get('nomreUsuario'),
-                       'nombreInvernadero': request.session.get('nombreInvernadero'), "editable": True, }
+                       'nombreInvernadero': request.session.get('nombreInvernadero'), "editable": True,  "temperaturaok" :temperaturaok,"phok":phok,"co2ok":co2ok }
             return render(request, template, context)
         if "b_aceptar" in request.POST:
             print('Aceptar Zona Invernadero')
@@ -129,15 +140,22 @@ def detalle(request,idZona):
             if mensajeError:
                 context = {"historiaZona": historiaZona, "listaTipoZonas": listaTipoZonas, "zona": zona,
                            'nombreUsuario': request.session.get('nomreUsuario'),
-                           'nombreInvernadero': request.session.get('nombreInvernadero'), "editable": True, "mensajeError":mensajeError}
+                           'nombreInvernadero': request.session.get('nombreInvernadero'), "editable": True, "mensajeError":mensajeError, "temperaturaok" :temperaturaok,"phok":phok,"co2ok":co2ok}
                 return render(request, template, context)
             else:
-                return redirect('zonaInvernaderoListar')
+                temperaturaok = validarRangoCondiciones(historiaZona.temperatura, float(zona.temperaturamin), float(zona.temperaturamax))
+                phok = validarRangoCondiciones(historiaZona.ph, float(zona.phmin), float(zona.phmax))
+                co2ok = validarRangoCondiciones(historiaZona.concentracionco2, float(zona.concentracionco2min),float(zona.concentracionco2max))
+
+                context = {"historiaZona": historiaZona, "listaTipoZonas": listaTipoZonas, "zona": zona,
+                           'nombreUsuario': request.session.get('nomreUsuario'),
+                           'nombreInvernadero': request.session.get('nombreInvernadero'), "editable": False,"mostrarModalEditar": True, "temperaturaok" :temperaturaok,"phok":phok,"co2ok":co2ok}
+                return render(request, template, context)
 
         if "b_cancelar" in request.POST :
             context = {"historiaZona": historiaZona, "listaTipoZonas": listaTipoZonas, "zona": zona,
                        'nombreUsuario': request.session.get('nomreUsuario'),
-                       'nombreInvernadero': request.session.get('nombreInvernadero'), "editable": False, }
+                       'nombreInvernadero': request.session.get('nombreInvernadero'), "editable": False,  "temperaturaok" :temperaturaok,"phok":phok,"co2ok":co2ok }
             return render(request, template, context)
         if "b_aceptar_modal" in request.POST:
             print("Aceptar Modal")
@@ -170,6 +188,11 @@ def obtenerZonaRequest(request):
     tempIdeal = request.POST.get('tempIdeal')
     tempMin = request.POST.get('tempMin')
     tempMax = request.POST.get('tempMax')
+
+    phIdeal = request.POST.get('phIdeal')
+    phMin = request.POST.get('phMin')
+    phMax = request.POST.get('phMax')
+
     co2Ideal = request.POST.get('co2Ideal')
     co2Min = request.POST.get('co2Min')
     co2Max = request.POST.get('co2Max')
@@ -181,9 +204,13 @@ def obtenerZonaRequest(request):
     zonaDataLlenada.temperaturaideal = tempIdeal
     zonaDataLlenada.temperaturamin = tempMin
     zonaDataLlenada.temperaturamax = tempMax
+    zonaDataLlenada.phideal = phIdeal
+    zonaDataLlenada.phmin = phMin
+    zonaDataLlenada.phmax = phMax
     zonaDataLlenada.concentracionco2ideal = co2Ideal
     zonaDataLlenada.concentracionco2min = co2Min
     zonaDataLlenada.concentracionco2max = co2Max
+
     return zonaDataLlenada
 
 def grabarData(request,idZona):
@@ -196,6 +223,9 @@ def grabarData(request,idZona):
     tempIdeal = request.POST.get('tempIdeal')
     tempMin = request.POST.get('tempMin')
     tempMax = request.POST.get('tempMax')
+    phIdeal =  request.POST.get('phIdeal')
+    phMin = request.POST.get('phMin')
+    phMax = request.POST.get('phMax')
     co2Ideal = request.POST.get('co2Ideal')
     co2Min = request.POST.get('co2Min')
     co2Max = request.POST.get('co2Max')
@@ -233,6 +263,15 @@ def grabarData(request,idZona):
     if tempMax == "":
         return "Falta ingresar la temperatura máxima para la zona."
 
+
+    if phIdeal == "":
+        return "Falta ingresar el PH ideal"
+
+    if phMin == "":
+        return "Falta ingresar el PH mínimo"
+
+    if phMax == "":
+        return "Falta ingresar el PH máximo"
 
     if co2Ideal == "":
         return "Falta ingresar la concentración de CO2 ideal para la zona."
@@ -294,6 +333,9 @@ def grabarData(request,idZona):
         "temperaturaideal":tempIdeal,
         "temperaturamin" :tempMin,
         "temperaturamax" :tempMax,
+        "phideal": phIdeal,
+        "phmin": phMin,
+        "phmax": phMax,
         "concentracionco2ideal":co2Ideal,
         "concentracionco2min":co2Min,
         "concentracionco2max":co2Max,
