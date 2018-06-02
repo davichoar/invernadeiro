@@ -96,7 +96,14 @@ def listar(request, template='app/usuario/listaUsuarios.html', extra_context=Non
     if request.method == 'GET':
         mostrarModalCrear = request.session.pop('mensajeUsuarioCrear', False)
         mostrarModalEliminar = request.session.pop('mensajeUsuarioEliminar', False)
-        listaUsuarios = Usuario.objects.filter(habilitado = True)
+        listaUsuarios = []
+        listaInvernaderoXUsuario = Usuarioxinvernadero.objects.filter(idinvernadero=int(request.session['idInvernadero']))
+        for item in listaInvernaderoXUsuario:
+            try:
+                usuario = Usuario.objects.get(idusuario = item.idusuario, habilitado = True)
+            except:
+                continue
+            listaUsuarios.append(usuario)
         listaRoles = Rol.objects.filter(habilitado=True)
         context = { 
             'listaUsuarios': list(i for i in zip(range(1,len(listaUsuarios)+1), listaUsuarios)),

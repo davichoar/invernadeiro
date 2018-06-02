@@ -61,7 +61,7 @@
                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="nombre">Nombres <span class="required">*</span>
                  </label>
                  <div class="col-md-6 col-sm-6 col-xs-12">
-                   <input id="nombre" class="form-control col-md-7 col-xs-12" name="nombre"  value="{{ usuario.nombres }}" type="text">
+                   <input id="nombre" class="form-control col-md-7 col-xs-12" name="nombre" style="border-color: green; background-color: white;" value="{{ usuario.nombres }}" type="text">
                  </div>
                </div>
 			   <div class="item form-group">
@@ -91,7 +91,7 @@
                <div class="item form-group">
                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="fechanac">Fecha de Nacimiento <span class="required">*</span>
                  </label>
-                 <div class="col-md-6 col-sm-6 col-xs-12">
+                 <div class="col-md-2 col-sm-2 col-xs-6">
                     <input id="fechanac" name="fechanac" type="text" class="form-control" data-inputmask="'mask': '99/99/9999'" value="{{usuario.fechanacimiento}}">
                  </div>
                </div>
