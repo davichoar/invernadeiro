@@ -2,22 +2,20 @@ from django.conf.urls import url
 from app import views
 
 urlpatterns = [
-    # Matches any html file - to be used for gentella
-    # Avoid using your .html in your resources.
-    # Or create a separate django app.
 
-
-##### PARA EL LOGIN
+### LOGIN
 
     url('^$',
         views.login.index,
         name='loginIndex'),
 
-### PARA ESCOGER INVERNADERO
+### ESCOGER INVERNADERO
 
     url('^invernadero/$',
         views.invernadero.escoger,
         name='escogerInvernadero'),
+        
+### USUARIO
         
     url('^usuario/crear/$',
         views.usuario.crear,
@@ -30,12 +28,15 @@ urlpatterns = [
     url('^usuario/(?P<idUsuario>.*)$',
         views.usuario.detalle,
         name='usuarioDetalle'),
+
+### PRUEBA JSON
         
     url('^pruebajson/$',
         views.pruebajson.prueba,
         name='pruebajson'),
 
-## ZONA INVERNADERO
+### ZONA INVERNADERO
+
     url('^zonainvernadero/crear/$',
         views.zonaInvernadero.crear,
         name='zonaInvernaderoCrear'),
@@ -46,20 +47,40 @@ urlpatterns = [
         views.zonaInvernadero.detalle,
         name='zonaInvernaderoDetalle'),
 
-    ###
+### INVERNADEROS
+        
+    url('^inv/crear/$',
+        views.inv.crear,
+        name='invernaderoCrear'),
+        
+    url('^inv/$',
+        views.inv.listar,
+        name='invernaderoLista'),
+        
+    url('^inv/(?P<idInv>.*)$',
+        views.inv.detalle,
+        name='invernaderoDetalle'),
+        
+### HISTORIAS (RECIBIR JSONS)
 
-## HISTORIAS (RECIBIR JSONS)
     url('^historia/$',
             views.historia.prueba,
             name='historia'),
 
-###
+### GENTELELLA
+
     url(r'^.*\.html', views.views.gentella_html, name='gentella'),
 
-    # The home page
+### EL HOME
+
     url(r'^index/(?P<idInvernadero>.*)$', views.index, name='index'),
 
+### CERRAR SESION
+    
     url(r'^cerrarSesion/$', views.cerrarSesion, name='cerrarSesion'),
 
+### CAMBIAR INVERNADERO
+    
     url(r'^cambiarInvernadero/$', views.cambiarInvernadero, name='cambiarInvernadero'),
+    
 ]
