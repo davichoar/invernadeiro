@@ -60,4 +60,6 @@ urlpatterns = [
     url(r'^index/(?P<idInvernadero>.*)$', views.index, name='index'),
 
     url(r'^cerrarSesion/$', views.cerrarSesion, name='cerrarSesion'),
+
+    url(r'^cambiarInvernadero/$', views.cambiarInvernadero, name='cambiarInvernadero'),
 ]
