@@ -14,6 +14,11 @@ def cerrarSesion(request):
     context = {}
     return HttpResponse(template.render(context, request))
 
+def cambiarInvernadero(request):
+    request.session.pop('nombreInvernadero', None)
+    request.session.pop('idInvernadero', None)
+    return redirect('escogerInvernadero')
+
 
 def index(request,idInvernadero):
 

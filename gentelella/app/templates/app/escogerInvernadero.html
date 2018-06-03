@@ -29,7 +29,7 @@
               <div class="clearfix"></div>
             </div>
             <div class="x_content">
-
+                {% if listaInvernaderos|length == 0 %} <center><h2>Ningún invernadero asociado a este usuario.</h2></center>{% endif %}
               <div class="row">
                 {% for invernadero in listaInvernaderos%}
                 <div class="col-md-6">
