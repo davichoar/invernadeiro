@@ -9,7 +9,7 @@ def escoger(request,
 
     print('ESCOGER INVERANDERO')
 
-    idUsuario = request.session.get('idUsuarioActual')
+    idUsuario = request.session.get('idUsuarioActual') # ToDo: Verificar que el usuario sea el -1 y mostrar todos los invernaderos
     usuario = None
     try:
         usuario = Usuario.objects.get(idusuario=idUsuario)
@@ -28,7 +28,7 @@ def escoger(request,
 
         for item in listaInvernaderoXUsuario:
             print(item.idinvernadero)
-            invernadero = Invernadero.objects.get(idinvernadero=item.idinvernadero)
+            invernadero = Invernadero.objects.get(idinvernadero=item.idinvernadero) # ToDo: Revisar q no sea invernadero eliminado tmbn
             print(invernadero.nombre)
             listaInvernaderos.append(invernadero)
         context = {
