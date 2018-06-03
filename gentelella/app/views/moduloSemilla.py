@@ -5,23 +5,23 @@ from datetime import datetime
 from django.template import loader
 from django.urls import reverse
 
-from app.models import Usuario, Invernadero, Usuarioxinvernadero, Zona, Tipozona, Historiainvernadero, Historiazona
+from app.models import Zona, Tipozona, Historiainvernadero, Historiazona, Modulosemilla
 
 
 def crear(request,
-          template='app/zonainvernadero/create.html',
+          template='app/modulosemilla/crear.html',
           extra_context=None):
+    idTipoZonasSemillas = 1
+    listaZonas = Zona.objects.filter(idtipozona = idTipoZonasSemillas,habilitado=True)
     if request.method == 'GET':
-        print('CREAR ZONAS DEL INVERANDERO')
-        listaTipoZonas = Tipozona.objects.filter(habilitado = True)
-        context = {"listaTipoZonas": listaTipoZonas,
+        print('CREAR MODULO DE SEMILLAS')
+        context = {'listaZonas': listaZonas,
                    'nombreUsuario': request.session.get('nomreUsuario'),
                    'nombreInvernadero': request.session.get('nombreInvernadero'),
                    }
         return render(request, template, context)
     elif request.method == 'POST':
 
-        idInvernadero = int(request.session.get('idInvernadero'))
         if "b_aceptar" in request.POST:
 
             mensajeError = None
@@ -33,26 +33,25 @@ def crear(request,
 
             if mensajeError is not None:
                 print("MENSAJE ERROR CREAR ZONA")
-                zona = obtenerZonaRequest(request)
-                listaTipoZonas = Tipozona.objects.filter(habilitado=True)
-                context = {"zona":zona,
-                            "listaTipoZonas": listaTipoZonas,
+                modulo = obtenerModuloRequest(request)
+                context = {"modulo":modulo,
+                           'listaZonas': listaZonas,
                            'nombreUsuario': request.session.get('nomreUsuario'),
                            'nombreInvernadero': request.session.get('nombreInvernadero'),
                            'mensajeError': mensajeError,
                            }
                 return render(request, template, context)
             else:
-                request.session['mensajeZonaCrear'] = True
-        return redirect('zonaInvernaderoListar')
+                request.session['mensajeModuloCrear'] = True
+        return redirect('moduloSemillaListar')
     else:
-        return redirect('zonaInvernaderoListar')
+        return redirect('moduloSemillaListar')
 
 
 def listar(request,
           extra_context=None):
     #template = loader.get_template('app/zonainvernadero/lista.html')
-    template = "app/zonainvernadero/list.html"
+    template = "app/modulosemilla/lista.html"
     listaZonas = []
     if request.method == 'GET':
 
@@ -78,8 +77,8 @@ def listar(request,
             listaZonas = Zona.objects.filter(habilitado=True)
 
 
-        mensajeCreacion = request.session.pop('mensajeZonaCrear',False)
-        mensajeEliminar = request.session.pop('mensajeZonaEliminar', False)
+        mensajeCreacion = request.session.pop('mensajeModuloCrear',False)
+        mensajeEliminar = request.session.pop('mensajeModuloEliminar', False)
 
         print(listaZonas)
         context = {"historia":ultimaHistoria,"listaZonas": listaZonas.order_by('idzona'), 'nombreUsuario': request.session.get('nomreUsuario'),
@@ -88,7 +87,7 @@ def listar(request,
 
     elif request.method == 'POST':
         if "b_crear" in request.POST:
-            return redirect('zonaInvernaderoCrear')
+            return redirect('moduloSemillaCrear')
     context = {}
     return render(request, template, context)
 
@@ -99,9 +98,9 @@ def validarRangoCondiciones(actual,min,max):
         return False
 
 
-def detalle(request,idZona):
+def detalle(request,idModulo):
 
-    template = 'app/zonainvernadero/show.html'
+    template = 'app/modulosemilla/verEditar.html'
     zona = Zona.objects.get(idzona=idZona)
     listaTipoZonas = Tipozona.objects.filter(habilitado=True)
 
@@ -178,174 +177,247 @@ def eliminarZona(request,idZona):
     return
 
 
-def obtenerZonaRequest(request):
-    zonaDataLlenada = Zona()
+def obtenerModuloRequest(request):
+    moduloDataLlenada = Modulosemilla()
 
     nombreObtenido = request.POST.get('nombre')
-    codigoZonaObtenido = request.POST.get('codigoZona')
-    tipoZonaEscogido = request.POST.get("tipoZona")
-    area = request.POST.get('area')
+    codigoModulo = request.POST.get('codigoModulo')
+    idzona = request.POST.get('zona')
     tempIdeal = request.POST.get('tempIdeal')
     tempMin = request.POST.get('tempMin')
     tempMax = request.POST.get('tempMax')
-
-    phIdeal = request.POST.get('phIdeal')
-    phMin = request.POST.get('phMin')
-    phMax = request.POST.get('phMax')
-
+    humTierraIdeal = request.POST.get('humedadTierraIdeal')
+    humTierraMin = request.POST.get('humedadTierraMin')
+    humTierraMax = request.POST.get('humedadTierraMax')
+    humAmbIdeal = request.POST.get('humedadAmbienteIdeal')
+    humAmbMin = request.POST.get('humedadAmbienteMin')
+    humAmbMax = request.POST.get('humedadAmbienteMax')
     co2Ideal = request.POST.get('co2Ideal')
     co2Min = request.POST.get('co2Min')
     co2Max = request.POST.get('co2Max')
+    nivelAguaIdeal = request.POST.get('nivelAguaIdeal')
+    nivelAguaMin = request.POST.get('nivelAguaMin')
+    nivelAguaMax = request.POST.get('nivelAguaMax')
+    filas = request.POST.get('filas')
+    columnas = request.POST.get('columnas')
 
-    zonaDataLlenada.nombre = nombreObtenido
-    zonaDataLlenada.codigozonajson = codigoZonaObtenido
-    zonaDataLlenada.idtipozona = tipoZonaEscogido
-    zonaDataLlenada.area = area
-    zonaDataLlenada.temperaturaideal = tempIdeal
-    zonaDataLlenada.temperaturamin = tempMin
-    zonaDataLlenada.temperaturamax = tempMax
-    zonaDataLlenada.phideal = phIdeal
-    zonaDataLlenada.phmin = phMin
-    zonaDataLlenada.phmax = phMax
-    zonaDataLlenada.concentracionco2ideal = co2Ideal
-    zonaDataLlenada.concentracionco2min = co2Min
-    zonaDataLlenada.concentracionco2max = co2Max
 
-    return zonaDataLlenada
+    moduloDataLlenada.nombre = nombreObtenido
+    moduloDataLlenada.codigomodulojson = codigoModulo
+    moduloDataLlenada.idzona = idzona
+    moduloDataLlenada.temperaturaideal = tempIdeal
+    moduloDataLlenada.temperaturamin = tempMin
+    moduloDataLlenada.temperaturamax = tempMax
+    moduloDataLlenada.humedadtierraideal = humTierraIdeal
+    moduloDataLlenada.humedadtierramin = humTierraMin
+    moduloDataLlenada.humedadtierramax = humTierraMax
+    moduloDataLlenada.humedadambienteideal = humAmbIdeal
+    moduloDataLlenada.humedadambientemin = humAmbMin
+    moduloDataLlenada.humedadambientemax = humAmbMax
+    moduloDataLlenada.concentracionco2ideal = co2Ideal
+    moduloDataLlenada.concentracionco2min = co2Min
+    moduloDataLlenada.concentracionco2max = co2Max
+    moduloDataLlenada.nivelaguaideal = nivelAguaIdeal
+    moduloDataLlenada.nivelaguamin = nivelAguaMin
+    moduloDataLlenada.nivelaguamax = nivelAguaMax
+    moduloDataLlenada.filas = filas
+    moduloDataLlenada.columnas = columnas
 
-def grabarData(request,idZona):
+    return moduloDataLlenada
+
+def grabarData(request,idModulo):
     print('GRABAR DATA')
 
     nombreObtenido = request.POST.get('nombre')
-    codigoZonaObtenido = request.POST.get('codigoZona')
-    tipoZonaEscogido = request.POST.get("tipoZona")
-    area = request.POST.get('area')
+    codigoModuloObtenido = request.POST.get('codigoModulo')
+    idzona = request.POST.get('zona')
     tempIdeal = request.POST.get('tempIdeal')
     tempMin = request.POST.get('tempMin')
     tempMax = request.POST.get('tempMax')
-    phIdeal =  request.POST.get('phIdeal')
-    phMin = request.POST.get('phMin')
-    phMax = request.POST.get('phMax')
+    humTierraIdeal = request.POST.get('humedadTierraIdeal')
+    humTierraMin = request.POST.get('humedadTierraMin')
+    humTierraMax = request.POST.get('humedadTierraMax')
+    humAmbIdeal = request.POST.get('humedadAmbienteIdeal')
+    humAmbMin = request.POST.get('humedadAmbienteMin')
+    humAmbMax = request.POST.get('humedadAmbienteMax')
     co2Ideal = request.POST.get('co2Ideal')
     co2Min = request.POST.get('co2Min')
     co2Max = request.POST.get('co2Max')
+    nivelAguaIdeal = request.POST.get('nivelAguaIdeal')
+    nivelAguaMin = request.POST.get('nivelAguaMin')
+    nivelAguaMax = request.POST.get('nivelAguaMax')
+    filas = request.POST.get('filas')
+    columnas = request.POST.get('columnas')
 
     if nombreObtenido:
         nombre = str(nombreObtenido)
     else:
-        return "Falta ingresar el nombre de la zona."
+        return "Falta ingresar el nombre del módulo."
 
 
-    if codigoZonaObtenido:
-        codigoZona = int(codigoZonaObtenido)
+    if codigoModuloObtenido:
+        codigoModulo = int(codigoModuloObtenido)
     else:
-        return "Falta ingresar el codigo para la zona."
+        return "Falta ingresar el codigo para el módulo."
 
-
-    if tipoZonaEscogido:
-        tipoZona = int(tipoZonaEscogido)
+    if idzona:
+        idzona = int(idzona)
     else:
-        return "Falta seleccionar la zona."
-
-
-    if area == "":
-        return "Falta ingresar el área de la zona."
-
-
-    if tempIdeal == "":
-        return "Falta ingresar la temperatura ideal para la zona."
+        return "Falta seleccionar la zona para el módulo"
 
 
     if tempMin == "":
-        return "Falta ingresar la temperatura mínima para la zona."
+        return "Falta ingresar la temperatura mínima para el módulo."
 
 
     if tempMax == "":
-        return "Falta ingresar la temperatura máxima para la zona."
+        return "Falta ingresar la temperatura máxima para el módulo."
 
 
-    if phIdeal == "":
-        return "Falta ingresar el PH ideal"
+    # if humTierraIdeal == "":
+    #     return "Falta ingresar la humedad de la tierra ideal para el módulo."
 
-    if phMin == "":
-        return "Falta ingresar el PH mínimo"
+    if humTierraMin == "":
+        return "Falta ingresar la humedad de la tierra mínima para el módulo."
 
-    if phMax == "":
-        return "Falta ingresar el PH máximo"
+    if humTierraMax == "":
+        return "Falta ingresar la humedad de la tierra máxima para el módulo."
 
-    if co2Ideal == "":
-        return "Falta ingresar la concentración de CO2 ideal para la zona."
+    # if humAmbIdeal == "":
+    #     return "Falta ingresar la humedad del ambiente ideal para el módulo."
+
+    if humAmbMin == "":
+        return "Falta ingresar la humedad del ambiente mínima para el módulo."
+
+    if humAmbMax == "":
+        return "Falta ingresar la humedad del ambiente máxima para el módulo."
+
+    #
+    # if co2Ideal == "":
+    #     return "Falta ingresar la concentración de CO2 ideal para el módulo."
 
 
     if co2Min == "":
-        return "Falta ingresar la concentración de CO2 mínima para la zona."
+        return "Falta ingresar la concentración de CO2 mínima para el módulo."
 
 
     if co2Max == "":
-        return "Falta ingresar la concentración de CO2 máxima para la zona."
+        return "Falta ingresar la concentración de CO2 máxima para el módulo."
 
-    idInvernaderoObtenido =  request.session.get('idInvernadero')
-    if idInvernaderoObtenido == "" or idInvernaderoObtenido == None:
-        return "Ocurrió un error al tratar de crear la zona. Intente de nuevo en un momento."
+    # if nivelAguaIdeal == "":
+    #     return "Falta ingresar el nivel del agua ideal para el módulo."
 
-    idInvernadero = int(idInvernaderoObtenido)
+
+    if nivelAguaMin == "":
+        return "Falta ingresar el nivel del agua mínimo para el módulo."
+
+
+    if nivelAguaMax == "":
+        return "Falta ingresar el nivel del agua máximo para el módulo."
+
+
+    if filas == "":
+        return "Falta ingresar las filas para el módulo."
+
+
+    if columnas == "":
+        return "Falta ingresar las columnas para el módulo."
+
+
+
+    if tempMin > tempMax:
+        return "La temperatura mínima debe ser menor a la temperatura máxima"
+
+    if tempIdeal != "":
+        if (tempIdeal > tempMin) and (tempIdeal < tempMax):
+            print("Temperatura Ideal Valida")
+        else:
+            return "La temperatura ideal debe ser un valor entre la mínima y la máxima"
+
+    if humTierraMin > humTierraMax:
+        return "La humedad de la tierra mínima debe ser menor a la humedad de la tierra máxima"
+
+    if humTierraIdeal != "":
+        if (humTierraIdeal > humTierraMin) and (humTierraIdeal < humTierraMax):
+            print("Humedad Tierra Ideal Valida")
+        else:
+            return "La humedad de la tierra ideal debe ser un valor entre el mínimo y el máximo"
+
+    if humAmbMin > humAmbMax:
+        return "La humedad del ambiente mínima debe ser menor a la humedad del ambiente máxima"
+
+    if humAmbIdeal != "":
+        if (humAmbIdeal > humAmbMin) and (humAmbIdeal < humAmbMax):
+            print("Humedad Ambiente Ideal Valida")
+        else:
+            return "La humedad del ambiente ideal debe ser un valor entre el mínimo y el máximo"
+
+    if co2Min > co2Max:
+        return "La concentración de CO2 mínima debe ser menor a la concentración de CO2 máxima"
+
+    if co2Ideal != "":
+        if (co2Ideal > co2Min) and (co2Ideal < co2Max):
+            print("CO2 Ideal Valida")
+        else:
+            return "La concentración de CO2 ideal debe ser un valor entre el mínimo y el máximo"
+
+
+    if nivelAguaMin > nivelAguaMax:
+        return "La concentración de CO2 mínima debe ser menor a la concentración de CO2 máxima"
+
+    if nivelAguaIdeal != "":
+        if (nivelAguaIdeal > nivelAguaMin) and (nivelAguaIdeal < nivelAguaMax):
+            print("Nivel del Agua Ideal Valida")
+        else:
+            return "EL nivel del agua ideal debe ser un valor entre el mínimo y el máximo"
 
     idUsuarioObtenido = request.session.get('idUsuarioActual')
     if idUsuarioObtenido == "" or idUsuarioObtenido == None:
         return "Ocurrió un error al tratar de crear la zona. Intente de nuevo en un momento."
     idUsuarioActual = int(idUsuarioObtenido)
 
-    print('Nombre: ' + nombre)
-    print('Codigo Zona: ' + str(codigoZona))
-    print('Tipo Zona:' + str(tipoZona))
-    print('area: ' + area)
-    print('tempIdeal: ' + tempIdeal)
-    print('tempMin: ' + tempMin)
-    print('tempMax: ' + tempMax)
-    print('co2Ideal: ' + co2Ideal)
-    print('co2Min: ' + co2Min)
-    print('co2Max: ' + co2Max)
-    print('Id Invernadero: ' + str(idInvernadero))
-    print('Id Usuario Actual: ' + str(idUsuarioActual))
-
-    zonaObtenidaBd = None
-    if idZona is None:
-        idMax = Zona.objects.all().aggregate(Max('idzona'))['idzona__max']
+    moduloObtenidoBd = None
+    if idModulo is None:
+        idMax = Modulosemilla.objects.all().aggregate(Max('idmodulo'))['idmodulo__max']
         if idMax is None:
-            idZona = 1
+            idModulo = 1
         else:
-            idZona = idMax + 1
-        zonaObtenidaBd = Zona.objects.filter(codigozonajson=codigoZona, habilitado=True)
+            idModulo = idMax + 1
+        moduloObtenidoBd = Modulosemilla.objects.filter(codigomodulojson=codigoModulo, habilitado=True)
 
     else:
-        zonaObtenidaBd = Zona.objects.filter(codigozonajson=codigoZona, habilitado=True).exclude(idzona=idZona)
-        print(zonaObtenidaBd)
-    if zonaObtenidaBd.exists():
+        moduloObtenidoBd = Modulosemilla.objects.filter(codigomodulojson=codigoModulo, habilitado=True).exclude(idmodulo=idModulo)
+        print(moduloObtenidoBd)
+    if moduloObtenidoBd.exists():
         return "Ya existe el codigo de zona. Ingrese un codigo de zona distinto"
 
 
-    zona,created = Zona.objects.update_or_create(
-        idzona=idZona, defaults={ "idtipozona" :tipoZona,
-        "idinvernadero" : idInvernadero,
-        "codigozonajson": codigoZona,
-        "nombre" : nombre,
-        "area" :area,
+    modulo,created = Modulosemilla.objects.update_or_create(
+        idmodulo=idModulo, defaults={
+        "nombre":nombre,
+        "idzona":idzona,
+        "codigomodulojson" :codigoModulo,
         "temperaturaideal":tempIdeal,
         "temperaturamin" :tempMin,
         "temperaturamax" :tempMax,
-        "phideal": phIdeal,
-        "phmin": phMin,
-        "phmax": phMax,
+        "humedadtierraideal": humTierraIdeal,
+        "humedadtierramin": humTierraMin,
+        "humedadtierramax": humTierraMax,
+        "humedadambienteideal": humAmbIdeal,
+        "humedadambientemin": humAmbMin,
+        "humedadambientemax": humAmbMax,
         "concentracionco2ideal":co2Ideal,
         "concentracionco2min":co2Min,
         "concentracionco2max":co2Max,
+        "nivelaguaideal": nivelAguaIdeal,
+        "nivelaguamin": nivelAguaMin,
+        "nivelaguamax": nivelAguaMax,
         "fechacreacion" :datetime.now(),
         "habilitado":True,
         "idusuarioauditado":idUsuarioActual}
     )
 
-    zona.save()
+    modulo.save()
 
     return None
-
 
