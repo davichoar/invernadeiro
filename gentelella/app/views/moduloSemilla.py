@@ -351,6 +351,8 @@ def grabarData(request,idModulo):
             print("Temperatura Ideal Valida")
         else:
             return "La temperatura ideal debe ser un valor entre la mínima y la máxima"
+    else:
+        tempIdeal = None
 
     if humTierraMin > humTierraMax:
         return "La humedad de la tierra mínima debe ser menor a la humedad de la tierra máxima"
@@ -360,6 +362,8 @@ def grabarData(request,idModulo):
             print("Humedad Tierra Ideal Valida")
         else:
             return "La humedad de la tierra ideal debe ser un valor entre el mínimo y el máximo"
+    else:
+        humTierraIdeal = None
 
     if humAmbMin > humAmbMax:
         return "La humedad del ambiente mínima debe ser menor a la humedad del ambiente máxima"
@@ -369,6 +373,8 @@ def grabarData(request,idModulo):
             print("Humedad Ambiente Ideal Valida")
         else:
             return "La humedad del ambiente ideal debe ser un valor entre el mínimo y el máximo"
+    else:
+        humAmbIdeal = None
 
     if co2Min > co2Max:
         return "La concentración de CO2 mínima debe ser menor a la concentración de CO2 máxima"
@@ -378,6 +384,8 @@ def grabarData(request,idModulo):
             print("CO2 Ideal Valida")
         else:
             return "La concentración de CO2 ideal debe ser un valor entre el mínimo y el máximo"
+    else:
+        co2Ideal = None
 
 
     if nivelAguaMin > nivelAguaMax:
@@ -388,6 +396,8 @@ def grabarData(request,idModulo):
             print("Nivel del Agua Ideal Valida")
         else:
             return "EL nivel del agua ideal debe ser un valor entre el mínimo y el máximo"
+    else:
+        nivelAguaIdeal = None
 
     idUsuarioObtenido = request.session.get('idUsuarioActual')
     if idUsuarioObtenido == "" or idUsuarioObtenido == None:
@@ -409,6 +419,7 @@ def grabarData(request,idModulo):
     if moduloObtenidoBd.exists():
         return "Ya existe el codigo de zona. Ingrese un codigo de zona distinto"
 
+    print('LLEGO A CREAR HASTA AQUI')
 
     modulo,created = Modulosemilla.objects.update_or_create(
         idmodulo=idModulo, defaults={
