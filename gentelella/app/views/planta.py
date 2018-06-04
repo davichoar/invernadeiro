@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect, render_to_response
 from datetime import datetime
 
 from app.models import Zona, Tipozona, Historiainvernadero, Historiazona, Modulosemilla, Historiamodulo, Tipoplanta, \
-    Planta
+    Planta, Semilla, Historiaplanta
 
 ID_TIPO_ZONAS_PLANTAS = 2
 def crear(request,
@@ -27,7 +27,7 @@ def crear(request,
             try:
                mensajeError = grabarData(request,None)
             except Exception as e:
-                mensajeError = "No se puede crear el modulo en este momento"
+                mensajeError = "No se puede crear la planta en este momento"
                 print(e)
 
             if mensajeError is not None:
@@ -43,42 +43,43 @@ def crear(request,
                 return render(request, template, context)
             else:
                 request.session['mensajeModuloCrear'] = True
-        return redirect('moduloSemillaListar')
+        return redirect('plantaListar')
     else:
-        return redirect('moduloSemillaListar')
+        return redirect('plantaListar')
 
 
 def listar(request,
           extra_context=None):
     #template = loader.get_template('app/zonainvernadero/lista.html')
     template = "app/planta/lista.html"
-    listaModulos = []
+    listaPlantas = []
+    listaTipoPlantas = Tipoplanta.objects.filter(habilitado=True)
     if request.method == 'GET':
 
-        print('LISTAR MODULOS SEMILLAS')
+        print('LISTAR PLANTAS')
 
         if "b_buscar" in request.GET:
             valorBusqueda = request.GET.get('textoBusqueda')
             print(valorBusqueda)
             if(valorBusqueda is None):
                 valorBusqueda = ""
-            listaModulos = Modulosemilla.objects.filter(nombre__icontains=valorBusqueda,habilitado=True)
+            listaPlantas = Planta.objects.filter(nombre__icontains=valorBusqueda,habilitado=True)
         else:
-            listaModulos = Modulosemilla.objects.filter(habilitado=True)
+            listaPlantas = Planta.objects.filter(habilitado=True)
 
 
-        mensajeCreacion = request.session.pop('mensajeModuloCrear',False)
-        mensajeEliminar = request.session.pop('mensajeModuloEliminar', False)
+        mensajeCreacion = request.session.pop('mensajePlantaCrear',False)
+        mensajeEliminar = request.session.pop('mensajePlantaEliminar', False)
 
-        print('Lista de modulos')
-        print(listaModulos)
-        context = {"listaModulos": listaModulos.order_by('idmodulo'), 'nombreUsuario': request.session.get('nomreUsuario'),
+        print('Lista de plantas')
+        print(listaPlantas)
+        context = {"listaTipoPlantas":listaTipoPlantas,"listaPlantas": listaPlantas.order_by('idplanta'), 'nombreUsuario': request.session.get('nomreUsuario'),
                    'nombreInvernadero': request.session.get('nombreInvernadero'),"mensajeCreacion": mensajeCreacion,"mensajeEliminacion": mensajeEliminar,}
         return render(request, template, context)
 
     elif request.method == 'POST':
         if "b_crear" in request.POST:
-            return redirect('moduloSemillaCrear')
+            return redirect('plantaCrear')
     context = {}
     return render(request, template, context)
 
@@ -93,60 +94,52 @@ def validarRangoCondiciones(actual,min,max):
         return False
 
 
-def detalle(request,idModulo):
+def detalle(request,idPlanta):
 
     template = 'app/planta/verEditar.html'
-    modulo = Modulosemilla.objects.get(idmodulo=idModulo)
+    planta = Planta.objects.get(idplanta=idPlanta)
 
-    listaZonas = Zona.objects.filter(idtipozona = ID_TIPO_ZONAS_SEMILLAS,habilitado=True)
+    listaTipoPlantas = Tipoplanta.objects.filter(habilitado=True)
+    listaZonas = Zona.objects.filter(idtipozona=ID_TIPO_ZONAS_PLANTAS, habilitado=True)
 
 
     try:
-        historiaModulo = Historiamodulo.objects.filter(idmodulo=idModulo).order_by('-fecharegistro')[0]
+        historiaPlanta = Historiaplanta.objects.filter(idplanta=idPlanta).order_by('-fecharegistro')[0]
     except Exception as e:
-        historiaModulo = None
+        historiaPlanta = None
         print(e)
 
-    if historiaModulo:
-        temperaturaok = validarRangoCondiciones(historiaModulo.temperatura,modulo.temperaturamin,modulo.temperaturamax)
-        humedadTierraok = validarRangoCondiciones(historiaModulo.humedadtierra,modulo.humedadtierramin,modulo.humedadtierramax)
-        humedadAmbienteok = validarRangoCondiciones(historiaModulo.humedadambiente,modulo.humedadambientemin,modulo.humedadambientemax)
-        nivelAguaok = validarRangoCondiciones(historiaModulo.nivelagua,modulo.nivelaguamin,modulo.nivelaguamax)
-        co2ok = validarRangoCondiciones(historiaModulo.concentracionco2,modulo.concentracionco2min,modulo.concentracionco2max)
+    if historiaPlanta:
+        humedadok = validarRangoCondiciones(historiaPlanta.humedad,planta.humedadmin,planta.humedadmax)
     else:
-        temperaturaok = None
-        humedadTierraok = None
-        humedadAmbienteok = None
-        nivelAguaok = None
-        co2ok = None
+        humedadok = None
 
-    context = {"historiaModulo": historiaModulo, "listaZonas": listaZonas, "modulo": modulo,
+    context = {"historiaPlanta": historiaPlanta,"listaTipoPlantas":listaTipoPlantas , "listaZonas": listaZonas, "planta": planta,
                'nombreUsuario': request.session.get('nomreUsuario'),
                'nombreInvernadero': request.session.get('nombreInvernadero'), "editable": False,
-               "temperaturaok": temperaturaok, "humedadTierraok": humedadTierraok,
-               "humedadAmbienteok": humedadAmbienteok, "nivelAguaok": nivelAguaok, "co2ok": co2ok}
+               "humedadok": humedadok}
 
     if request.method == 'GET':
-        print('Mostrar Modulo de Semilla')
+        print('Mostrar Planta')
         ## context es el mismo de arriba
         context['editable'] = False ## es un saludo a la bandera, solo para aclarar que la vista no sera editable
         return render(request, template, context)
 
     elif request.method == 'POST':
         if "b_editar" in request.POST:
-            print('Editar Modulo Semilla')
+            print('Editar Planta')
             context['editable'] = True
             return render(request, template, context)
         if "b_aceptar" in request.POST:
-            print('Aceptar Modulo Semilla')
+            print('Aceptar Planta')
             mensajeError = None
             try:
-               mensajeError = grabarData(request,idModulo)
+               mensajeError = grabarData(request,idPlanta)
             except Exception as e:
-                mensajeError = "No se puede crear la zona en este momento"
+                mensajeError = "No se puede crear la planta en este momento"
                 print(e)
-            modulo = obtenerModuloRequest(request)
-            context['modulo'] = modulo
+            planta = obtenerPlantaRequest(request)
+            context['planta'] = planta
             if mensajeError:
 
                 context['editable'] = True
@@ -154,20 +147,14 @@ def detalle(request,idModulo):
 
                 return render(request, template, context)
             else:
-                if historiaModulo:
-                    temperaturaok = validarRangoCondiciones(historiaModulo.temperatura, modulo.temperaturamin,modulo.temperaturamax)
-                    humedadTierraok = validarRangoCondiciones(historiaModulo.humedadtierra, modulo.humedadtierramin,modulo.humedadtierramax)
-                    humedadAmbienteok = validarRangoCondiciones(historiaModulo.humedadambiente,modulo.humedadambientemin, modulo.humedadambientemax)
-                    nivelAguaok = validarRangoCondiciones(historiaModulo.nivelagua, modulo.nivelaguamin,modulo.nivelaguamax)
-                    co2ok = validarRangoCondiciones(historiaModulo.concentracionco2, modulo.concentracionco2min,modulo.concentracionco2max)
+                if historiaPlanta:
+                    humedadok = validarRangoCondiciones(historiaPlanta.humedad, planta.humedadmin, planta.humedadmax)
+                else:
+                    humedadok = None
 
                 context['editable'] = False
                 context['mostrarModalEditar'] = True
-                context['temperaturaok'] = temperaturaok
-                context['humedadTierraok'] = humedadTierraok
-                context['humedadAmbienteok'] = humedadAmbienteok
-                context['nivelAguaok'] = nivelAguaok
-                context['co2ok'] = co2ok
+                context['humedadok'] = humedadok
 
                 return render(request, template, context)
 
@@ -178,14 +165,14 @@ def detalle(request,idModulo):
         if "b_aceptar_modal" in request.POST:
             print("Aceptar Modal")
             try:
-                eliminarModulo(request, idModulo)
-                request.session['mensajeModuloEliminar'] = True
+                eliminarModulo(request, idPlanta)
+                request.session['mensajePlantaEliminar'] = True
             except Exception as e:
                 print(e)
 
-            return redirect('moduloSemillaListar')
+            return redirect('plantaListar')
         else:
-            return redirect('moduloSemillaListar')
+            return redirect('plantaListar')
 
 def eliminarModulo(request,idModulo):
     idUsuarioActual = int(request.session.get('idUsuarioActual'))
@@ -199,30 +186,35 @@ def eliminarModulo(request,idModulo):
 def obtenerPlantaRequest(request):
     plantaDataLlenada = Planta()
 
-    tipoPlanta = request.POST.get('tipoPlanta')
+    idTipoPlanta = request.POST.get('tipoPlanta')
     idzona = request.POST.get('zona')
-    idSemilla = request.POST.get('semilla')
     codigoPlanta = request.POST.get('codigoPlanta')
     humedadIdeal = request.POST.get('humedadIdeal')
     humedadMin = request.POST.get('humedadMin')
     humedadMax = request.POST.get('humedadMax')
 
+
+    plantaDataLlenada.idtipoplanta = idTipoPlanta
+    plantaDataLlenada.idzona = idzona
+    plantaDataLlenada.codigoplantajson = codigoPlanta
+    plantaDataLlenada.humedadideal = humedadIdeal
+    plantaDataLlenada.humedadmin = humedadMin
+    plantaDataLlenada.humedadmax = humedadMax
 
     return plantaDataLlenada
 
-def grabarData(request,idModulo):
+def grabarData(request,idPlanta):
     print('GRABAR DATA')
 
-    tipoPlanta = request.POST.get('tipoPlanta')
+    idTipoPlanta = request.POST.get('tipoPlanta')
     idzona = request.POST.get('zona')
-    idSemilla = request.POST.get('semilla')
     codigoPlanta = request.POST.get('codigoPlanta')
     humedadIdeal = request.POST.get('humedadIdeal')
     humedadMin = request.POST.get('humedadMin')
     humedadMax = request.POST.get('humedadMax')
 
 
-    if tipoPlanta:
+    if idTipoPlanta:
         print('Tipo Planta correcto')
     else:
         return "Falta ingresar el tipo de planta."
@@ -240,14 +232,16 @@ def grabarData(request,idModulo):
     if humedadMin == "":
         return "Falta ingresar la humedad mínima para la planta."
 
+    humedadMin = float(humedadMin)
     if humedadMax == "":
         return "Falta ingresar la humedad máxima para la planta."
 
-
+    humedadMax = float(humedadMax)
     if humedadMin > humedadMax:
         return "La humedad mínima debe ser menor a la humedad máxima"
 
     if humedadIdeal != "":
+        humedadIdeal = float(humedadIdeal)
         if (humedadIdeal > humedadMin) and (humedadIdeal < humedadMax):
             print("Humedad Ideal Valida")
         else:
@@ -262,50 +256,34 @@ def grabarData(request,idModulo):
     idUsuarioActual = int(idUsuarioObtenido)
 
     moduloObtenidoBd = None
-    if idModulo is None:
-        idMax = Modulosemilla.objects.all().aggregate(Max('idmodulo'))['idmodulo__max']
+    if idPlanta is None:
+        idMax = Planta.objects.all().aggregate(Max('idplanta'))['idplanta__max']
         if idMax is None:
-            idModulo = 1
+            idPlanta = 1
         else:
-            idModulo = idMax + 1
-        moduloObtenidoBd = Modulosemilla.objects.filter(codigomodulojson=codigoModulo, habilitado=True)
+            idPlanta = idMax + 1
+        plantaObtenidaBd = Planta.objects.filter(codigoplantajson=codigoPlanta, habilitado=True)
 
     else:
-        moduloObtenidoBd = Modulosemilla.objects.filter(codigomodulojson=codigoModulo, habilitado=True).exclude(idmodulo=idModulo)
-        print(moduloObtenidoBd)
-    if moduloObtenidoBd.exists():
-        return "Ya existe el codigo de zona. Ingrese un codigo de zona distinto"
+        plantaObtenidaBd = Planta.objects.filter(codigoplantajson=codigoPlanta, habilitado=True).exclude(idplanta=idPlanta)
+        print(plantaObtenidaBd)
+    if plantaObtenidaBd.exists():
+        return "Ya existe el codigo de planta. Ingrese un codigo de planta distinto"
 
-    print('LLEGO A CREAR HASTA AQUI')
-
-    modulo,created = Modulosemilla.objects.update_or_create(
-        idmodulo=idModulo, defaults={
-        "nombre":nombre,
+    planta,created = Planta.objects.update_or_create(
+        idplanta=idPlanta, defaults={
+        "idtipoplanta":idTipoPlanta,
         "idzona":idzona,
-        "codigomodulojson" :codigoModulo,
-        "temperaturaideal":tempIdeal,
-        "temperaturamin" :tempMin,
-        "temperaturamax" :tempMax,
-        "humedadtierraideal": humTierraIdeal,
-        "humedadtierramin": humTierraMin,
-        "humedadtierramax": humTierraMax,
-        "humedadambienteideal": humAmbIdeal,
-        "humedadambientemin": humAmbMin,
-        "humedadambientemax": humAmbMax,
-        "concentracionco2ideal":co2Ideal,
-        "concentracionco2min":co2Min,
-        "concentracionco2max":co2Max,
-        "nivelaguaideal": nivelAguaIdeal,
-        "nivelaguamin": nivelAguaMin,
-        "nivelaguamax": nivelAguaMax,
+        "codigoplantajson" :codigoPlanta,
         "fechacreacion" :datetime.now(),
-        "filas":filas,
-        "columnas":columnas,
+        "humedadmin":humedadMin,
+        "humedadideal":humedadIdeal,
+        "humedadmax":humedadMax,
         "habilitado":True,
         "idusuarioauditado":idUsuarioActual}
     )
 
-    modulo.save()
+    planta.save()
 
     return None
 

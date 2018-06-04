@@ -306,10 +306,14 @@ def grabarData(request,idZona):
     if co2Max == "":
         return "Falta ingresar la concentración de CO2 máxima para la zona."
 
+
+    tempMin = float(tempMin)
+    tempMax = float(tempMax)
     if tempMin > tempMax:
         return "La temperatura mínima debe ser menor a la temperatura máxima"
 
     if tempIdeal != "":
+        tempIdeal = float(tempIdeal)
         if (tempIdeal > tempMin) and (tempIdeal < tempMax):
             print("Temperatura Ideal Valida")
         else:
@@ -317,10 +321,14 @@ def grabarData(request,idZona):
     else:
         tempIdeal = None
 
+
+    phMin = float(phMin)
+    phMax = float(phMax)
     if phMin > phMax:
         return "El pH mínimo debe ser menor al pH máximo"
 
     if phIdeal != "":
+        phIdeal = float(phIdeal)
         if (phIdeal > phMin) and (phIdeal < phMax):
             print("pH Valido")
         else:
@@ -328,8 +336,14 @@ def grabarData(request,idZona):
     else:
         phIdeal = None
 
+    co2Min = float(co2Min)
+    co2Max = float(co2Max)
+    if co2Min > co2Max:
+        return "La concentración de CO2 mínima debe ser mayor a la concentración de CO2 máxima"
+
 
     if co2Ideal != "":
+        co2Ideal = float(co2Ideal)
         if (co2Ideal > co2Min) and (co2Ideal < co2Max):
             print("CO2 Valido")
         else:
