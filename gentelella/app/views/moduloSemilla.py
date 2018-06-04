@@ -5,14 +5,13 @@ from datetime import datetime
 from django.template import loader
 from django.urls import reverse
 
-from app.models import Zona, Tipozona, Historiainvernadero, Historiazona, Modulosemilla
+from app.models import Zona, Tipozona, Historiainvernadero, Historiazona, Modulosemilla, Historiamodulo
 
-
+ID_TIPO_ZONAS_SEMILLAS = 1
 def crear(request,
           template='app/modulosemilla/crear.html',
           extra_context=None):
-    idTipoZonasSemillas = 1
-    listaZonas = Zona.objects.filter(idtipozona = idTipoZonasSemillas,habilitado=True)
+    listaZonas = Zona.objects.filter(idtipozona = ID_TIPO_ZONAS_SEMILLAS,habilitado=True)
     if request.method == 'GET':
         print('CREAR MODULO DE SEMILLAS')
         context = {'listaZonas': listaZonas,
@@ -28,7 +27,7 @@ def crear(request,
             try:
                mensajeError = grabarData(request,None)
             except Exception as e:
-                mensajeError = "No se puede crear la zona en este momento"
+                mensajeError = "No se puede crear el modulo en este momento"
                 print(e)
 
             if mensajeError is not None:
@@ -52,36 +51,27 @@ def listar(request,
           extra_context=None):
     #template = loader.get_template('app/zonainvernadero/lista.html')
     template = "app/modulosemilla/lista.html"
-    listaZonas = []
+    listaModulos = []
     if request.method == 'GET':
 
-        print('LISTAR ZONAS INVERNADERO')
-
-        idInvernadero = int(request.session.get('idInvernadero'))
-
-        try:
-            ultimaHistoria = Historiainvernadero.objects.filter(idinvernadero=idInvernadero).order_by('-fecharegistro')[0]
-        except:
-            ultimaHistoria = Historiainvernadero()
-            ultimaHistoria.nivelenergia = 0
-            ultimaHistoria.niveltanqueagua = 0
-
+        print('LISTAR MODULOS SEMILLAS')
 
         if "b_buscar" in request.GET:
             valorBusqueda = request.GET.get('textoBusqueda')
             print(valorBusqueda)
             if(valorBusqueda is None):
                 valorBusqueda = ""
-            listaZonas = Zona.objects.filter(nombre__icontains=valorBusqueda,habilitado=True)
+            listaModulos = Modulosemilla.objects.filter(nombre__icontains=valorBusqueda,habilitado=True)
         else:
-            listaZonas = Zona.objects.filter(habilitado=True)
+            listaModulos = Modulosemilla.objects.filter(habilitado=True)
 
 
         mensajeCreacion = request.session.pop('mensajeModuloCrear',False)
         mensajeEliminar = request.session.pop('mensajeModuloEliminar', False)
 
-        print(listaZonas)
-        context = {"historia":ultimaHistoria,"listaZonas": listaZonas.order_by('idzona'), 'nombreUsuario': request.session.get('nomreUsuario'),
+        print('Lista de modulos')
+        print(listaModulos)
+        context = {"listaModulos": listaModulos.order_by('idmodulo'), 'nombreUsuario': request.session.get('nomreUsuario'),
                    'nombreInvernadero': request.session.get('nombreInvernadero'),"mensajeCreacion": mensajeCreacion,"mensajeEliminacion": mensajeEliminar,}
         return render(request, template, context)
 
@@ -92,6 +82,10 @@ def listar(request,
     return render(request, template, context)
 
 def validarRangoCondiciones(actual,min,max):
+
+    actual = float(actual)
+    min = float(min)
+    max = float(max)
     if (actual > min) and (actual < max):
         return True
     else:
@@ -101,79 +95,103 @@ def validarRangoCondiciones(actual,min,max):
 def detalle(request,idModulo):
 
     template = 'app/modulosemilla/verEditar.html'
-    zona = Zona.objects.get(idzona=idZona)
-    listaTipoZonas = Tipozona.objects.filter(habilitado=True)
+    modulo = Modulosemilla.objects.get(idmodulo=idModulo)
+
+    listaZonas = Zona.objects.filter(idtipozona = ID_TIPO_ZONAS_SEMILLAS,habilitado=True)
 
 
     try:
-        historiaZona = Historiazona.objects.filter(idzona=idZona).order_by('-fecharegistro')[0]
+        historiaModulo = Historiamodulo.objects.filter(idmodulo=idModulo).order_by('-fecharegistro')[0]
     except Exception as e:
-        historiaZona = None
+        historiaModulo = None
         print(e)
 
-    temperaturaok = validarRangoCondiciones(historiaZona.temperatura,zona.temperaturamin,zona.temperaturamax)
-    phok = validarRangoCondiciones(historiaZona.ph,zona.phmin,zona.phmax)
-    co2ok = validarRangoCondiciones(historiaZona.concentracionco2, zona.concentracionco2min,zona.concentracionco2max)
+    if historiaModulo:
+        temperaturaok = validarRangoCondiciones(historiaModulo.temperatura,modulo.temperaturamin,modulo.temperaturamax)
+        humedadTierraok = validarRangoCondiciones(historiaModulo.humedadtierra,modulo.humedadtierramin,modulo.humedadtierramax)
+        humedadAmbienteok = validarRangoCondiciones(historiaModulo.humedadambiente,modulo.humedadambientemin,modulo.humedadambientemax)
+        nivelAguaok = validarRangoCondiciones(historiaModulo.nivelagua,modulo.nivelaguamin,modulo.nivelaguamax)
+        co2ok = validarRangoCondiciones(historiaModulo.concentracionco2,modulo.concentracionco2min,modulo.concentracionco2max)
+    else:
+        temperaturaok = None
+        humedadTierraok = None
+        humedadAmbienteok = None
+        nivelAguaok = None
+        co2ok = None
+
+    context = {"historiaModulo": historiaModulo, "listaZonas": listaZonas, "modulo": modulo,
+               'nombreUsuario': request.session.get('nomreUsuario'),
+               'nombreInvernadero': request.session.get('nombreInvernadero'), "editable": False,
+               "temperaturaok": temperaturaok, "humedadTierraok": humedadTierraok,
+               "humedadAmbienteok": humedadAmbienteok, "nivelAguaok": nivelAguaok, "co2ok": co2ok}
 
     if request.method == 'GET':
-        print('Mostrar Zona Invernadero')
-        context = {"historiaZona":historiaZona,"listaTipoZonas":listaTipoZonas,"zona": zona, 'nombreUsuario': request.session.get('nomreUsuario'),
-                   'nombreInvernadero': request.session.get('nombreInvernadero'), "editable":False, "temperaturaok" :temperaturaok,"phok":phok,"co2ok":co2ok}
+        print('Mostrar Modulo de Semilla')
+        ## context es el mismo de arriba
+        context['editable'] = False ## es un saludo a la bandera, solo para aclarar que la vista no sera editable
         return render(request, template, context)
 
     elif request.method == 'POST':
         if "b_editar" in request.POST:
-            print('Editar Zona Invernadero')
-            context = {"historiaZona":historiaZona,"listaTipoZonas":listaTipoZonas,"zona": zona, 'nombreUsuario': request.session.get('nomreUsuario'),
-                       'nombreInvernadero': request.session.get('nombreInvernadero'), "editable": True,  "temperaturaok" :temperaturaok,"phok":phok,"co2ok":co2ok }
+            print('Editar Modulo Semilla')
+            context['editable'] = True
             return render(request, template, context)
         if "b_aceptar" in request.POST:
-            print('Aceptar Zona Invernadero')
+            print('Aceptar Modulo Semilla')
             mensajeError = None
             try:
-               mensajeError = grabarData(request,idZona)
+               mensajeError = grabarData(request,idModulo)
             except Exception as e:
                 mensajeError = "No se puede crear la zona en este momento"
                 print(e)
-            zona = obtenerZonaRequest(request)
+            modulo = obtenerModuloRequest(request)
+            context['modulo'] = modulo
             if mensajeError:
-                context = {"historiaZona": historiaZona, "listaTipoZonas": listaTipoZonas, "zona": zona,
-                           'nombreUsuario': request.session.get('nomreUsuario'),
-                           'nombreInvernadero': request.session.get('nombreInvernadero'), "editable": True, "mensajeError":mensajeError, "temperaturaok" :temperaturaok,"phok":phok,"co2ok":co2ok}
+
+                context['editable'] = True
+                context['mensajeError'] = mensajeError
+
                 return render(request, template, context)
             else:
-                temperaturaok = validarRangoCondiciones(historiaZona.temperatura, float(zona.temperaturamin), float(zona.temperaturamax))
-                phok = validarRangoCondiciones(historiaZona.ph, float(zona.phmin), float(zona.phmax))
-                co2ok = validarRangoCondiciones(historiaZona.concentracionco2, float(zona.concentracionco2min),float(zona.concentracionco2max))
+                if historiaModulo:
+                    temperaturaok = validarRangoCondiciones(historiaModulo.temperatura, modulo.temperaturamin,modulo.temperaturamax)
+                    humedadTierraok = validarRangoCondiciones(historiaModulo.humedadtierra, modulo.humedadtierramin,modulo.humedadtierramax)
+                    humedadAmbienteok = validarRangoCondiciones(historiaModulo.humedadambiente,modulo.humedadambientemin, modulo.humedadambientemax)
+                    nivelAguaok = validarRangoCondiciones(historiaModulo.nivelagua, modulo.nivelaguamin,modulo.nivelaguamax)
+                    co2ok = validarRangoCondiciones(historiaModulo.concentracionco2, modulo.concentracionco2min,modulo.concentracionco2max)
 
-                context = {"historiaZona": historiaZona, "listaTipoZonas": listaTipoZonas, "zona": zona,
-                           'nombreUsuario': request.session.get('nomreUsuario'),
-                           'nombreInvernadero': request.session.get('nombreInvernadero'), "editable": False,"mostrarModalEditar": True, "temperaturaok" :temperaturaok,"phok":phok,"co2ok":co2ok}
+                context['editable'] = False
+                context['mostrarModalEditar'] = True
+                context['temperaturaok'] = temperaturaok
+                context['humedadTierraok'] = humedadTierraok
+                context['humedadAmbienteok'] = humedadAmbienteok
+                context['nivelAguaok'] = nivelAguaok
+                context['co2ok'] = co2ok
+
                 return render(request, template, context)
 
         if "b_cancelar" in request.POST :
-            context = {"historiaZona": historiaZona, "listaTipoZonas": listaTipoZonas, "zona": zona,
-                       'nombreUsuario': request.session.get('nomreUsuario'),
-                       'nombreInvernadero': request.session.get('nombreInvernadero'), "editable": False,  "temperaturaok" :temperaturaok,"phok":phok,"co2ok":co2ok }
+            ## context es el mismo de arriba
+            context['editable'] = False  ## es un saludo a la bandera, solo para aclarar que la vista no sera editable
             return render(request, template, context)
         if "b_aceptar_modal" in request.POST:
             print("Aceptar Modal")
             try:
-                eliminarZona(request, idZona)
-                request.session['mensajeZonaEliminar'] = True
+                eliminarModulo(request, idModulo)
+                request.session['mensajeModuloEliminar'] = True
             except Exception as e:
                 print(e)
 
-            return redirect('zonaInvernaderoListar')
+            return redirect('moduloSemillaListar')
         else:
-            return redirect('zonaInvernaderoListar')
+            return redirect('moduloSemillaListar')
 
-def eliminarZona(request,idZona):
+def eliminarModulo(request,idModulo):
     idUsuarioActual = int(request.session.get('idUsuarioActual'))
-    zona,created = Zona.objects.update_or_create(
-        idzona=idZona, defaults={"habilitado":False,"idusuarioauditado":idUsuarioActual})
+    modulo,created = Modulosemilla.objects.update_or_create(
+        idmodulo=idModulo, defaults={"habilitado":False,"idusuarioauditado":idUsuarioActual})
     print(created)
-    zona.save()
+    modulo.save()
     return
 
 
@@ -413,6 +431,8 @@ def grabarData(request,idModulo):
         "nivelaguamin": nivelAguaMin,
         "nivelaguamax": nivelAguaMax,
         "fechacreacion" :datetime.now(),
+        "filas":filas,
+        "columnas":columnas,
         "habilitado":True,
         "idusuarioauditado":idUsuarioActual}
     )

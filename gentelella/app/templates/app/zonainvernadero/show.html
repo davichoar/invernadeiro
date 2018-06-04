@@ -65,7 +65,7 @@
         <div class="x_content">
             <form class="form-horizontal form-label-left">
               <div class="item form-group">
-                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="tempIdeal">Temperatura Actual<span class="required">*</span>
+                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="tempIdeal">Temperatura Actual<span class="required"></span>
                 </label>
                 <div class="col-md-2 col-sm-2 col-xs-6">
                   <input required="required" id="temperaturaActual" value="{{historiaZona.temperatura}}"  {% if temperaturaok %} style="border-color: green; background-color: white;" {% else %} style="border-color: red; background-color: white;" {% endif %} data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12"  disabled >
@@ -73,7 +73,7 @@
               </div>
 
               <div class="item form-group">
-                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="tempIdeal">PH Actual<span class="required">*</span>
+                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="tempIdeal">PH Actual<span class="required"></span>
                 </label>
                 <div class="col-md-2 col-sm-2 col-xs-6">
                   <input required="required" id="phActual" value="{{historiaZona.ph}}"  {% if phok %} style="border-color: green; background-color: white;" {% else %} style="border-color: red; background-color: white;" {% endif %} data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12"   disabled >
@@ -81,7 +81,7 @@
               </div>
 
               <div class="item form-group">
-                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="tempIdeal">Concentración de CO2 Actual<span class="required">*</span>
+                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="tempIdeal">Concentración de CO2 Actual<span class="required"></span>
                 </label>
                 <div class="col-md-2 col-sm-2 col-xs-6">
                   <input required="required" value="{{historiaZona.concentracionco2}}" {% if co2ok %} style="border-color: green; background-color: white;" {% else %} style="border-color: red; background-color: white;" {% endif %} data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12"  disabled >
@@ -138,14 +138,14 @@
                   </div>
                 </div>
                 <div class="item form-group">
-                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="area">Área (m<sup>2</sup>)<span class="required">*</span>
+                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="area">Área (m<sup>2</sup>)<span class="required"></span>
                   </label>
                   <div class="col-md-2 col-sm-2 col-xs-6">
                     <input type="number" id="area" name="area" value="{{zona.area}}" required="required" data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12" {% if not editable %} disabled {% endif %}>
                   </div>
                 </div>
                 <div class="item form-group">
-                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="tempIdeal">Temperatura Ideal (°C)<span class="required">*</span>
+                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="tempIdeal">Temperatura Ideal (°C)<span class="required"></span>
                   </label>
                   <div class="col-md-2 col-sm-2 col-xs-6">
                     <input type="number" id="tempIdeal" name="tempIdeal" value="{{zona.temperaturaideal}}" required="required" data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12" {% if not editable %} disabled {% endif %}>
@@ -167,7 +167,7 @@
                 </div>
 
                 <div class="item form-group">
-                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="phIdeal">PH Ideal <span class="required">*</span>
+                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="phIdeal">PH Ideal <span class="required"></span>
                   </label>
                   <div class="col-md-2 col-sm-2 col-xs-6">
                     <input type="number" id="phIdeal" name="phIdeal" value="{{zona.phideal}}" required="required" data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12" {% if not editable %} disabled {% endif %}>
@@ -190,7 +190,7 @@
 
 
                 <div class="item form-group">
-                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="co2Ideal">Concentración de CO2 Ideal (%)<span class="required">*</span>
+                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="co2Ideal">Concentración de CO2 Ideal (%)<span class="required"></span>
                   </label>
                   <div class="col-md-2 col-sm-2 col-xs-6">
                     <input type="number" id="co2Ideal" name="co2Ideal" value="{{zona.concentracionco2ideal}}" required="required" data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12" {% if not editable %} disabled {% endif %}>
