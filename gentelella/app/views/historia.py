@@ -9,7 +9,7 @@ import json
 import base64
 import os
 
-rutaDefault='/app/static/received_images/'
+rutaDefault='app/static/received_images/'
 formatoDefault='.jpg'
 #rutaProyecto='/'.join(os.path.dirname(os.path.abspath(__file__)).split('/')[:-2])
 rutaProyecto=settings.BASE_DIR
@@ -26,6 +26,7 @@ def selectID(actual_id):
 def prueba(request, template=None, extra_context=None):
     global rutaFinal
     global formatoDefault
+    
     if request.method == 'GET':
         #rechicken
         content = 'prueba del servidor'
@@ -39,12 +40,12 @@ def prueba(request, template=None, extra_context=None):
                 nuevoid = selectID(Foto.objects.all().aggregate(Max('idfoto'))['idfoto__max']) + 1
 
                 nombreArch = str(jsonFoto['codigoModulo']) + '_' + str(nuevoid)
-                #rutaArchivo = os.path.join(rutaFinal,nombreArch,formatoDefault)
+                rutaArchivo = os.path.join(rutaFinal,nombreArch+formatoDefault)
                 #Guardando en la carpeta
 
-                #imagenCont = base64.b64decode(jsonFoto['foto'])
-                #with open(rutaArchivo, 'wb') as f:
-                #    f.write(imagenCont)
+                imagenCont = base64.b64decode(jsonFoto['foto'])
+                with open(rutaArchivo, 'wb') as f:
+                    f.write(imagenCont)
                 
 
                 #Guardando en la base de datos.
@@ -53,9 +54,9 @@ def prueba(request, template=None, extra_context=None):
                     idfoto = nuevoid,
                     idmodulo = int(jsonFoto['codigoModulo']),
                     ruta = rutaArchivo,
-                    nombresinextension = nombreArchivo,
+                    nombresinextension = nombreArch,
                     extension = formatoDefault,
-                    nombreFoto = 'semilla_' + str(nuevoid), #nombre inicial
+                    nombrefoto = 'semilla_' + str(nuevoid), #nombre inicial
 	                fecharegistro = datetime.now() #maybe a corregir.
                 )
 
@@ -105,8 +106,7 @@ def prueba(request, template=None, extra_context=None):
                     idhistoriapanel = nuevopanelid,
                     idpanel = int(jsonPanel['codigoPanel']),
                     encendido = jsonPanel['encendido'],
-                    fecharegistro= datetime.now(), #tochange
-                    comentario='meme'
+                    fecharegistro= datetime.now() #tochange
                 )
 
 
@@ -116,7 +116,7 @@ def prueba(request, template=None, extra_context=None):
             nuevaHInvernadero = Historiainvernadero.objects.create(
                 idhistoriainvernadero = nuevoid,
                 idinvernadero = int(jsonATomar['codigoInvernadero']),
-                energia = float(jsonATomar['energia']),
+                nivelenergia = float(jsonATomar['energia']),
                 niveltanqueagua = float(jsonATomar['nivelTanque']),
                 comentario = 'meme',
                 fecharegistro= datetime.now()
