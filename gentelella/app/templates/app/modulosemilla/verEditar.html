@@ -76,7 +76,7 @@
                 <label class="control-label col-md-3 col-sm-3 col-xs-12" for="tempIdeal">Humedad de la Tierra Actual<span class="required"></span>
                 </label>
                 <div class="col-md-2 col-sm-2 col-xs-6">
-                  <input required="required" id="humedadTieraActual" value="{{historiaModulo.humedadtierra}}"  {% if phok %} style="border-color: green; background-color: white;" {% else %} style="border-color: red; background-color: white;" {% endif %} data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12"   disabled >
+                  <input required="required" id="humedadTieraActual" value="{{historiaModulo.humedadtierra}}"  {% if humedadTierraok %} style="border-color: green; background-color: white;" {% else %} style="border-color: red; background-color: white;" {% endif %} data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12"   disabled >
                 </div>
               </div>
 
@@ -84,7 +84,7 @@
                 <label class="control-label col-md-3 col-sm-3 col-xs-12" for="tempIdeal">Humedad del Ambiente Actual<span class="required"></span>
                 </label>
                 <div class="col-md-2 col-sm-2 col-xs-6">
-                  <input required="required" id="humedadAmbienteActual" value="{{historiaModulo.humedadambiente}}"  {% if phok %} style="border-color: green; background-color: white;" {% else %} style="border-color: red; background-color: white;" {% endif %} data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12"   disabled >
+                  <input required="required" id="humedadAmbienteActual" value="{{historiaModulo.humedadambiente}}"  {% if humedadAmbienteok %} style="border-color: green; background-color: white;" {% else %} style="border-color: red; background-color: white;" {% endif %} data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12"   disabled >
                 </div>
               </div>
 
@@ -100,7 +100,7 @@
                 <label class="control-label col-md-3 col-sm-3 col-xs-12" for="tempIdeal">Nivel del Agua Actual<span class="required"></span>
                 </label>
                 <div class="col-md-2 col-sm-2 col-xs-6">
-                  <input required="required" id="nivelAguaActual" value="{{historiaModulo.nivelagua}}"  {% if phok %} style="border-color: green; background-color: white;" {% else %} style="border-color: red; background-color: white;" {% endif %} data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12"   disabled >
+                  <input required="required" id="nivelAguaActual" value="{{historiaModulo.nivelagua}}"  {% if nivelAguaok %} style="border-color: green; background-color: white;" {% else %} style="border-color: red; background-color: white;" {% endif %} data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12"   disabled >
                 </div>
               </div>
 
