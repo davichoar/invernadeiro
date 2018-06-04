@@ -54,8 +54,9 @@ def index(request,
                     'idInvernadero': request.session['idInvernadero'],
                     'nombreInvernadero': request.session.get('nombreInvernadero')
                 }
-                template = loader.get_template('app/index.html')
-                return HttpResponse(template.render(context, request))
+                #template = loader.get_template('app/index.html')
+                #return HttpResponse(template.render(context, request))
+                return redirect('zonaInvernaderoListar')                
             else:
                 return redirect('escogerInvernadero')
 
