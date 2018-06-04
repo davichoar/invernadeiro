@@ -273,9 +273,9 @@ def grabarData(request,idZona):
     if area == "":
         return "Falta ingresar el área de la zona."
 
-
-    if tempIdeal == "":
-        return "Falta ingresar la temperatura ideal para la zona."
+    #
+    # if tempIdeal == "":
+    #     return "Falta ingresar la temperatura ideal para la zona."
 
 
     if tempMin == "":
@@ -285,18 +285,18 @@ def grabarData(request,idZona):
     if tempMax == "":
         return "Falta ingresar la temperatura máxima para la zona."
 
-
-    if phIdeal == "":
-        return "Falta ingresar el PH ideal"
+    #
+    # if phIdeal == "":
+    #     return "Falta ingresar el PH ideal"
 
     if phMin == "":
         return "Falta ingresar el PH mínimo"
 
     if phMax == "":
         return "Falta ingresar el PH máximo"
-
-    if co2Ideal == "":
-        return "Falta ingresar la concentración de CO2 ideal para la zona."
+    #
+    # if co2Ideal == "":
+    #     return "Falta ingresar la concentración de CO2 ideal para la zona."
 
 
     if co2Min == "":
@@ -305,6 +305,39 @@ def grabarData(request,idZona):
 
     if co2Max == "":
         return "Falta ingresar la concentración de CO2 máxima para la zona."
+
+    if tempMin > tempMax:
+        return "La temperatura mínima debe ser menor a la temperatura máxima"
+
+    if tempIdeal != "":
+        if (tempIdeal > tempMin) and (tempIdeal < tempMax):
+            print("Temperatura Ideal Valida")
+        else:
+            return "La temperatura ideal debe ser un valor entre la mínima y la máxima"
+    else:
+        tempIdeal = None
+
+    if phMin > phMax:
+        return "El pH mínimo debe ser menor al pH máximo"
+
+    if phIdeal != "":
+        if (phIdeal > phMin) and (phIdeal < phMax):
+            print("pH Valido")
+        else:
+            return "El pH ideal debe ser un valor entre el mínimo y el máximo"
+    else:
+        phIdeal = None
+
+
+    if co2Ideal != "":
+        if (co2Ideal > co2Min) and (co2Ideal < co2Max):
+            print("CO2 Valido")
+        else:
+            return "El CO2 ideal debe ser un valor entre el mínimo y el máximo"
+    else:
+        co2Ideal = None
+
+
 
     idInvernaderoObtenido =  request.session.get('idInvernadero')
     if idInvernaderoObtenido == "" or idInvernaderoObtenido == None:
