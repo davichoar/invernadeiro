@@ -389,7 +389,7 @@ def grabarData(request,idModulo):
 
 
     if nivelAguaMin > nivelAguaMax:
-        return "La concentración de CO2 mínima debe ser menor a la concentración de CO2 máxima"
+        return "El nivel del agua mínimo debe ser menor al nivel del agua máximo"
 
     if nivelAguaIdeal != "":
         if (nivelAguaIdeal > nivelAguaMin) and (nivelAguaIdeal < nivelAguaMax):
