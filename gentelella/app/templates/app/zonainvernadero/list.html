@@ -104,7 +104,7 @@
                                 <h3>{{historia.niveltanqueagua}}</h3>
                             </center>
                                 <center>
-                                    <img class="img-thumbnail img-circle center-block" style="height: 45%; width: 45%; display: block; border-color: white;" src="/static/images/water.png" />
+                                    <img class="img-thumbnail img-circle center-block" style="height: 45%; width: 45%; display: block; border-width: 2px; {% if nivelAguaok %} border-color: green; {% else %} border-color: red; {% endif %}" src="/static/images/water.png" />
                                 </center>
                                 <br>
                             <center><h2>Litros</h2></center>
@@ -115,7 +115,7 @@
                             <div class="x_title"></div>
                             <center><h3>{{historia.nivelenergia}}</h3></center>
                                 <center>
-                                    <img class="img-thumbnail img-rounded center-block" style="height: 45%; width: 45%; display: block; border-color: white;" src="/static/images/thunder.png" />
+                                    <img class="img-thumbnail img-rounded center-block" style="height: 45%; width: 45%; display: block; border-width: 2px; {% if nivelEnergiaok %} border-color: green; {% else %} border-color: red; {% endif %}" src="/static/images/thunder.png" />
                                 </center>
                                 <br>
                             <center><h2>Watts</h2></center>
