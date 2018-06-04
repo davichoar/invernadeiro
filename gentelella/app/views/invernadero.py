@@ -9,7 +9,7 @@ def escoger(request,
 
     print('ESCOGER INVERANDERO')
 
-    idUsuario = request.session.get('idUsuarioActual') # ToDo: Verificar que el usuario sea el -1 y mostrar todos los invernaderos
+    idUsuario = request.session.get('idUsuarioActual')
     usuario = None
     try:
         usuario = Usuario.objects.get(idusuario=idUsuario)
@@ -18,19 +18,24 @@ def escoger(request,
         return
 
     if usuario is not None:
+        if usuario.idrol == -1: # ToDo: Cuando tengamos permisos, verificar q tenga el superpermiso, o el permiso de ver todos los usuarios
+            listaInvernaderos = Invernadero.objects.filter(habilitado=True)
+        else:
+            listaInvernaderoXUsuario = Usuarioxinvernadero.objects.filter(idusuario=idUsuario)
+            listaInvernaderos = []
 
-        listaInvernaderoXUsuario = Usuarioxinvernadero.objects.filter(idusuario=idUsuario)
-        listaInvernaderos = []
+            if len(listaInvernaderoXUsuario) == 0:
+                print('NINGUN INVERNADERO ASOCIADO A ESE USUARIO')
+                #return
 
-        if len(listaInvernaderoXUsuario) == 0:
-            print('NINGUN INVERNADERO ASOCIADO A ESE USUARIO')
-            return
-
-        for item in listaInvernaderoXUsuario:
-            print(item.idinvernadero)
-            invernadero = Invernadero.objects.get(idinvernadero=item.idinvernadero) # ToDo: Revisar q no sea invernadero eliminado tmbn
-            print(invernadero.nombre)
-            listaInvernaderos.append(invernadero)
+            for item in listaInvernaderoXUsuario:
+                print(item.idinvernadero)
+                try:
+                    invernadero = Invernadero.objects.get(idinvernadero=item.idinvernadero, habilitado=True)
+                except:
+                    continue
+                print(invernadero.nombre)
+                listaInvernaderos.append(invernadero)
         context = {
             'listaInvernaderos': listaInvernaderos,
             'nombreUsuario': usuario.getnombrecompleto(),

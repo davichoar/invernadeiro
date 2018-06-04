@@ -1,0 +1,239 @@
+{% extends "app/base_site.html" %}
+
+
+{% block title %} Crear Invernadero {% endblock title %}
+
+{% block stylesheets %}
+ {{ block.super }}
+  <link href="/static/vendors/pnotify/dist/pnotify.css" rel="stylesheet">
+  <link href="/static/vendors/pnotify/dist/pnotify.buttons.css" rel="stylesheet">
+  <link href="/static/vendors/pnotify/dist/pnotify.nonblock.css" rel="stylesheet">
+{% endblock stylesheets %}
+
+{% block content %}
+
+<div id="modalxd" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-hidden="true" >
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span>
+        </button>
+        <h4 class="modal-title" id="myModalLabel2">Error</h4>
+      </div>
+      <div class="modal-body">
+        <p>Los datos ingresados no son válidos.</p>
+      </div>
+      <div class="modal-footer">
+        <center><button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button></center>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="right_col" role="main">
+   <div class="">
+     <div class="page-title">
+       <div class="title_left">
+         <h3>Invernaderos</h3>
+       </div>
+
+     </div>
+     <div class="clearfix"></div>
+
+     <div class="row">
+       <div class="col-md-12 col-sm-12 col-xs-12">
+         <div class="x_panel">
+
+           <div class="x_title">
+             <h2>Crear Invernadero<small></small></h2>
+                  <div class="clearfix"></div>
+           </div>
+
+
+           <div class="x_content">
+
+             <form id="nuevoInvernadero" class="form-horizontal form-label-left" method="POST">
+                                                                {% csrf_token %}
+
+               <div class="item form-group">
+                 <label class="control-label col-md-3 col-sm-3 col-xs-12" for="nombre">Nombre <span class="required">*</span>
+                 </label>
+                 <div class="col-md-6 col-sm-6 col-xs-12">
+                   <input id="nombre" class="form-control col-md-7 col-xs-12" name="nombre" value="{{inv.nombre}}" type="text">
+                 </div>
+               </div>
+                <div class="item form-group">
+                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="codigoInv">Código de Invernadero <span class="required">*</span>
+                  </label>
+                  <div class="col-md-2 col-sm-2 col-xs-6">
+                    <input  type="number" id="codigoInv" name="codigoInv" value="{{inv.codigoinvernaderojson}}" class="form-control col-md-7 col-xs-12">
+                  </div>
+                </div>
+               <div class="form-group">
+                  <label class="control-label col-md-3 col-sm-3 col-xs-12">Administrador *</label>
+                  <div class="col-md-6 col-sm-6 col-xs-12">
+                    <select id = "admin" class="form-control" name="admin">
+                      <option value="-1" {% if  inv.idadmin  == -1 %} selected {% endif %} disabled>- Seleccione -</option>
+                      {% for usuario in listaUsuarios %}
+                      <option value="{{usuario.idusuario}}" {% if inv.idadmin == usuario.idusuario %} selected {% endif %} >{{usuario.nombres}} {{usuario.apellidopaterno}}</option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                </div>
+                <div class="item form-group">
+                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="area">Área (m<sup>2</sup>)
+                  </label>
+                  <div class="col-md-2 col-sm-2 col-xs-6">
+                    <input  type="number" id="area" name="area" value="{{inv.area}}" class="form-control col-md-7 col-xs-12">
+                  </div>
+                </div>
+                <div class="item form-group">
+                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="aguaIdeal">Nivel Ideal del Tanque de Agua (Litros) 
+                  </label>
+                  <div class="col-md-2 col-sm-2 col-xs-6">
+                    <input  type="number" id="aguaIdeal" name="aguaIdeal" value="{{inv.niveltanqueaguaideal}}" class="form-control col-md-7 col-xs-12">
+                  </div>
+                </div>
+                <div class="item form-group">
+                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="aguaMin">Nivel Mínimo del Tanque de Agua (Litros)* 
+                  </label>
+                  <div class="col-md-2 col-sm-2 col-xs-6">
+                    <input  type="number" id="aguaMin" name="aguaMin" value="{{inv.niveltanqueaguamin}}" class="form-control col-md-7 col-xs-12">
+                  </div>
+                </div>
+                <div class="item form-group">
+                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="aguaMax">Nivel Máximo del Tanque de Agua (Litros)*
+                  </label>
+                  <div class="col-md-2 col-sm-2 col-xs-6">
+                    <input  type="number" id="aguaMax" name="aguaMax" value="{{inv.niveltanqueaguamax}}" class="form-control col-md-7 col-xs-12">
+                  </div>
+                </div>
+                <div class="item form-group">
+                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="energiaIdeal">Nivel Ideal de Energía (Watts) 
+                  </label>
+                  <div class="col-md-2 col-sm-2 col-xs-6">
+                    <input  type="number" id="energiaIdeal" name="energiaIdeal" value="{{inv.nivelenergiaideal}}" class="form-control col-md-7 col-xs-12">
+                  </div>
+                </div>
+                <div class="item form-group">
+                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="energiaMin">Nivel Mínimo de Energía (Watts)* 
+                  </label>
+                  <div class="col-md-2 col-sm-2 col-xs-6">
+                    <input  type="number" id="energiaMin" name="energiaMin" value="{{inv.nivelenergiamin}}" class="form-control col-md-7 col-xs-12">
+                  </div>
+                </div>
+                <div class="item form-group">
+                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="energiaMax">Nivel Máximo de Energía (Watts)*
+                  </label>
+                  <div class="col-md-2 col-sm-2 col-xs-6">
+                    <input  type="number" id="energiaMax" name="energiaMax" value="{{inv.nivelenergiamax}}" class="form-control col-md-7 col-xs-12">
+                  </div>
+                </div>
+                <div class="item form-group">
+                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="latitud">Latitud
+                  </label>
+                  <div class="col-md-2 col-sm-2 col-xs-6">
+                    <input  type="number" id="latitud" name="latitud" value="{{inv.latitud}}" class="form-control col-md-7 col-xs-12">
+                  </div>
+                </div>
+                <div class="item form-group">
+                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="longitud">Longitud
+                  </label>
+                  <div class="col-md-2 col-sm-2 col-xs-6">
+                    <input  type="number" id="longitud" name="longitud" value="{{inv.longitud}}" class="form-control col-md-7 col-xs-12">
+                  </div>
+                </div>
+               <div class="ln_solid"></div>
+               <div class="form-group">
+                 <div class="col-xs-12">
+				 <center>
+                   <button id="send" name="b_aceptar" type="button" class="btn btn-success" onclick="validar()">Aceptar</button>
+                   <a href="/inv/"><button id="cancel" name="b_cancelar" type="button" class="btn btn-default">Cancelar</button></a>
+				  </center>
+                 </div>
+               </div>
+             </form>
+           </div>
+         </div>
+       </div>
+     </div>
+   </div>
+ </div>
+{% endblock content %}
+
+{% block javascripts %}
+ {{ block.super }}
+  <script src="/static/vendors/jquery.inputmask/dist/min/jquery.inputmask.bundle.min.js"></script>
+  <script src="/static/vendors/pnotify/dist/pnotify.js"></script>
+  <script src="/static/vendors/pnotify/dist/pnotify.buttons.js"></script>
+  <script src="/static/vendors/pnotify/dist/pnotify.nonblock.js"></script>
+  <script>
+  function validar() {
+        if (document.getElementById("nombre").value == '') {
+            mostrarModal('Debe ingresar un nombre para el invernadero.');
+            return;
+        }
+        if (document.getElementById("codigoInv").value == '') {
+            mostrarModal('Debe ingresar el código de identificación del invernadero.');
+            return;
+        }
+        if (document.getElementById("admin").value == -1) {
+            mostrarModal('Debe ingresar un administrador para el invernadero.');
+            return;
+        }
+        aguaMin = document.getElementById("aguaMin").value;
+        aguaMax = document.getElementById("aguaMax").value;
+        aguaIdeal = document.getElementById("aguaIdeal").value;
+        if (aguaMin == '' || aguaMax == '') {
+            mostrarModal('Debe ingresar los valores para el mínimo y el máximo del nivel de tanque de agua.');
+            return;
+        }
+        if (aguaIdeal == '') {
+            if (!(aguaMin <= aguaMax)) {
+                mostrarModal('Los valores para el mínimo, ideal y máximo del nivel de tanque de agua no son válidos.');
+                return;     
+            }
+        } else if (!(aguaMin <= aguaIdeal && aguaIdeal <= aguaMax)) {
+            mostrarModal('Los valores para el mínimo, ideal y máximo del nivel de tanque de agua no son válidos.');
+            return;        
+        }
+        energiaMin = document.getElementById("energiaMin").value;
+        energiaMax = document.getElementById("energiaMax").value;
+        energiaIdeal = document.getElementById("energiaIdeal").value;
+        if (energiaMin == '' || energiaMax == '') {
+            mostrarModal('Debe ingresar los valores para el mínimo y el máximo del nivel de energía.');
+            return;
+        }
+        if (energiaIdeal == '') {
+            if (!(energiaMin <= energiaMax)) {
+                mostrarModal('Los valores para el mínimo, ideal y máximo del nivel de energía no son válidos.');
+                return;        
+            }
+        } else if (!(energiaMin <= energiaIdeal && energiaIdeal <= energiaMax)) {
+            mostrarModal('Los valores para el mínimo, ideal y máximo del nivel de energía no son válidos.');
+            return;        
+        }
+       document.getElementById("nuevoInvernadero").submit();
+       return;        
+    }
+  
+  </script>
+  <script>
+  function mostrarModal(cadena) {
+    new PNotify({
+        title: 'Error',
+        text: cadena,
+        type: 'error',
+        styling: 'bootstrap3'
+    });
+  }
+  </script>
+  {% if mensajeError != None %}
+  <script>
+  mostrarModal("{{mensajeError}}");
+  </script>
+  {% endif %}
+{% endblock javascripts %}
+
