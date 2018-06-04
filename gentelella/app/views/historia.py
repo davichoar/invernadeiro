@@ -9,7 +9,7 @@ import json
 import base64
 import os
 
-rutaDefault='/app/static/received_images/'
+rutaDefault='app/static/received_images/'
 formatoDefault='.jpg'
 #rutaProyecto='/'.join(os.path.dirname(os.path.abspath(__file__)).split('/')[:-2])
 rutaProyecto=settings.BASE_DIR
@@ -26,6 +26,7 @@ def selectID(actual_id):
 def prueba(request, template=None, extra_context=None):
     global rutaFinal
     global formatoDefault
+    
     if request.method == 'GET':
         #rechicken
         content = 'prueba del servidor'
@@ -42,9 +43,9 @@ def prueba(request, template=None, extra_context=None):
                 rutaArchivo = os.path.join(rutaFinal,nombreArch+formatoDefault)
                 #Guardando en la carpeta
 
-                #imagenCont = base64.b64decode(jsonFoto['foto'])
-                #with open(rutaArchivo, 'wb') as f:
-                #    f.write(imagenCont)
+                imagenCont = base64.b64decode(jsonFoto['foto'])
+                with open(rutaArchivo, 'wb') as f:
+                    f.write(imagenCont)
                 
 
                 #Guardando en la base de datos.
