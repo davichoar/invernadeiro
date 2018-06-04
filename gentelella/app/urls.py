@@ -47,7 +47,6 @@ urlpatterns = [
         views.zonaInvernadero.detalle,
         name='zonaInvernaderoDetalle'),
 
-###
 ### INVERNADEROS
         
     url('^inv/crear/$',
@@ -61,11 +60,10 @@ urlpatterns = [
     url('^inv/(?P<idInv>.*)$',
         views.inv.detalle,
         name='invernaderoDetalle'),
-        
-### HISTORIAS (RECIBIR JSONS)
 
 
-## MODULO SEMILLA
+### MODULO SEMILLA
+
     url('^modulosemilla/crear/$',
         views.moduloSemilla.crear,
         name='moduloSemillaCrear'),
@@ -76,9 +74,8 @@ urlpatterns = [
         views.moduloSemilla.detalle,
         name='moduloSemillaDetalle'),
 
-###
+### HISTORIAS (RECIBIR JSONS)
 
-## HISTORIAS (RECIBIR JSONS)
     url('^historia/$',
             views.historia.prueba,
             name='historia'),
