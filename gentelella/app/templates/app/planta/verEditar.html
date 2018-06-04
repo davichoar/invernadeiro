@@ -1,0 +1,363 @@
+{% extends "app/base_site.html" %}
+
+
+{% block title %} {% if editable %} Editar {% else %} Ver {% endif %} Zona del Invernadero{% endblock title %}
+
+{% block stylesheets %}
+  {{ block.super }}
+  <link href="/static/vendors/pnotify/dist/pnotify.css" rel="stylesheet">
+  <link href="/static/vendors/pnotify/dist/pnotify.buttons.css" rel="stylesheet">
+  <link href="/static/vendors/pnotify/dist/pnotify.nonblock.css" rel="stylesheet">
+{% endblock stylesheets %}
+
+{% block content %}
+
+
+  <div id="modalxd" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-hidden="true" >
+<form class="form-horizontal form-label-left"  method="POST" novalidate>
+    <div class="modal-dialog modal-sm">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span>
+          </button>
+          <h4 class="modal-title" id="myModalLabel2">Confirmación de Eliminación</h4>
+        </div>
+        <div class="modal-body">
+          <p>¿Está seguro que desea eliminar la planta?</p>
+        </div>
+        <div class="modal-footer">
+            {% csrf_token %}
+            <center>
+              <button id="b_aceptar_modal" name="b_aceptar_modal" type="submit" class="btn btn-success" data-dismiss="modal">Aceptar</button>
+              <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+            </center>
+        </div>
+      </div>
+    </div>
+</form>
+  </div>
+
+
+
+ <div class="right_col" role="main">
+    <div class="">
+      <div class="page-title">
+        <div class="title_left">
+          <h3>Plantas</h3>
+        </div>
+
+      </div>
+      <div class="clearfix"></div>
+
+      {% if historiaModulo  %}
+      <div class="x_panel">
+
+        <div class="x_title">
+          <h2>Condiciones Actuales (Registradas el {{historiaModulo.fecharegistro|date:"d/m/Y H:m:s"}})<small></small></h2>
+              <ul class="nav navbar-right panel_toolbox" >
+                <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                </li>
+              </ul>
+          <div class="clearfix"></div>
+        </div>
+
+
+        <div class="x_content">
+            <form class="form-horizontal form-label-left">
+              <div class="item form-group">
+                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="tempIdeal">Temperatura Actual<span class="required"></span>
+                </label>
+                <div class="col-md-2 col-sm-2 col-xs-6">
+                  <input required="required" id="temperaturaActual" value="{{historiaModulo.temperatura}}"  {% if temperaturaok %} style="border-color: green; background-color: white;" {% else %} style="border-color: red; background-color: white;" {% endif %} data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12"  disabled >
+                </div>
+              </div>
+
+              <div class="item form-group">
+                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="tempIdeal">Humedad de la Tierra Actual<span class="required"></span>
+                </label>
+                <div class="col-md-2 col-sm-2 col-xs-6">
+                  <input required="required" id="humedadTieraActual" value="{{historiaModulo.humedadtierra}}"  {% if humedadTierraok %} style="border-color: green; background-color: white;" {% else %} style="border-color: red; background-color: white;" {% endif %} data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12"   disabled >
+                </div>
+              </div>
+
+              <div class="item form-group">
+                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="tempIdeal">Humedad del Ambiente Actual<span class="required"></span>
+                </label>
+                <div class="col-md-2 col-sm-2 col-xs-6">
+                  <input required="required" id="humedadAmbienteActual" value="{{historiaModulo.humedadambiente}}"  {% if humedadAmbienteok %} style="border-color: green; background-color: white;" {% else %} style="border-color: red; background-color: white;" {% endif %} data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12"   disabled >
+                </div>
+              </div>
+
+              <div class="item form-group">
+                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="tempIdeal">Concentración de CO2 Actual<span class="required"></span>
+                </label>
+                <div class="col-md-2 col-sm-2 col-xs-6">
+                  <input required="required" value="{{historiaModulo.concentracionco2}}" {% if co2ok %} style="border-color: green; background-color: white;" {% else %} style="border-color: red; background-color: white;" {% endif %} data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12"  disabled >
+                </div>
+              </div>
+
+              <div class="item form-group">
+                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="tempIdeal">Nivel del Agua Actual<span class="required"></span>
+                </label>
+                <div class="col-md-2 col-sm-2 col-xs-6">
+                  <input required="required" id="nivelAguaActual" value="{{historiaModulo.nivelagua}}"  {% if nivelAguaok %} style="border-color: green; background-color: white;" {% else %} style="border-color: red; background-color: white;" {% endif %} data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12"   disabled >
+                </div>
+              </div>
+
+              <div class="item form-group">
+                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="tempIdeal">Luz del módulo<span class="required"></span>
+                </label>
+                <div class="col-md-2 col-sm-2 col-xs-6">
+                    <div class="radio">
+                      <label>
+                        <input type="radio" class="flat" name="iCheck" {% if historiaModulo.luz %} checked {% endif%} > {% if historiaModulo.luz %} Encendida {% else %} Apagada {% endif %}
+                      </label>
+                    </div>
+                </div>
+              </div>
+
+            </form>
+        </div>
+      </div>
+      {% endif %}
+
+      <div class="row">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+          <div class="x_panel">
+
+            <div class="x_title">
+              <h2>Detalle de Módulo de Semillas<small></small></h2>
+              <ul class="nav navbar-right panel_toolbox" >
+                <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                </li>
+              </ul>
+              <div class="clearfix"></div>
+            </div>
+
+
+            <div class="x_content">
+
+              <form class="form-horizontal form-label-left"  method="POST" novalidate>
+                {% csrf_token %}
+                <div class="item form-group">
+                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="nombre">Nombre<span class="required">*</span>
+                  </label>
+                  <div class="col-md-6 col-sm-6 col-xs-12">
+                    <input id="nombre" name="nombre" value = "{{modulo.nombre}}" class="form-control col-md-7 col-xs-12" data-validate-length-range="6" data-validate-words="2" name="name" placeholder="" required="required" type="text"  {% if not editable %} disabled {% endif %} >
+                  </div>
+                </div>
+                <div class="item form-group">
+                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="codigoModulo">Código de módulo <span class="required">*</span>
+                  </label>
+                  <div class="col-md-2 col-sm-2 col-xs-6">
+                    <input  type="number" id="codigoModulo" name="codigoModulo"  value ="{{modulo.codigomodulojson}}" required="required" class="form-control col-md-7 col-xs-12" {% if not editable %} disabled {% endif %}>
+                  </div>
+                </div>
+                <div class="item form-group">
+                  <label
+                    class="control-label col-md-3 col-sm-3 col-xs-12" for="zona">Zona <span class="required">*</span>
+                  </label>
+                  <div class="col-md-6 col-sm-6 col-xs-12">
+                    <select id="zona" name="zona"  class="form-control" required {% if not editable %} disabled {% endif %}>
+                      {% for zona in listaZonas %}
+                        <option value="{{zona.idzona}}" {% if zona.idzona == modulo.idzona %}selected{% endif %}>{{zona.nombre}}</option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                </div>
+                 <div class="item form-group">
+                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="tempIdeal">Temperatura Ideal (°C)<span class="required"></span>
+                  </label>
+                  <div class="col-md-2 col-sm-2 col-xs-6">
+                    <input type="number" id="tempIdeal" name="tempIdeal" value="{{modulo.temperaturaideal}}" required="required" data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12" {% if not editable %} disabled {% endif %}>
+                  </div>
+                </div>
+                <div class="item form-group">
+                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="tempIdeal">Temperatura Mínima (°C)<span class="required">*</span>
+                  </label>
+                  <div class="col-md-2 col-sm-2 col-xs-6">
+                    <input type="number" id="tempMin" name="tempMin" value="{{modulo.temperaturamin}}" required="required" data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12" {% if not editable %} disabled {% endif %}>
+                  </div>
+                </div>
+                <div class="item form-group">
+                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="tempIdeal">Temperatura Máxima (°C)<span class="required">*</span>
+                  </label>
+                  <div class="col-md-2 col-sm-2 col-xs-6">
+                    <input type="number" id="tempMax" name="tempMax" value="{{modulo.temperaturamax}}" required="required" data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12" {% if not editable %} disabled {% endif %}>
+                  </div>
+                </div>
+
+                <div class="item form-group">
+                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="humedadTierraIdeal">Humedad de la Tierra Ideal (%)<span class="required"></span>
+                  </label>
+                  <div class="col-md-2 col-sm-2 col-xs-6">
+                    <input type="number" id="humedadTierraIdeal" name="humedadTierraIdeal" value="{{modulo.humedadtierraideal}}" required="required" data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12" {% if not editable %} disabled {% endif %}>
+                  </div>
+                </div>
+                <div class="item form-group">
+                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="humedadTierraMin">Humedad de la Tierra Mínima (%)<span class="required">*</span>
+                  </label>
+                  <div class="col-md-2 col-sm-2 col-xs-6">
+                    <input type="number" id="humedadTierraMin" name="humedadTierraMin" value="{{modulo.humedadtierramin}}" required="required" data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12" {% if not editable %} disabled {% endif %}>
+                  </div>
+                </div>
+                <div class="item form-group">
+                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="humedadTierraMax">Humedad de la Tierra Máxima (%)<span class="required">*</span>
+                  </label>
+                  <div class="col-md-2 col-sm-2 col-xs-6">
+                    <input type="number" id="humedadTierraMax" name="humedadTierraMax" value="{{modulo.humedadtierramax}}" required="required" data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12" {% if not editable %} disabled {% endif %}>
+                  </div>
+                </div>
+
+                <div class="item form-group">
+                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="humedadAmbienteIdeal">Humedad del Ambiente Ideal (%)<span class="required"></span>
+                  </label>
+                  <div class="col-md-2 col-sm-2 col-xs-6">
+                    <input type="number" id="humedadAmbienteIdeal" name="humedadAmbienteIdeal" value="{{modulo.humedadambienteideal}}" required="required" data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12" {% if not editable %} disabled {% endif %}>
+                  </div>
+                </div>
+                <div class="item form-group">
+                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="humedadAmbienteMin">Humedad del Ambiente Mínimo (%)<span class="required">*</span>
+                  </label>
+                  <div class="col-md-2 col-sm-2 col-xs-6">
+                    <input type="number" id="humedadAmbienteMin" name="humedadAmbienteMin" value="{{modulo.humedadambientemin}}" required="required" data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12" {% if not editable %} disabled {% endif %}>
+                  </div>
+                </div>
+                <div class="item form-group">
+                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="humedadAmbienteMax">Humedad del Ambiente Máximo (%)<span class="required">*</span>
+                  </label>
+                  <div class="col-md-2 col-sm-2 col-xs-6">
+                    <input type="number" id="humedadAmbienteMax" name="humedadAmbienteMax" value="{{modulo.humedadambientemax}}" required="required" data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12" {% if not editable %} disabled {% endif %}>
+                  </div>
+                </div>
+
+                <div class="item form-group">
+                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="co2Ideal">Concentración de CO2 Ideal (%)<span class="required"></span>
+                  </label>
+                  <div class="col-md-2 col-sm-2 col-xs-6">
+                    <input type="number" id="co2Ideal" name="co2Ideal" value="{{modulo.concentracionco2ideal}}" required="required" data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12" {% if not editable %} disabled {% endif %}>
+                  </div>
+                </div>
+                <div class="item form-group">
+                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="co2Min">Concentración de CO2 Mínima (%)<span class="required">*</span>
+                  </label>
+                  <div class="col-md-2 col-sm-2 col-xs-6">
+                    <input type="number" id="co2Min" name="co2Min" required="required" value="{{modulo.concentracionco2min}}" data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12" {% if not editable %} disabled {% endif %}>
+                  </div>
+                </div>
+                <div class="item form-group">
+                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="co2Max">Concentración de CO2 Máxima (%)<span class="required">*</span>
+                  </label>
+                  <div class="col-md-2 col-sm-2 col-xs-6">
+                    <input type="number" id="co2Max" name="co2Max" required="required" value="{{modulo.concentracionco2max}}" data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12" {% if not editable %} disabled {% endif %}>
+                  </div>
+                </div>
+
+                <div class="item form-group">
+                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="nivelAguaIdeal">Nivel del Agua Ideal (L)<span class="required"></span>
+                  </label>
+                  <div class="col-md-2 col-sm-2 col-xs-6">
+                    <input type="number" id="nivelAguaIdeal" name="nivelAguaIdeal" value="{{modulo.nivelaguaideal}}" required="required" data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12" {% if not editable %} disabled {% endif %}>
+                  </div>
+                </div>
+                <div class="item form-group">
+                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="nivelAguaMin">Nivel del Agua Mínima (L)<span class="required">*</span>
+                  </label>
+                  <div class="col-md-2 col-sm-2 col-xs-6">
+                    <input type="number" id="nivelAguaMin" name="nivelAguaMin" required="required" value="{{modulo.nivelaguamin}}" data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12" {% if not editable %} disabled {% endif %}>
+                  </div>
+                </div>
+                <div class="item form-group">
+                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="nivelAguaMax">Nivel del Agua Máxima (L)<span class="required">*</span>
+                  </label>
+                  <div class="col-md-2 col-sm-2 col-xs-6">
+                    <input type="number" id="nivelAguaMax" name="nivelAguaMax" required="required" value="{{modulo.nivelaguamax}}" data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12" {% if not editable %} disabled {% endif %}>
+                  </div>
+                </div>
+
+                <div class="item form-group">
+                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="filas">Cantidad de Filas<span class="required">*</span>
+                  </label>
+                  <div class="col-md-2 col-sm-2 col-xs-6">
+                    <input type="number" id="filas" name="filas" required="required" value="{{modulo.filas}}" data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12" {% if not editable %} disabled {% endif %}>
+                  </div>
+                </div>
+                <div class="item form-group">
+                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="columnas">Cantidad de Columnas<span class="required">*</span>
+                  </label>
+                  <div class="col-md-2 col-sm-2 col-xs-6">
+                    <input type="number" id="columnas" name="columnas" required="required" value="{{modulo.columnas}}" data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12" {% if not editable %} disabled {% endif %}>
+                  </div>
+                </div>
+
+
+                <div class="ln_solid"></div>
+                <div class="form-group">
+                  <div class="col-xs-12">
+                    <center>
+                    {% if editable %}
+                      <button id="b_aceptar" name="b_aceptar" type="submit" class="btn btn-success">Aceptar</button>
+                      <button id="b_cancelar" name="b_cancelar" type="submit" class="btn btn-default">Cancelar</button>
+                    {% else %}
+                       <button id="b_editar" name="b_editar" type="submit" class="btn btn-success">Editar</button>
+                       <button id="b_regresar" name="b_regresar" type="submit" class="btn btn-default">Regresar</button>
+                    {% endif %}
+                    <button id="b_eliminar" name="b_eliminar"  type="button" class="btn btn-danger" style="float:right">Eliminar</button>
+                    </center>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock content %}
+{% block javascripts %}
+  {{ block.super }}
+
+  <script src="/static/vendors/pnotify/dist/pnotify.js"></script>
+  <script src="/static/vendors/pnotify/dist/pnotify.buttons.js"></script>
+  <script src="/static/vendors/pnotify/dist/pnotify.nonblock.js"></script>
+
+    {% if mensajeError != None %}
+        <script>
+            new PNotify({
+                                title: 'Error',
+                                text: "{{mensajeError}}",
+                                type: 'error',
+                                styling: 'bootstrap3'
+                            });
+        </script>
+    {% endif %}
+
+  {% if mostrarModalEditar %}
+    <script>
+      new PNotify({
+          title: 'Edición Exitosa',
+          text: 'Se editó el módulo satisfactoriamente.',
+          type: 'success',
+          styling: 'bootstrap3'
+      });
+    </script>
+  {% endif %}
+  <script>
+    function activate_modal() {
+      $("#modalxd").modal()
+    }
+
+    document.getElementById("b_eliminar").addEventListener("click", activate_modal);
+  </script>
+
+
+  <script>
+
+  function deletO(){
+    document.getElementById("b_aceptar_modal").click();
+    }
+
+  document.getElementById("b_aceptar_modal").addEventListener("click", deletO);
+  </script>
+{% endblock javascripts %}
