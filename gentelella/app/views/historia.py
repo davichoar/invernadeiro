@@ -39,7 +39,7 @@ def prueba(request, template=None, extra_context=None):
                 nuevoid = selectID(Foto.objects.all().aggregate(Max('idfoto'))['idfoto__max']) + 1
 
                 nombreArch = str(jsonFoto['codigoModulo']) + '_' + str(nuevoid)
-                #rutaArchivo = os.path.join(rutaFinal,nombreArch,formatoDefault)
+                rutaArchivo = os.path.join(rutaFinal,nombreArch+formatoDefault)
                 #Guardando en la carpeta
 
                 #imagenCont = base64.b64decode(jsonFoto['foto'])
@@ -53,9 +53,9 @@ def prueba(request, template=None, extra_context=None):
                     idfoto = nuevoid,
                     idmodulo = int(jsonFoto['codigoModulo']),
                     ruta = rutaArchivo,
-                    nombresinextension = nombreArchivo,
+                    nombresinextension = nombreArch,
                     extension = formatoDefault,
-                    nombreFoto = 'semilla_' + str(nuevoid), #nombre inicial
+                    nombrefoto = 'semilla_' + str(nuevoid), #nombre inicial
 	                fecharegistro = datetime.now() #maybe a corregir.
                 )
 
@@ -105,8 +105,7 @@ def prueba(request, template=None, extra_context=None):
                     idhistoriapanel = nuevopanelid,
                     idpanel = int(jsonPanel['codigoPanel']),
                     encendido = jsonPanel['encendido'],
-                    fecharegistro= datetime.now(), #tochange
-                    comentario='meme'
+                    fecharegistro= datetime.now() #tochange
                 )
 
 
@@ -116,7 +115,7 @@ def prueba(request, template=None, extra_context=None):
             nuevaHInvernadero = Historiainvernadero.objects.create(
                 idhistoriainvernadero = nuevoid,
                 idinvernadero = int(jsonATomar['codigoInvernadero']),
-                energia = float(jsonATomar['energia']),
+                nivelenergia = float(jsonATomar['energia']),
                 niveltanqueagua = float(jsonATomar['nivelTanque']),
                 comentario = 'meme',
                 fecharegistro= datetime.now()
