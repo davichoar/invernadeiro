@@ -30,13 +30,13 @@
             </div>
             <div class="x_content">
                 {% if listaInvernaderos|length == 0 %} <center><h2>Ningún invernadero asociado a este usuario.</h2></center>{% endif %}
-              <div class="row">
+              <div class="row" style="width:100%; max-width:800px; margin:0 auto; float: left">
                 {% for invernadero in listaInvernaderos%}
-                <div class="col-md-6">
+                <div class="col-md-3" style="display: inline-block; height: 180px; width: 180px; margin:10px;">
                   <div class="thumbnail">
                     <a href="{% url 'index' idInvernadero=invernadero.idinvernadero %}">
 					<div class="image view view-first">
-                      <img style="height: 100%; width: 100%; display: block;" src="/static/images/invernadero.jpg" alt="image" />
+                      <img style="height: 100%; width: 100%; display: block;" src="/static/images/invernadero3.png" alt="image" />
                       <div class="mask">
                         <p>{{invernadero.nombre}}</p>
                         <p></p><p></p>
@@ -50,10 +50,9 @@
                   </div>
                 </div>
                 {% endfor %}
-
-
               </div>
             </div>
+
           </div>
         </div>
       </div>
