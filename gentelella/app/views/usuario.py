@@ -21,7 +21,7 @@ def mandarWebada(request, cadfecha, idusuario = -1):
 
 def crear(request, template='app/usuario/crearUsuario.html', extra_context=None):
     if request.method == 'GET':
-        listaRoles = Rol.objects.filter(habilitado=True)
+        listaRoles = Rol.objects.filter(habilitado=True).exclude(idrol=-1)
         listaInvernaderos = Invernadero.objects.filter(habilitado=True)
         usuarioFake = Usuario()
         usuarioFake.idrol = -1
@@ -35,12 +35,16 @@ def crear(request, template='app/usuario/crearUsuario.html', extra_context=None)
         }
         return render(request, template, context)
     elif request.method == 'POST':
-        nuevoid = Usuario.objects.all().aggregate(Max('idusuario'))['idusuario__max'] + 1
+        nuevoid = Usuario.objects.all().aggregate(Max('idusuario'))['idusuario__max']
+        if nuevoid is None:
+            nuevoid = 1
+        else:
+            nuevoid += 1
         cadfecha = str(request.POST.get('fechanac'))
         dia, mes, anno = cadfecha.split('/')
         fechanacimientoshida = dt.date(int(anno),int(mes),int(dia))
-        if (len(Usuario.objects.filter(nombreusuario = str(request.POST.get('nombreUsuario')))) > 0):
-            listaRoles = Rol.objects.filter(habilitado=True)
+        if (len(Usuario.objects.filter(habilitado=True, nombreusuario = str(request.POST.get('nombreUsuario')))) > 0):
+            listaRoles = Rol.objects.filter(habilitado=True).exclude(idrol=-1)
             listaInvernaderos = Invernadero.objects.filter(habilitado=True)
             usuarioFake = mandarWebada(request, cadfecha)
             context = {
@@ -68,13 +72,14 @@ def crear(request, template='app/usuario/crearUsuario.html', extra_context=None)
                     contrasena = str(request.POST.get('contrasena')),
                     correo = str(request.POST.get('correo')),
                     fechacreacion = datetime.now(),
-                    idusuarioauditado = request.session['idUsuarioActual']
+                    idusuarioauditado = request.session['idUsuarioActual'],
+                    habilitado = True
                 )
                 for inv in request.POST.getlist('invernaderos'):
                     usuxinv = Usuarioxinvernadero.objects.create(idinvernadero = inv, idusuario = nuevoid)
         except Exception as e:
             print(e)
-            listaRoles = Rol.objects.filter(habilitado=True)
+            listaRoles = Rol.objects.filter(habilitado=True).exclude(idrol=-1)
             listaInvernaderos = Invernadero.objects.filter(habilitado=True)
             usuarioFake = mandarWebada(request, cadfecha)
             context = {
@@ -94,8 +99,15 @@ def listar(request, template='app/usuario/listaUsuarios.html', extra_context=Non
     if request.method == 'GET':
         mostrarModalCrear = request.session.pop('mensajeUsuarioCrear', False)
         mostrarModalEliminar = request.session.pop('mensajeUsuarioEliminar', False)
-        listaUsuarios = Usuario.objects.filter(habilitado = True)
-        listaRoles = Rol.objects.filter(habilitado=True)
+        listaUsuarios = []
+        listaInvernaderoXUsuario = Usuarioxinvernadero.objects.filter(idinvernadero=int(request.session['idInvernadero']))
+        for item in listaInvernaderoXUsuario:
+            try:
+                usuario = Usuario.objects.get(idusuario = item.idusuario, habilitado = True)
+            except:
+                continue
+            listaUsuarios.append(usuario)
+        listaRoles = Rol.objects.filter(habilitado=True).exclude(idrol=-1)
         context = { 
             'listaUsuarios': list(i for i in zip(range(1,len(listaUsuarios)+1), listaUsuarios)),
             'listaRoles': listaRoles,
@@ -109,7 +121,7 @@ def listar(request, template='app/usuario/listaUsuarios.html', extra_context=Non
 def detalle(request,idUsuario):
     template = 'app/usuario/verEditarUsuario.html'
     usuario = Usuario.objects.get(idusuario = idUsuario)
-    listaRoles = Rol.objects.filter(habilitado=True)
+    listaRoles = Rol.objects.filter(habilitado=True).exclude(idrol=-1)
     listaInvernaderos = Invernadero.objects.filter(habilitado=True)
     InvernaderosUsuario = Usuarioxinvernadero.objects.filter(idusuario = idUsuario)
     fechaFormateada = usuario.fechanacimiento.strftime('%d/%m/%Y')
@@ -118,6 +130,7 @@ def detalle(request,idUsuario):
         listaInvernaderosUsuario.append(usuarioxinvernadero.idinvernadero)
     if request.method == 'GET':
         mostrarModalEditar = request.session.pop('mensajeUsuarioEditar', False)
+        mostrarModalEliminarFallo = request.session.pop('mensajeUsuarioEliminarFallo', False)
         context = {
             'listaInvernaderos': listaInvernaderos,
             'nombreUsuario': request.session.get('nomreUsuario'), 
@@ -128,7 +141,8 @@ def detalle(request,idUsuario):
             'listaInvernaderosUsuario': listaInvernaderosUsuario,
             'usuario': usuario,
             'editable': False, 
-            'mostrarModalEditar': mostrarModalEditar
+            'mostrarModalEditar': mostrarModalEditar,
+            'mostrarModalEliminarFallo': mostrarModalEliminarFallo
         }
         return render(request, template, context)
     if request.method == 'POST':
@@ -145,6 +159,12 @@ def detalle(request,idUsuario):
             }
             return render(request, template, context)
         if 'b_aceptar_modal' in request.POST:
+            print(request.session.get('idUsuarioActual'))
+            print(idUsuario)
+            print(request.session.get('idUsuarioActual') == idUsuario)
+            if (int(request.session.get('idUsuarioActual')) == int(idUsuario)):
+                request.session['mensajeUsuarioEliminarFallo'] = True
+                return redirect('usuarioDetalle', idUsuario)
             try:
                 Usuario.objects.filter(idusuario = idUsuario).update(habilitado=False, idusuarioauditado=request.session['idUsuarioActual'])
                 request.session['mensajeUsuarioEliminar'] = True
@@ -155,8 +175,8 @@ def detalle(request,idUsuario):
         dia, mes, anno = cadfecha.split('/')
         fechanacimientoshida = dt.date(int(anno),int(mes),int(dia))
         
-        if (len(Usuario.objects.filter(nombreusuario = str(request.POST.get('nombreUsuario'))).exclude(idusuario = idUsuario)) > 0):
-            listaRoles = Rol.objects.filter(habilitado=True)
+        if (len(Usuario.objects.filter(habilitado=True, nombreusuario = str(request.POST.get('nombreUsuario'))).exclude(idusuario = idUsuario)) > 0):
+            listaRoles = Rol.objects.filter(habilitado=True).exclude(idrol=-1)
             listaInvernaderos = Invernadero.objects.filter(habilitado=True)
             usuarioFake = mandarWebada(request, cadfecha, idUsuario)
             context = {
@@ -192,7 +212,7 @@ def detalle(request,idUsuario):
                     usuxinv = Usuarioxinvernadero.objects.create(idinvernadero = inv, idusuario = idUsuario)
         except Exception as e:
             print(e)
-            listaRoles = Rol.objects.filter(habilitado=True)
+            listaRoles = Rol.objects.filter(habilitado=True).exclude(idrol=-1)
             listaInvernaderos = Invernadero.objects.filter(habilitado=True)
             usuarioFake = mandarWebada(request, cadfecha, idUsuario)
             context = {
@@ -202,7 +222,8 @@ def detalle(request,idUsuario):
                 'mensajeError': 'Error en la edición del usuario.',
                 'listaRoles': listaRoles,
                 'listaInvernaderos': listaInvernaderos,
-                'listaInvernaderosUsuario': list(map(int, request.POST.getlist('invernaderos')))
+                'listaInvernaderosUsuario': list(map(int, request.POST.getlist('invernaderos'))),
+                'editable': True
             }
             return render(request, template, context)
         request.session['mensajeUsuarioEditar'] = True

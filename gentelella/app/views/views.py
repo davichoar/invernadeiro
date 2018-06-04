@@ -10,9 +10,12 @@ def cerrarSesion(request):
     request.session.pop('nombreInvernadero', None)
     request.session.pop('idInvernadero', None)
     request.session.pop('nomreUsuario', None)
-    template = loader.get_template('app/loginShido.html')
-    context = {}
-    return HttpResponse(template.render(context, request))
+    return redirect('loginIndex')
+
+def cambiarInvernadero(request):
+    request.session.pop('nombreInvernadero', None)
+    request.session.pop('idInvernadero', None)
+    return redirect('escogerInvernadero')
 
 
 def index(request,idInvernadero):
@@ -40,8 +43,8 @@ def index(request,idInvernadero):
         'nombreUsuario': nombreUsuarioCompleto,
         'nombreInvernadero':  invernadero.nombre,
     }
-    return HttpResponse(template.render(context, request))
-    #return redirect('zonaInvernaderoListar')
+    #return HttpResponse(template.render(context, request))
+    return redirect('zonaInvernaderoListar')
 
 
 def gentella_html(request):

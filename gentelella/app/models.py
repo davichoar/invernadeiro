@@ -1,6 +1,4 @@
 from __future__ import unicode_literals
-
-
 from django.db import models
 
 
@@ -12,7 +10,6 @@ class Auditoria(models.Model):
     fecha = models.DateTimeField()
     dataantigua = models.TextField()
     datanueva = models.TextField()
-
 
 
 class Cronograma(models.Model):
@@ -38,28 +35,26 @@ class Foto(models.Model):
     fecharegistro = models.DateTimeField()
 
 
-
 class Historiainvernadero(models.Model):
     idhistoriainvernadero = models.IntegerField(primary_key=True)
     idinvernadero = models.IntegerField()
-    nivelenergia = models.FloatField()
-    niveltanqueagua = models.FloatField()
-    comentario = models.CharField(max_length=255)
+    nivelenergia = models.FloatField(blank=True, null=True)
+    niveltanqueagua = models.FloatField(blank=True, null=True)
+    comentario = models.CharField(max_length=255, blank=True, null=True)
     fecharegistro = models.DateTimeField()
-
 
 
 class Historiamodulo(models.Model):
     idhistoriamodulo = models.IntegerField(primary_key=True)
     idmodulo = models.IntegerField()
-    temperatura = models.FloatField()
-    humedadtierra = models.FloatField()
-    humedadambiente = models.FloatField()
-    nivelagua = models.FloatField()
-    concentracionco2 = models.FloatField()
-    luz = models.BooleanField()
+    temperatura = models.FloatField(blank=True, null=True)
+    humedadtierra = models.FloatField(blank=True, null=True)
+    humedadambiente = models.FloatField(blank=True, null=True)
+    nivelagua = models.FloatField(blank=True, null=True)
+    concentracionco2 = models.FloatField(blank=True, null=True)
+    luz = models.NullBooleanField()
     fecharegistro = models.DateTimeField()
-    comentario = models.CharField(max_length=255)
+    comentario = models.CharField(max_length=255, blank=True, null=True)
 
 
 class Historiapanel(models.Model):
@@ -68,13 +63,13 @@ class Historiapanel(models.Model):
     encendido = models.BooleanField()
     fecharegistro = models.DateTimeField()
 
-	
+
 class Historiaplanta(models.Model):
     idhistoriaplanta = models.IntegerField(primary_key=True)
     idplanta = models.IntegerField()
     idzona = models.IntegerField()
     humedad = models.FloatField()
-    comentario = models.CharField(max_length=255)
+    comentario = models.CharField(max_length=255, blank=True, null=True)
     fecharegistro = models.DateTimeField()
 
 
@@ -84,57 +79,70 @@ class Historiasemilla(models.Model):
     idmodulo = models.IntegerField()
     posx = models.IntegerField()
     posy = models.IntegerField()
-    comentario = models.CharField(max_length=255)
+    comentario = models.CharField(max_length=255, blank=True, null=True)
     fecharegistro = models.DateTimeField()
 
 
 class Historiazona(models.Model):
     idhistoriazona = models.IntegerField(primary_key=True)
     idzona = models.IntegerField()
-    temperatura = models.FloatField()
-    ph = models.FloatField()
-    concentracionco2 = models.FloatField()
+    temperatura = models.FloatField(blank=True, null=True)
+    ph = models.FloatField(blank=True, null=True)
+    concentracionco2 = models.FloatField(blank=True, null=True)
     fecharegistro = models.DateTimeField()
 
-	
+
 class Invernadero(models.Model):
     idinvernadero = models.IntegerField(primary_key=True)
     idadmin = models.IntegerField()
-    codigoinvernaderojson = models.IntegerField(unique=True)
+    codigoinvernaderojson = models.IntegerField()
     nombre = models.CharField(max_length=255)
-    ubicacion = models.CharField(max_length=255)
     fechacreacion = models.DateTimeField()
-    area = models.FloatField()
+    area = models.FloatField(blank=True, null=True)
+    niveltanqueaguaideal = models.FloatField(blank=True, null=True)
+    niveltanqueaguamin = models.FloatField()
+    niveltanqueaguamax = models.FloatField()
+    nivelenergiaideal = models.FloatField(blank=True, null=True)
+    nivelenergiamin = models.FloatField()
+    nivelenergiamax = models.FloatField()
+    latitud = models.FloatField(blank=True, null=True)
+    longitud = models.FloatField(blank=True, null=True)
+    condicionesshidas = models.NullBooleanField()
+    idusuarioauditado = models.IntegerField()
     habilitado = models.BooleanField()
-    idusuarioauditado = models.IntegerField(blank=True, null=True)
-
 
 
 class Modulosemilla(models.Model):
     idmodulo = models.IntegerField(primary_key=True)
-    codigomodulojson = models.IntegerField(unique=True)
-    temperaturaideal = models.FloatField()
+    idzona = models.IntegerField()
+    nombre = models.CharField(max_length=255)
+    codigomodulojson = models.IntegerField()
+    temperaturaideal = models.FloatField(blank=True, null=True)
     temperaturamin = models.FloatField()
     temperaturamax = models.FloatField()
-    humedadtierraideal = models.FloatField()
+    humedadtierraideal = models.FloatField(blank=True, null=True)
     humedadtierramin = models.FloatField()
     humedadtierramax = models.FloatField()
-    humedadambienteideal = models.FloatField()
+    humedadambienteideal = models.FloatField(blank=True, null=True)
     humedadambientemin = models.FloatField()
     humedadambientemax = models.FloatField()
-    concentracionco2ideal = models.FloatField()
+    concentracionco2ideal = models.FloatField(blank=True, null=True)
     concentracionco2min = models.FloatField()
     concentracionco2max = models.FloatField()
+    nivelaguaideal = models.FloatField(blank=True, null=True)
+    nivelaguamin = models.FloatField()
+    nivelaguamax = models.FloatField()
     filas = models.IntegerField()
     columnas = models.IntegerField()
-    habilitado = models.BooleanField()
     fechacreacion = models.DateTimeField()
-    idusuarioauditado = models.IntegerField(blank=True, null=True)
+    habilitado = models.BooleanField()
+    idusuarioauditado = models.IntegerField()
+    condicionesshidas = models.NullBooleanField()
 
 
 class Panelluz(models.Model):
     idpanel = models.IntegerField(primary_key=True)
-    codigopaneljson = models.IntegerField(unique=True)
+    codigopaneljson = models.IntegerField()
     idzona = models.IntegerField()
     habilitado = models.BooleanField()
 
@@ -155,13 +163,14 @@ class Planta(models.Model):
     idtipoplanta = models.IntegerField()
     idzona = models.IntegerField()
     idsemilla = models.IntegerField(blank=True, null=True)
+    codigoplantajson = models.IntegerField()
     fechacreacion = models.DateTimeField()
-    habilitado = models.BooleanField()
-    idusuarioauditado = models.IntegerField(blank=True, null=True)
-    humedadmin = models.FloatField()
+    humedadmin = models.FloatField(blank=True, null=True)
     humedadideal = models.FloatField()
     humedadmax = models.FloatField()
-
+    idusuarioauditado = models.IntegerField()
+    condicionesshidas = models.NullBooleanField()
+    habilitado = models.BooleanField()
 
 
 class Rol(models.Model):
@@ -170,15 +179,13 @@ class Rol(models.Model):
     habilitado = models.BooleanField()
 
 
-
 class Semilla(models.Model):
     idsemilla = models.IntegerField(primary_key=True)
     idtipoplanta = models.IntegerField()
     idmodulo = models.IntegerField()
     fechacreacion = models.DateTimeField()
     habilitado = models.BooleanField()
-    idusuarioauditado = models.IntegerField(blank=True, null=True)
-
+    idusuarioauditado = models.IntegerField()
 
 
 class Tipoplanta(models.Model):
@@ -186,7 +193,7 @@ class Tipoplanta(models.Model):
     nombrecomun = models.CharField(max_length=255)
     nombrecientifico = models.CharField(max_length=255)
     habilitado = models.BooleanField()
-    idfoto = models.IntegerField()
+    idfoto = models.IntegerField(blank=True, null=True)
 
 
 class Tipozona(models.Model):
@@ -207,11 +214,12 @@ class Usuario(models.Model):
     contrasena = models.CharField(max_length=255)
     correo = models.CharField(max_length=255)
     fechacreacion = models.DateTimeField()
-    idusuarioauditado = models.IntegerField(blank=True, null=True)
-    habilitado = models.BooleanField(default=True)
+    idusuarioauditado = models.IntegerField()
+    habilitado = models.BooleanField()
 
     def getnombrecompleto(self):
         return self.nombres + ' ' + self.apellidopaterno
+
 
 class Usuarioxinvernadero(models.Model):
     idinvernadero = models.IntegerField(primary_key=True)
@@ -222,18 +230,22 @@ class Zona(models.Model):
     idzona = models.IntegerField(primary_key=True)
     idtipozona = models.IntegerField()
     idinvernadero = models.IntegerField()
-    codigozonajson = models.IntegerField(unique=True)
+    codigozonajson = models.IntegerField()
     nombre = models.CharField(max_length=255)
-    area = models.FloatField()
-    temperaturaideal = models.FloatField()
+    area = models.FloatField(blank=True, null=True)
+    temperaturaideal = models.FloatField(blank=True, null=True)
     temperaturamin = models.FloatField()
     temperaturamax = models.FloatField()
-    concentracionco2ideal = models.FloatField()
+    phideal = models.FloatField(blank=True, null=True)
+    phmin = models.FloatField()
+    phmax = models.FloatField()
+    concentracionco2ideal = models.FloatField(blank=True, null=True)
     concentracionco2min = models.FloatField()
     concentracionco2max = models.FloatField()
     fechacreacion = models.DateTimeField()
     habilitado = models.BooleanField()
-    idusuarioauditado = models.IntegerField(blank=True, null=True)
+    idusuarioauditado = models.IntegerField()
+    condicionesshidas = models.NullBooleanField()
 
 
 class AuthGroup(models.Model):

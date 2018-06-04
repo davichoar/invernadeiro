@@ -882,7 +882,7 @@ a:focus {
     min-width: 70px
 }
 .panel_toolbox>li {
-    float: left;
+    float: right;
     cursor: pointer
 }
 .panel_toolbox>li>a {

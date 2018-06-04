@@ -1,7 +1,7 @@
 {% extends "app/base_site.html" %}
 
 
-{% block title %} Lista{% endblock title %}
+{% block title %} Lista de Zonas del Invernadero {% endblock title %}
 
 {% block stylesheets %}
   {{ block.super }}
@@ -52,7 +52,7 @@
                   <div class="x_panel">
 
                     <div class="x_title">
-                        <h2>Lista de zonas<small>  </small></h2>
+                        <h2>Lista de zonas</h2>
                         <form class="form-horizontal form-label-left"  method="POST" novalidate>
                         {% csrf_token %}
                             <button id="b_crear" name="b_crear" type="submit" class="btn btn-success" style="float:right">Crear Zona</button>
@@ -62,10 +62,10 @@
 
                     <div class="x_content">
 
-                      <div class="row">
+                      <div class="row" style="width:100%; max-width:800px; margin:0 auto; float: left">
                         {% for zona in listaZonas%}
-                        <div class="col-md-55">
-                          <div class="thumbnail">
+                        <div class="col-md-3" style="display: inline-block; height: 180px; width: 180px; margin:10px;">
+                          <div class="thumbnail" {% if zona.condicionesshidas != None %} {% if zona.condicionesshidas %} style="border-color: green;" {% else %} style="border-color: red;" {% endif %} {% endif %} >
                             <a href="{% url 'zonaInvernaderoDetalle' idZona=zona.idzona %}">
                             <div class="image view view-first">
                                 {% if zona.idtipozona == 1 %}
@@ -97,76 +97,31 @@
               <div class="x_panel">
                 <div class="x_content">
                   <h2>Condiciones del Invernadero<small></small></h2>
-                       <div class="clearfix"></div>
-
-                    <div class="col-md-12">
-                        <div class="col-md-6">
+                        <div class="col-sm-6 col-xs-12">
                             <h2>Nivel del tanque de agua</h2>
                             <div class="x_title"></div>
                             <center>
                                 <h3>{{historia.niveltanqueagua}}</h3>
                             </center>
-
-
-                            <div class="col-md-4">
                                 <center>
-                                    <div class="image view view-first" style="visibility:hidden;">
-                                    <img class="img-responsive center-block" style="height: 100%; width: 100%; display: block;" src="/static/images/water.png" />
-                                    </div>
+                                    <img class="img-thumbnail img-circle center-block" style="height: 45%; width: 45%; display: block; border-width: 2px; {% if nivelAguaok %} border-color: green; {% else %} border-color: red; {% endif %}" src="/static/images/water.png" />
                                 </center>
-                            </div>
-                            <div class="col-md-4">
-                                <center>
-                                    <div class="image view view-first">
-                                    <img class="img-responsive center-block" style="height: 100%; width: 100%; display: block;" src="/static/images/water.png" />
-                                    </div>
-                                </center>
-                            </div>
-                            <div class="col-md-4">
-                                <center>
-                                    <div class="image view view-first" style="visibility:hidden;">
-                                    <img class="img-responsive center-block" style="height: 100%; width: 100%; display: block;" src="/static/images/water.png" />
-                                    </div>
-                                </center>
-                            </div>
-
-                            <center style="visibility:hidden;"><h2>sacha</h2></center>
+                                <br>
                             <center><h2>Litros</h2></center>
 
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-sm-6 col-xs-12">
                             <h2>Nivel de energía</h2>
                             <div class="x_title"></div>
                             <center><h3>{{historia.nivelenergia}}</h3></center>
-
-                            <div class="col-md-4">
                                 <center>
-                                    <div class="image view view-first" style="visibility:hidden;">
-                                    <img class="img-responsive center-block" style="height: 100%; width: 100%; display: block;" src="/static/images/thunder.png" />
-                                    </div>
+                                    <img class="img-thumbnail img-rounded center-block" style="height: 45%; width: 45%; display: block; border-width: 2px; {% if nivelEnergiaok %} border-color: green; {% else %} border-color: red; {% endif %}" src="/static/images/thunder.png" />
                                 </center>
-                            </div>
-                            <div class="col-md-4">
-                                <center>
-                                    <div class="image view view-first">
-                                    <img class="img-responsive center-block" style="height: 100%; width: 100%; display: block;" src="/static/images/thunder.png" />
-                                    </div>
-                                </center>
-                            </div>
-                            <div class="col-md-4">
-                                <center>
-                                    <div class="image view view-first" style="visibility:hidden;">
-                                    <img class="img-responsive center-block" style="height: 100%; width: 100%; display: block;" src="/static/images/thunder.png" />
-                                    </div>
-                                </center>
-                            </div>
-
-                            <center style="visibility:hidden;"><h2>sacha</h2></center>
+                                <br>
                             <center><h2>Watts</h2></center>
 
 
                         </div>
-                    </div>
                 </div>
               </div>
 
