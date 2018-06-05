@@ -121,6 +121,56 @@
       </div>
       {% endif %}
 
+      
+      
+      <!-- Grilla de las semillitas -->
+      {% load app_filters %}
+      {% if not editable and modulo.filas > 0 and modulo.columnas > 0 %}
+      <div class="x_panel">
+
+        <div class="x_title">
+          <h2>Disposición del Semillero<small></small></h2>
+              <ul class="nav navbar-right panel_toolbox" >
+                <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                </li>
+              </ul>
+          <div class="clearfix"></div>
+        </div>
+
+
+        <div class="x_content">
+            <center>
+            <table class="table-bordered">
+            <tbody>
+            <tr>
+            <th width="30dp" height="30dp" style="border-color:grey; background-color: lightgray"></th>
+            {% for columna in rangeColumnas %}
+            <th width="30dp" height="30dp" style="border-color:grey; background-color: lightgray"><center>{{columna}}</center></th>
+            {% endfor %}
+            </tr>
+            {% for fila in rangeFilas %}
+                <tr>
+                <td width="30dp" height="30dp" style="border-color:grey; background-color: lightgray"><center>{{fila}}</center></th>
+                {% for columna in rangeColumnas %}
+                <td width="30dp" height="30dp"
+                {% if listaSemillas|haskey:columna and listaSemillas|get:columna|haskey:fila %}
+                    style="border-color:grey; background-color:gray;" data-toggle="tooltip" data-placement="top" title="{{ listaSemillas|get:columna|get:fila|get:1 }}" onclick="location.href='/semilla/{{ listaSemillas|get:columna|get:fila|get:0|idsemilla }}';"
+                {% else %}
+                    style="border-color:grey;" data-toggle="tooltip" data-placement="top" title="Agregar Semilla" onclick="location.href='/semilla/crear/';"
+                {% endif %}><center></center></td>
+                {% endfor %}
+                </tr>
+            {% endfor %}
+            </tbody>
+            </table>
+            </center>
+        </div>
+      </div>
+      {% endif %}
+      <!-- /Grilla de las semillitas -->      
+      
+      
+      
       <div class="row">
         <div class="col-md-12 col-sm-12 col-xs-12">
           <div class="x_panel">
