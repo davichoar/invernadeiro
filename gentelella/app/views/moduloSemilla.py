@@ -437,9 +437,7 @@ def grabarData(request,idModulo):
         moduloObtenidoBd = Modulosemilla.objects.filter(codigomodulojson=codigoModulo, habilitado=True).exclude(idmodulo=idModulo)
         print(moduloObtenidoBd)
     if moduloObtenidoBd.exists():
-        return "Ya existe el codigo de zona. Ingrese un codigo de zona distinto"
-
-    print('LLEGO A CREAR HASTA AQUI')
+        return "Ya existe el codigo de modulo. Ingrese un codigo de modulo distinto"
 
     modulo,created = Modulosemilla.objects.update_or_create(
         idmodulo=idModulo, defaults={
