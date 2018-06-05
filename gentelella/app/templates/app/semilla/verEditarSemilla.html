@@ -1,7 +1,7 @@
 {% extends "app/base_site.html" %}
 
 
-{% block title %} Crear Invernadero {% endblock title %}
+{% block title %} {% if editable %} Editar {% else %} Ver {% endif %} Semilla {% endblock title %}
 
 {% block stylesheets %}
  {{ block.super }}
@@ -12,25 +12,32 @@
 
 {% block content %}
 
-<div id="modalxd" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-hidden="true" >
-  <div class="modal-dialog modal-sm">
-    <div class="modal-content">
+  <div id="modalxd" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-hidden="true" >
+<form class="form-horizontal form-label-left"  method="POST" novalidate>
+    <div class="modal-dialog modal-sm">
+      <div class="modal-content">
 
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span>
-        </button>
-        <h4 class="modal-title" id="myModalLabel2">Error</h4>
-      </div>
-      <div class="modal-body">
-        <p>Los datos ingresados no son válidos.</p>
-      </div>
-      <div class="modal-footer">
-        <center><button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button></center>
-      </div>
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span>
+          </button>
+          <h4 class="modal-title" id="myModalLabel2">Confirmación de Eliminación</h4>
+        </div>
+        <div class="modal-body">
+          <p>¿Está seguro que desea eliminar el invernadero?</p>
+        </div>
+        <div class="modal-footer">
+            {% csrf_token %}
+            <center>
+              <button id="b_aceptar_modal" name="b_aceptar_modal" type="submit" class="btn btn-success" data-dismiss="modal">Aceptar</button>
+              <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+            </center>
 
+        </div>
+
+      </div>
     </div>
+</form>
   </div>
-</div>
 
 <div class="right_col" role="main">
    <div class="">
@@ -47,7 +54,7 @@
          <div class="x_panel">
 
            <div class="x_title">
-             <h2>Crear Semilla<small></small></h2>
+             <h2>{% if editable %} Editar {% else %} Ver {% endif %} Semilla<small></small></h2>
                   <div class="clearfix"></div>
            </div>
 
@@ -55,11 +62,12 @@
            <div class="x_content">
 
              <form id="nuevaSemilla" class="form-horizontal form-label-left" method="POST">
-                                                                {% csrf_token %}                
-                <div class="form-group">
+                                                                {% csrf_token %}
+
+               <div class="form-group">
                   <label class="control-label col-md-3 col-sm-3 col-xs-12">Tipo de Planta *</label>
                   <div class="col-md-6 col-sm-6 col-xs-12">
-                    <select id = "tipoPlanta" class="form-control" name="tipoPlanta">
+                    <select id = "tipoPlanta" class="form-control" name="tipoPlanta" {% if not editable %} disabled {% endif %}>
                       <option value="-1" {% if  semilla.idtipoplanta  == -1 %} selected {% endif %} disabled>- Seleccione -</option>
                       {% for tipoplanta in listaTipoplanta %}
                       <option value="{{tipoplanta.idtipoplanta}}" {% if semilla.idtipoplanta == tipoplanta.idtipoplanta %} selected {% endif %} >{{tipoplanta.nombrecomun}}</option>
@@ -70,7 +78,7 @@
                  <div class="form-group">
                   <label class="control-label col-md-3 col-sm-3 col-xs-12">Módulo de Semillas *</label>
                   <div class="col-md-6 col-sm-6 col-xs-12">
-                    <select id = "modulo" class="form-control" name="modulo" onchange="cambiarMax(this)">
+                    <select id = "modulo" class="form-control" name="modulo" onchange="cambiarMax(this)"  {% if not editable %} disabled {% endif %}>
                       <option value="-1" {% if  semilla.idmodulo  == -1 %} selected {% endif %} disabled>- Seleccione -</option>
                       {% for fmodulo in listaModulos %}
                       <option value="{{fmodulo.idmodulo}}" {% if modulo.idmodulo == fmodulo.idmodulo %} selected {% endif %} >{{fmodulo.nombre}}</option>
@@ -82,22 +90,29 @@
                   <label class="control-label col-md-3 col-sm-3 col-xs-12" for="posx"> Columna
                   </label>
                   <div class="col-md-2 col-sm-2 col-xs-6">
-                    <input  type="number" id="posx" name="posx" value="{{historia.posx}}" min="1" max="{{modulo.columnas}}" step="1" class="form-control col-md-7 col-xs-12">
+                    <input  type="number" id="posx" name="posx" value="{{historia.posx}}" min="1" max="{{modulo.columnas}}" step="1" class="form-control col-md-7 col-xs-12"  {% if not editable %} disabled {% endif %}>
                   </div>
                 </div>
                 <div class="item form-group">
                   <label class="control-label col-md-3 col-sm-3 col-xs-12" for="posy"> Fila
                   </label>
                   <div class="col-md-2 col-sm-2 col-xs-6">
-                    <input  type="number" id="posy" name="posy" value="{{historia.posy}}" min="1" max="{{modulo.filas}}" step="1" class="form-control col-md-7 col-xs-12">
+                    <input  type="number" id="posy" name="posy" value="{{historia.posy}}" min="1" max="{{modulo.filas}}" step="1" class="form-control col-md-7 col-xs-12" {% if not editable %} disabled {% endif %}>
                   </div>
                 </div>
                <div class="ln_solid"></div>
                <div class="form-group">
                  <div class="col-xs-12">
 				 <center>
-                   <button id="send" name="b_aceptar" type="button" class="btn btn-success" onclick="validar()">Aceptar</button>
-                   <a href="/modulosemilla/{{idModuloOrig}}"><button id="cancel" name="b_cancelar" type="button" class="btn btn-default">Cancelar</button></a>
+                   {% if editable %}
+                        <button id="send" name="b_aceptar" type="button" class="btn btn-success" onclick="validar()">Aceptar</button>
+                        <a href="/semilla/{{ semilla.idsemilla }}"><button id="cancel" name="b_cancelar" type="button" class="btn btn-default">Cancelar</button></a>   
+                   {% else %}
+                        <button id="edit" name="b_editar" type="submit" class="btn btn-success">Editar</button>
+                        <a href="/modulosemilla/{{idModuloOrig}}"><button id="cancel" name="b_cancelar" type="button" class="btn btn-default">Regresar</button></a>                   
+                   {% endif %}
+                    <button id="b_eliminar" name="b_eliminar"  type="button" class="btn btn-danger" style="float:right">Eliminar</button>
+                   
 				  </center>
                  </div>
                </div>
@@ -116,6 +131,18 @@
   <script src="/static/vendors/pnotify/dist/pnotify.js"></script>
   <script src="/static/vendors/pnotify/dist/pnotify.buttons.js"></script>
   <script src="/static/vendors/pnotify/dist/pnotify.nonblock.js"></script>
+  <script>
+  function activate_modal() {
+     $("#modalxd").modal()
+  }
+  document.getElementById("b_eliminar").addEventListener("click", activate_modal);
+  </script>
+  <script>
+  function deletO(){
+     document.getElementById("b_aceptar_modal").click();
+  }
+  document.getElementById("b_aceptar_modal").addEventListener("click", deletO);
+  </script>
   <script>
   function validar() {
         if (document.getElementById("tipoPlanta").value == -1) {
@@ -188,11 +215,22 @@
         styling: 'bootstrap3'
     });
   }
+  </script>  
+  {% if mostrarModalEditar %}
+  <script>
+    new PNotify({
+        title: 'Edición Exitosa',
+        text: 'Se editó la semilla satisfactoriamente.',
+        type: 'success',
+        styling: 'bootstrap3'
+    });
   </script>
+  {% endif %}
   {% if mensajeError != None %}
   <script>
   mostrarModal("{{mensajeError}}");
   </script>
   {% endif %}
 {% endblock javascripts %}
+
 

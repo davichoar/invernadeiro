@@ -96,6 +96,7 @@ def contextParaGrilla(request, context, modulo):
     context['rangeFilas'] = range(1, modulo.filas + 1)
     context['rangeColumnas'] = range(1, modulo.columnas + 1)
     context['mostrarModalCrear'] = request.session.pop('mensajeSemillaCrear', False)
+    context['mostrarModalEliminar'] = request.session.pop('mensajeSemillaEliminar', False)
     semillas = Semilla.objects.filter(idmodulo=modulo.idmodulo, habilitado=True)
     listaSemillas = dict()
     for semilla in semillas:
