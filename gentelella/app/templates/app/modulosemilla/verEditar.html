@@ -156,7 +156,7 @@
                 {% if listaSemillas|haskey:columna and listaSemillas|get:columna|haskey:fila %}
                     style="border-color:grey; background-color:gray;" data-toggle="tooltip" data-placement="top" title="{{ listaSemillas|get:columna|get:fila|get:1 }}" onclick="location.href='/semilla/{{ listaSemillas|get:columna|get:fila|get:0|idsemilla }}';"
                 {% else %}
-                    style="border-color:grey;" data-toggle="tooltip" data-placement="top" title="Agregar Semilla" onclick="location.href='/semilla/crear/';"
+                    style="border-color:grey;" data-toggle="tooltip" data-placement="top" title="Agregar Semilla" onclick="location.href='/semilla/crear/{{modulo.idmodulo}}/{{columna}}/{{fila}}';"
                 {% endif %}><center></center></td>
                 {% endfor %}
                 </tr>
@@ -388,6 +388,17 @@
       new PNotify({
           title: 'Edición Exitosa',
           text: 'Se editó el módulo satisfactoriamente.',
+          type: 'success',
+          styling: 'bootstrap3'
+      });
+    </script>
+  {% endif %}
+
+  {% if mostrarModalCrear %}
+    <script>
+      new PNotify({
+          title: 'Creación Exitosa',
+          text: 'Se creó la semilla satisfactoriamente.',
           type: 'success',
           styling: 'bootstrap3'
       });

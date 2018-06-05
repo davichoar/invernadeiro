@@ -92,9 +92,10 @@ def validarRangoCondiciones(actual,min,max):
         return False
 
         
-def contextParaGrilla(context, modulo):
+def contextParaGrilla(request, context, modulo):
     context['rangeFilas'] = range(1, modulo.filas + 1)
     context['rangeColumnas'] = range(1, modulo.columnas + 1)
+    context['mostrarModalCrear'] = request.session.pop('mensajeSemillaCrear', False)
     semillas = Semilla.objects.filter(idmodulo=modulo.idmodulo, habilitado=True)
     listaSemillas = dict()
     for semilla in semillas:
@@ -146,7 +147,7 @@ def detalle(request,idModulo):
         print('Mostrar Modulo de Semilla')
         ## context es el mismo de arriba
         context['editable'] = False ## es un saludo a la bandera, solo para aclarar que la vista no sera editable
-        contextParaGrilla(context, modulo)
+        contextParaGrilla(request, context, modulo)
         return render(request, template, context)
 
     elif request.method == 'POST':
@@ -185,14 +186,14 @@ def detalle(request,idModulo):
                 context['humedadAmbienteok'] = humedadAmbienteok
                 context['nivelAguaok'] = nivelAguaok
                 context['co2ok'] = co2ok
-                contextParaGrilla(context, modulo)
+                contextParaGrilla(request, context, modulo)
 
                 return render(request, template, context)
 
         if "b_cancelar" in request.POST :
             ## context es el mismo de arriba
             context['editable'] = False  ## es un saludo a la bandera, solo para aclarar que la vista no sera editable
-            contextParaGrilla(context, modulo)
+            contextParaGrilla(request, context, modulo)
             return render(request, template, context)
         if "b_aceptar_modal" in request.POST:
             print("Aceptar Modal")
