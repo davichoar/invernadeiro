@@ -154,7 +154,7 @@ def detalle(request, idModulo, idSemilla, template='app/semilla/verEditarSemilla
                 request.session['mensajeSemillaEliminar'] = True
             except Exception as e:
                 print(e)
-            return redirect('moduloSemillaDetalle', semilla.idmodulo)
+            return redirect('moduloSemillaDetalle', idModulo)
         if (casillaOcupada(request.POST.get('modulo'), request.POST.get('posx'), request.POST.get('posy'), semilla)):
             listaTipoplanta = Tipoplanta.objects.filter(habilitado = True)
             listaModulos = Modulosemilla.objects.filter(habilitado=True)
