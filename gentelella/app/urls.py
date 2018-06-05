@@ -94,9 +94,9 @@ urlpatterns = [
     #url('^semilla/$',
     #    views.semilla.listar,
     #    name='semillaListar'),
-    #url('^semilla/(?P<idSemilla>.*)$',
-    #    views.semilla.detalle,
-    #    name='semillaDetalle'),
+    url('^semilla/(?P<idModulo>.*)/(?P<idSemilla>.*)$',
+        views.semilla.detalle,
+        name='semillaDetalle'),
 
 ### HISTORIAS (RECIBIR JSONS)
 
