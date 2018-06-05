@@ -74,7 +74,7 @@ urlpatterns = [
         views.moduloSemilla.detalle,
         name='moduloSemillaDetalle'),
 
-### Plantas
+### PLANTAS
 
     url('^planta/crear/$',
         views.planta.crear,
@@ -85,6 +85,18 @@ urlpatterns = [
     url('^planta/(?P<idPlanta>.*)$',
         views.planta.detalle,
         name='plantaDetalle'),
+
+### SEMILLAS
+
+    url('^semilla/crear/(?P<idModulo>.*)/(?P<columna>.*)/(?P<fila>.*)$',
+        views.semilla.crear,
+        name='semillaCrear'),
+    #url('^semilla/$',
+    #    views.semilla.listar,
+    #    name='semillaListar'),
+    #url('^semilla/(?P<idSemilla>.*)$',
+    #    views.semilla.detalle,
+    #    name='semillaDetalle'),
 
 ### HISTORIAS (RECIBIR JSONS)
 
