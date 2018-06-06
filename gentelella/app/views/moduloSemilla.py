@@ -8,10 +8,20 @@ from django.urls import reverse
 from app.models import Zona, Tipozona, Historiainvernadero, Historiazona, Modulosemilla, Historiamodulo, Semilla, Historiasemilla, Tipoplanta
 
 ID_TIPO_ZONAS_SEMILLAS = 1
+CANTIDAD_CADENA_MAXIMA = 250
 def crear(request,
           template='app/modulosemilla/crear.html',
           extra_context=None):
-    listaZonas = Zona.objects.filter(idtipozona = ID_TIPO_ZONAS_SEMILLAS,habilitado=True)
+    try:
+        idInvernadero = int(request.session.get('idInvernadero'))
+        listaZonas = Zona.objects.filter(idinvernadero=idInvernadero, idtipozona=ID_TIPO_ZONAS_SEMILLAS,habilitado=True)
+    except Exception as e:
+        print(e)
+        request.session['mensajeCrearEditarError'] = True
+        return redirect('moduloSemillaListar')
+
+
+
     if request.method == 'GET':
         print('CREAR MODULO DE SEMILLAS')
         context = {'listaZonas': listaZonas,
@@ -55,24 +65,53 @@ def listar(request,
     if request.method == 'GET':
 
         print('LISTAR MODULOS SEMILLAS')
+        listaIdZonas = []
+        try:
+            idInvernadero = int(request.session.get('idInvernadero'))
+            listaZonas = Zona.objects.filter(idinvernadero=idInvernadero,idtipozona = ID_TIPO_ZONAS_SEMILLAS, habilitado=True)
+            for zona in listaZonas:
+                listaIdZonas.append(zona.idzona)
+        except Exception as e:
+            print(e)
+            listaZonas = None
 
-        if "b_buscar" in request.GET:
-            valorBusqueda = request.GET.get('textoBusqueda')
-            print(valorBusqueda)
-            if(valorBusqueda is None):
-                valorBusqueda = ""
-            listaModulos = Modulosemilla.objects.filter(nombre__icontains=valorBusqueda,habilitado=True)
+        mensajeCreacion = False
+        mensajeEliminar = False
+        mensajeCrearEditarError = False
+        mensajeObtenerZonaError = False
+
+        if listaZonas != None:
+            if "b_buscar" in request.GET:
+                valorBusqueda = request.GET.get('textoBusqueda')
+                print(valorBusqueda)
+                if (valorBusqueda is None):
+                    valorBusqueda = ""
+                try:
+                    listaModulos = Modulosemilla.objects.filter(idzona__in = listaIdZonas,nombre__icontains=valorBusqueda, habilitado=True)
+                except Exception as e:
+                    print(e)
+                    listaModulos = None
+            else:
+                try:
+                    listaModulos = Modulosemilla.objects.filter(idzona__in = listaIdZonas,habilitado=True)
+                except Exception as e:
+                    print(e)
+                    listaModulos = None
+
+            mensajeCreacion = request.session.pop('mensajeModuloCrear', False)
+            mensajeEliminar = request.session.pop('mensajeModuloEliminar', False)
+            mensajeCrearEditarError = request.session.pop('mensajeCrearEditarError', False)
+
+            if listaModulos:
+                listaModulos = listaModulos.order_by('idmodulo')
+
         else:
-            listaModulos = Modulosemilla.objects.filter(habilitado=True)
-
-
-        mensajeCreacion = request.session.pop('mensajeModuloCrear',False)
-        mensajeEliminar = request.session.pop('mensajeModuloEliminar', False)
+            mensajeObtenerZonaError = True
 
         print('Lista de modulos')
         print(listaModulos)
-        context = {"listaModulos": listaModulos.order_by('idmodulo'), 'nombreUsuario': request.session.get('nomreUsuario'),
-                   'nombreInvernadero': request.session.get('nombreInvernadero'),"mensajeCreacion": mensajeCreacion,"mensajeEliminacion": mensajeEliminar,}
+        context = {"listaModulos": listaModulos, 'nombreUsuario': request.session.get('nomreUsuario'),
+                   'nombreInvernadero': request.session.get('nombreInvernadero'),"mensajeCreacion": mensajeCreacion,"mensajeEliminacion": mensajeEliminar,"mensajeCrearEditarError":mensajeCrearEditarError,"mensajeObtenerZonaError":mensajeObtenerZonaError}
         return render(request, template, context)
 
     elif request.method == 'POST':
@@ -116,7 +155,13 @@ def detalle(request,idModulo):
     template = 'app/modulosemilla/verEditar.html'
     modulo = Modulosemilla.objects.get(idmodulo=idModulo)
 
-    listaZonas = Zona.objects.filter(idtipozona = ID_TIPO_ZONAS_SEMILLAS,habilitado=True)
+    try:
+        idInvernadero = int(request.session.get('idInvernadero'))
+        listaZonas = Zona.objects.filter(idinvernadero=idInvernadero, idtipozona=ID_TIPO_ZONAS_SEMILLAS,habilitado=True)
+    except Exception as e:
+        print(e)
+        request.session['mensajeCrearEditarError'] = True
+        return redirect('moduloSemillaListar')
 
 
     try:
@@ -291,14 +336,23 @@ def grabarData(request,idModulo):
 
     if nombreObtenido:
         nombre = str(nombreObtenido)
+        if len(nombre) > CANTIDAD_CADENA_MAXIMA:
+            return "Debe ingresar un nombre menor a 250 caracteres"
     else:
         return "Falta ingresar el nombre del módulo."
 
 
     if codigoModuloObtenido:
-        codigoModulo = int(codigoModuloObtenido)
+        try:
+            codigoModulo = int(codigoModuloObtenido)
+        except Exception as e:
+            print(e)
+            return "Debe ingresar un numero entero para el código de módulo"
+        if codigoModulo < 0:
+            return "El código de módulo debe ser mayor a cero"
+
     else:
-        return "Falta ingresar el codigo para el módulo."
+        return "Falta ingresar el código para el módulo."
 
     if idzona:
         idzona = int(idzona)
@@ -358,66 +412,81 @@ def grabarData(request,idModulo):
 
     if filas == "":
         return "Falta ingresar las filas para el módulo."
-
+    else:
+        try:
+            filas = int(filas)
+        except Exception as e:
+            print(e)
+            return "Debe ingresar un numero entero para el valor de las filas"
+        if filas <= 0:
+            return "El valor para las filas debe ser mayor a cero"
 
     if columnas == "":
         return "Falta ingresar las columnas para el módulo."
+    else:
+        try:
+            columnas = int(columnas)
+        except Exception as e:
+            print(e)
+            return "Debe ingresar un numero entero para el valor de las columnas"
+        if columnas <= 0:
+            return "El valor para las columnas debe ser mayor a cero"
 
 
 
     if tempMin > tempMax:
-        return "La temperatura mínima debe ser menor a la temperatura máxima"
+        return "La temperatura mínima debe ser menor a la temperatura máxima."
 
     if tempIdeal != "":
         if (tempIdeal > tempMin) and (tempIdeal < tempMax):
             print("Temperatura Ideal Valida")
         else:
-            return "La temperatura ideal debe ser un valor entre la mínima y la máxima"
+            return "La temperatura ideal debe ser un valor entre la mínima y la máxima."
     else:
         tempIdeal = None
 
     if humTierraMin > humTierraMax:
-        return "La humedad de la tierra mínima debe ser menor a la humedad de la tierra máxima"
+        return "La humedad de la tierra mínima debe ser menor a la humedad de la tierra máxima."
 
     if humTierraIdeal != "":
         if (humTierraIdeal > humTierraMin) and (humTierraIdeal < humTierraMax):
             print("Humedad Tierra Ideal Valida")
         else:
-            return "La humedad de la tierra ideal debe ser un valor entre el mínimo y el máximo"
+            return "La humedad de la tierra ideal debe ser un valor entre el mínimo y el máximo."
     else:
         humTierraIdeal = None
 
     if humAmbMin > humAmbMax:
-        return "La humedad del ambiente mínima debe ser menor a la humedad del ambiente máxima"
+        return "La humedad del ambiente mínima debe ser menor a la humedad del ambiente máxima."
 
     if humAmbIdeal != "":
         if (humAmbIdeal > humAmbMin) and (humAmbIdeal < humAmbMax):
             print("Humedad Ambiente Ideal Valida")
         else:
-            return "La humedad del ambiente ideal debe ser un valor entre el mínimo y el máximo"
+            return "La humedad del ambiente ideal debe ser un valor entre el mínimo y el máximo."
     else:
         humAmbIdeal = None
 
     if co2Min > co2Max:
-        return "La concentración de CO2 mínima debe ser menor a la concentración de CO2 máxima"
+        return "La concentración de CO2 mínima debe ser menor a la concentración de CO2 máxima."
 
     if co2Ideal != "":
         if (co2Ideal > co2Min) and (co2Ideal < co2Max):
             print("CO2 Ideal Valida")
         else:
-            return "La concentración de CO2 ideal debe ser un valor entre el mínimo y el máximo"
+            return "La concentración de CO2 ideal debe ser un valor entre el mínimo y el máximo."
     else:
         co2Ideal = None
 
 
     if nivelAguaMin > nivelAguaMax:
-        return "El nivel del agua mínimo debe ser menor al nivel del agua máximo"
+        return "El nivel del agua mínimo debe ser menor al nivel del agua máximo."
 
     if nivelAguaIdeal != "":
         if (nivelAguaIdeal > nivelAguaMin) and (nivelAguaIdeal < nivelAguaMax):
             print("Nivel del Agua Ideal Valida")
         else:
-            return "EL nivel del agua ideal debe ser un valor entre el mínimo y el máximo"
+            return "EL nivel del agua ideal debe ser un valor entre el mínimo y el máximo."
     else:
         nivelAguaIdeal = None
 

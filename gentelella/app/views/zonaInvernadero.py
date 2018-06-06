@@ -7,7 +7,7 @@ from django.urls import reverse
 
 from app.models import Usuario, Invernadero, Usuarioxinvernadero, Zona, Tipozona, Historiainvernadero, Historiazona
 
-
+CANTIDAD_CADENA_MAXIMA = 250
 def crear(request,
           template='app/zonainvernadero/create.html',
           extra_context=None):
@@ -76,9 +76,9 @@ def listar(request,
             print(valorBusqueda)
             if(valorBusqueda is None):
                 valorBusqueda = ""
-            listaZonas = Zona.objects.filter(nombre__icontains=valorBusqueda,habilitado=True)
+            listaZonas = Zona.objects.filter(idinvernadero=idInvernadero,nombre__icontains=valorBusqueda,habilitado=True)
         else:
-            listaZonas = Zona.objects.filter(habilitado=True)
+            listaZonas = Zona.objects.filter(idinvernadero=idInvernadero,habilitado=True)
 
 
         mensajeCreacion = request.session.pop('mensajeZonaCrear',False)
@@ -252,14 +252,23 @@ def grabarData(request,idZona):
     co2Min = request.POST.get('co2Min')
     co2Max = request.POST.get('co2Max')
 
+
     if nombreObtenido:
         nombre = str(nombreObtenido)
+        if len(nombre) > CANTIDAD_CADENA_MAXIMA:
+            return "Debe ingresar un nombre menor a 250 caracteres"
     else:
         return "Falta ingresar el nombre de la zona."
 
 
     if codigoZonaObtenido:
-        codigoZona = int(codigoZonaObtenido)
+        try:
+            codigoZona = int(codigoZonaObtenido)
+        except Exception as e:
+            print(e)
+            return "Debe ingresar un numero entero para el códido de la zona"
+        if codigoZona < 0:
+            return "El código de la zona debe ser mayor a cero"
     else:
         return "Falta ingresar el codigo para la zona."
 
@@ -310,14 +319,14 @@ def grabarData(request,idZona):
     tempMin = float(tempMin)
     tempMax = float(tempMax)
     if tempMin > tempMax:
-        return "La temperatura mínima debe ser menor a la temperatura máxima"
+        return "La temperatura mínima debe ser menor a la temperatura máxima."
 
     if tempIdeal != "":
         tempIdeal = float(tempIdeal)
         if (tempIdeal > tempMin) and (tempIdeal < tempMax):
             print("Temperatura Ideal Valida")
         else:
-            return "La temperatura ideal debe ser un valor entre la mínima y la máxima"
+            return "La temperatura ideal debe ser un valor entre la mínima y la máxima."
     else:
         tempIdeal = None
 
@@ -325,21 +334,21 @@ def grabarData(request,idZona):
     phMin = float(phMin)
     phMax = float(phMax)
     if phMin > phMax:
-        return "El pH mínimo debe ser menor al pH máximo"
+        return "El pH mínimo debe ser menor al pH máximo."
 
     if phIdeal != "":
         phIdeal = float(phIdeal)
         if (phIdeal > phMin) and (phIdeal < phMax):
             print("pH Valido")
         else:
-            return "El pH ideal debe ser un valor entre el mínimo y el máximo"
+            return "El pH ideal debe ser un valor entre el mínimo y el máximo."
     else:
         phIdeal = None
 
     co2Min = float(co2Min)
     co2Max = float(co2Max)
     if co2Min > co2Max:
-        return "La concentración de CO2 mínima debe ser mayor a la concentración de CO2 máxima"
+        return "La concentración de CO2 mínima debe ser mayor a la concentración de CO2 máxima."
 
 
     if co2Ideal != "":
@@ -347,7 +356,7 @@ def grabarData(request,idZona):
         if (co2Ideal > co2Min) and (co2Ideal < co2Max):
             print("CO2 Valido")
         else:
-            return "El CO2 ideal debe ser un valor entre el mínimo y el máximo"
+            return "El CO2 ideal debe ser un valor entre el mínimo y el máximo."
     else:
         co2Ideal = None
 
@@ -364,16 +373,16 @@ def grabarData(request,idZona):
         return "Ocurrió un error al tratar de crear la zona. Intente de nuevo en un momento."
     idUsuarioActual = int(idUsuarioObtenido)
 
-    print('Nombre: ' + nombre)
+    print('Nombre: ' + str(nombre))
     print('Codigo Zona: ' + str(codigoZona))
     print('Tipo Zona:' + str(tipoZona))
-    print('area: ' + area)
-    print('tempIdeal: ' + tempIdeal)
-    print('tempMin: ' + tempMin)
-    print('tempMax: ' + tempMax)
-    print('co2Ideal: ' + co2Ideal)
-    print('co2Min: ' + co2Min)
-    print('co2Max: ' + co2Max)
+    print('area: ' + str(area))
+    print('tempIdeal: ' + str(tempIdeal))
+    print('tempMin: ' + str(tempMin))
+    print('tempMax: ' + str(tempMax))
+    print('co2Ideal: ' + str(co2Ideal))
+    print('co2Min: ' + str(co2Min))
+    print('co2Max: ' + str(co2Max))
     print('Id Invernadero: ' + str(idInvernadero))
     print('Id Usuario Actual: ' + str(idUsuarioActual))
 

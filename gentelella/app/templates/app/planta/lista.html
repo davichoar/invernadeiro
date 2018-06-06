@@ -128,5 +128,25 @@
                             });
         </script>
     {% endif %}
+    {% if mensajePlantaCrearEditarError %}
+        <script>
+            new PNotify({
+                                title: 'Error',
+                                text: "En este momento no se puede acceder o crear una planta.",
+                                type: 'error',
+                                styling: 'bootstrap3'
+                            });
+        </script>
+    {% endif %}
+    {% if mensajeObtenerZonaError %}
+        <script>
+            new PNotify({
+                                title: 'Error al obtener las plantas',
+                                text: "Ocurrió un problema al obtener las zonas de las plantas.",
+                                type: 'error',
+                                styling: 'bootstrap3'
+                            });
+        </script>
+    {% endif %}
 
 {% endblock javascripts %}

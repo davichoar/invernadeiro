@@ -9,8 +9,23 @@ ID_TIPO_ZONAS_PLANTAS = 2
 def crear(request,
           template='app/planta/crear.html',
           extra_context=None):
-    listaTipoPlantas = Tipoplanta.objects.filter(habilitado=True)
-    listaZonas = Zona.objects.filter(idtipozona=ID_TIPO_ZONAS_PLANTAS, habilitado=True)
+
+    try:
+        listaTipoPlantas = Tipoplanta.objects.filter(habilitado=True)
+    except Exception as e:
+        print(e)
+        request.session['mensajePlantaCrearEditarError'] = True
+        return redirect('plantaListar')
+
+
+    try:
+        idInvernadero = int(request.session.get('idInvernadero'))
+        listaZonas = Zona.objects.filter(idinvernadero=idInvernadero, idtipozona=ID_TIPO_ZONAS_PLANTAS, habilitado=True)
+    except Exception as e:
+        print(e)
+        request.session['mensajePlantaCrearError'] = True
+        return redirect('plantaListar')
+
     if request.method == 'GET':
         print('CREAR PLANTAS')
         context = {'listaTipoPlantas': listaTipoPlantas,
@@ -57,24 +72,53 @@ def listar(request,
     if request.method == 'GET':
 
         print('LISTAR PLANTAS')
+        listaIdZonas = []
+        try:
+            idInvernadero = int(request.session.get('idInvernadero'))
+            listaZonas = Zona.objects.filter(idinvernadero=idInvernadero,idtipozona = ID_TIPO_ZONAS_PLANTAS, habilitado=True)
+            for zona in listaZonas:
+                listaIdZonas.append(zona.idzona)
+        except Exception as e:
+            print(e)
+            listaZonas = None
 
-        if "b_buscar" in request.GET:
-            valorBusqueda = request.GET.get('textoBusqueda')
-            print(valorBusqueda)
-            if(valorBusqueda is None):
-                valorBusqueda = ""
-            listaPlantas = Planta.objects.filter(nombre__icontains=valorBusqueda,habilitado=True)
+        mensajeEliminar = False
+        mensajeObtenerZonaError = False
+        mensajeCreacion = False
+        mensajePlantaCrearEditarError = False
+
+        if listaIdZonas != None:
+            if "b_buscar" in request.GET:
+                valorBusqueda = request.GET.get('textoBusqueda')
+                print(valorBusqueda)
+                if (valorBusqueda is None):
+                    valorBusqueda = ""
+                try:
+                    listaPlantas = Planta.objects.filter(idzona__in = listaIdZonas,nombre__icontains=valorBusqueda, habilitado=True)
+                except Exception as e:
+                    print(e)
+                    listaPlantas = None
+            else:
+                try:
+                    listaPlantas = Planta.objects.filter(idzona__in = listaIdZonas,habilitado=True)
+                except Exception as e:
+                    print(e)
+                    listaPlantas = None
+
+            mensajeCreacion = request.session.pop('mensajePlantaCrear', False)
+            mensajeEliminar = request.session.pop('mensajePlantaEliminar', False)
+            mensajePlantaCrearEditarError = request.session.pop('mensajePlantaCrearEditarError', False)
+
+            if listaPlantas:
+                listaPlantas = listaPlantas.order_by('idplanta')
+
         else:
-            listaPlantas = Planta.objects.filter(habilitado=True)
-
-
-        mensajeCreacion = request.session.pop('mensajePlantaCrear',False)
-        mensajeEliminar = request.session.pop('mensajePlantaEliminar', False)
+            mensajeObtenerZonaError = True
 
         print('Lista de plantas')
         print(listaPlantas)
-        context = {"listaTipoPlantas":listaTipoPlantas,"listaPlantas": listaPlantas.order_by('idplanta'), 'nombreUsuario': request.session.get('nomreUsuario'),
-                   'nombreInvernadero': request.session.get('nombreInvernadero'),"mensajeCreacion": mensajeCreacion,"mensajeEliminacion": mensajeEliminar,}
+        context = {"listaTipoPlantas":listaTipoPlantas,"listaPlantas": listaPlantas, 'nombreUsuario': request.session.get('nomreUsuario'),
+                   'nombreInvernadero': request.session.get('nombreInvernadero'),"mensajeCreacion": mensajeCreacion,"mensajeEliminacion": mensajeEliminar,"mensajePlantaCrearEditarError":mensajePlantaCrearEditarError,"mensajeObtenerZonaError":mensajeObtenerZonaError}
         return render(request, template, context)
 
     elif request.method == 'POST':
@@ -100,7 +144,13 @@ def detalle(request,idPlanta):
     planta = Planta.objects.get(idplanta=idPlanta)
 
     listaTipoPlantas = Tipoplanta.objects.filter(habilitado=True)
-    listaZonas = Zona.objects.filter(idtipozona=ID_TIPO_ZONAS_PLANTAS, habilitado=True)
+    try:
+        idInvernadero = int(request.session.get('idInvernadero'))
+        listaZonas = Zona.objects.filter(idinvernadero=idInvernadero, idtipozona=ID_TIPO_ZONAS_PLANTAS, habilitado=True)
+    except Exception as e:
+        print(e)
+        request.session['mensajePlantaCrearEditarError'] = True
+        return redirect('plantaListar')
 
 
     try:
@@ -222,11 +272,19 @@ def grabarData(request,idPlanta):
     if idzona:
         idzona = int(idzona)
     else:
-        return "Falta seleccionar la zona para el módulo"
+        return "Falta seleccionar la zona para la planta"
 
 
     if codigoPlanta == "":
-        return "Falta ingresar el codigo para la planta."
+        return "Falta ingresar el código para la planta."
+    else:
+        try:
+            codigoPlanta = int(codigoPlanta)
+        except Exception as e:
+            print(e)
+            return "Debe ingresar un numero entero para el código de planta"
+        if codigoPlanta < 0:
+            return "El código de planta debe ser mayor a cero"
 
 
     if humedadMin == "":
