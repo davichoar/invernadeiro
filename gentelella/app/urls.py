@@ -74,6 +74,42 @@ urlpatterns = [
         views.moduloSemilla.detalle,
         name='moduloSemillaDetalle'),
 
+### PLANTAS
+
+    url('^planta/crear/$',
+        views.planta.crear,
+        name='plantaCrear'),
+    url('^planta/$',
+        views.planta.listar,
+        name='plantaListar'),
+    url('^planta/(?P<idPlanta>.*)$',
+        views.planta.detalle,
+        name='plantaDetalle'),
+
+### PANEL LUZ
+
+    url('^panel/crear/$',
+        views.panelluz.crear,
+        name='panelCrear'),
+    url('^panel/$',
+        views.panelluz.listar,
+        name='panelListar'),
+    url('^panel/(?P<idPanel>.*)$',
+        views.panelluz.detalle,
+        name='panelDetalle'),
+
+### SEMILLAS
+
+    url('^semilla/crear/(?P<idModulo>.*)/(?P<columna>.*)/(?P<fila>.*)$',
+        views.semilla.crear,
+        name='semillaCrear'),
+    #url('^semilla/$',
+    #    views.semilla.listar,
+    #    name='semillaListar'),
+    url('^semilla/(?P<idModulo>.*)/(?P<idSemilla>.*)$',
+        views.semilla.detalle,
+        name='semillaDetalle'),
+
 ### HISTORIAS (RECIBIR JSONS)
 
     url('^historia/$',

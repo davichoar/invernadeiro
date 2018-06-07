@@ -1,0 +1,236 @@
+{% extends "app/base_site.html" %}
+
+
+{% block title %} {% if editable %} Editar {% else %} Ver {% endif %} Semilla {% endblock title %}
+
+{% block stylesheets %}
+ {{ block.super }}
+  <link href="/static/vendors/pnotify/dist/pnotify.css" rel="stylesheet">
+  <link href="/static/vendors/pnotify/dist/pnotify.buttons.css" rel="stylesheet">
+  <link href="/static/vendors/pnotify/dist/pnotify.nonblock.css" rel="stylesheet">
+{% endblock stylesheets %}
+
+{% block content %}
+
+  <div id="modalxd" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-hidden="true" >
+<form class="form-horizontal form-label-left"  method="POST" novalidate>
+    <div class="modal-dialog modal-sm">
+      <div class="modal-content">
+
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span>
+          </button>
+          <h4 class="modal-title" id="myModalLabel2">Confirmación de Eliminación</h4>
+        </div>
+        <div class="modal-body">
+          <p>¿Está seguro que desea eliminar el invernadero?</p>
+        </div>
+        <div class="modal-footer">
+            {% csrf_token %}
+            <center>
+              <button id="b_aceptar_modal" name="b_aceptar_modal" type="submit" class="btn btn-success" data-dismiss="modal">Aceptar</button>
+              <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+            </center>
+
+        </div>
+
+      </div>
+    </div>
+</form>
+  </div>
+
+<div class="right_col" role="main">
+   <div class="">
+     <div class="page-title">
+       <div class="title_left">
+         <h3>Semillas</h3>
+       </div>
+
+     </div>
+     <div class="clearfix"></div>
+
+     <div class="row">
+       <div class="col-md-12 col-sm-12 col-xs-12">
+         <div class="x_panel">
+
+           <div class="x_title">
+             <h2>{% if editable %} Editar {% else %} Ver {% endif %} Semilla<small></small></h2>
+                  <div class="clearfix"></div>
+           </div>
+
+
+           <div class="x_content">
+
+             <form id="nuevaSemilla" class="form-horizontal form-label-left" method="POST">
+                                                                {% csrf_token %}
+
+               <div class="form-group">
+                  <label class="control-label col-md-3 col-sm-3 col-xs-12">Tipo de Planta *</label>
+                  <div class="col-md-6 col-sm-6 col-xs-12">
+                    <select id = "tipoPlanta" class="form-control" name="tipoPlanta" {% if not editable %} disabled {% endif %}>
+                      <option value="-1" {% if  semilla.idtipoplanta  == -1 %} selected {% endif %} disabled>- Seleccione -</option>
+                      {% for tipoplanta in listaTipoplanta %}
+                      <option value="{{tipoplanta.idtipoplanta}}" {% if semilla.idtipoplanta == tipoplanta.idtipoplanta %} selected {% endif %} >{{tipoplanta.nombrecomun}}</option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                </div>
+                 <div class="form-group">
+                  <label class="control-label col-md-3 col-sm-3 col-xs-12">Módulo de Semillas *</label>
+                  <div class="col-md-6 col-sm-6 col-xs-12">
+                    <select id = "modulo" class="form-control" name="modulo" onchange="cambiarMax(this)"  {% if not editable %} disabled {% endif %}>
+                      <option value="-1" {% if  semilla.idmodulo  == -1 %} selected {% endif %} disabled>- Seleccione -</option>
+                      {% for fmodulo in listaModulos %}
+                      <option value="{{fmodulo.idmodulo}}" {% if modulo.idmodulo == fmodulo.idmodulo %} selected {% endif %} >{{fmodulo.nombre}}</option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                </div>
+                <div class="item form-group">
+                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="posx"> Columna
+                  </label>
+                  <div class="col-md-2 col-sm-2 col-xs-6">
+                    <input  type="number" id="posx" name="posx" value="{{historia.posx}}" min="1" max="{{modulo.columnas}}" step="1" class="form-control col-md-7 col-xs-12"  {% if not editable %} disabled {% endif %}>
+                  </div>
+                </div>
+                <div class="item form-group">
+                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="posy"> Fila
+                  </label>
+                  <div class="col-md-2 col-sm-2 col-xs-6">
+                    <input  type="number" id="posy" name="posy" value="{{historia.posy}}" min="1" max="{{modulo.filas}}" step="1" class="form-control col-md-7 col-xs-12" {% if not editable %} disabled {% endif %}>
+                  </div>
+                </div>
+               <div class="ln_solid"></div>
+               <div class="form-group">
+                 <div class="col-xs-12">
+				 <center>
+                   {% if editable %}
+                        <button id="send" name="b_aceptar" type="button" class="btn btn-success" onclick="validar()">Aceptar</button>
+                        <a href="/semilla/{{ semilla.idsemilla }}"><button id="cancel" name="b_cancelar" type="button" class="btn btn-default">Cancelar</button></a>   
+                   {% else %}
+                        <button id="edit" name="b_editar" type="submit" class="btn btn-success">Editar</button>
+                        <a href="/modulosemilla/{{idModuloOrig}}"><button id="cancel" name="b_cancelar" type="button" class="btn btn-default">Regresar</button></a>                   
+                   {% endif %}
+                    <button id="b_eliminar" name="b_eliminar"  type="button" class="btn btn-danger" style="float:right">Eliminar</button>
+                   
+				  </center>
+                 </div>
+               </div>
+             </form>
+           </div>
+         </div>
+       </div>
+     </div>
+   </div>
+ </div>
+{% endblock content %}
+
+{% block javascripts %}
+ {{ block.super }}
+  <script src="/static/vendors/jquery.inputmask/dist/min/jquery.inputmask.bundle.min.js"></script>
+  <script src="/static/vendors/pnotify/dist/pnotify.js"></script>
+  <script src="/static/vendors/pnotify/dist/pnotify.buttons.js"></script>
+  <script src="/static/vendors/pnotify/dist/pnotify.nonblock.js"></script>
+  <script>
+  function activate_modal() {
+     $("#modalxd").modal()
+  }
+  document.getElementById("b_eliminar").addEventListener("click", activate_modal);
+  </script>
+  <script>
+  function deletO(){
+     document.getElementById("b_aceptar_modal").click();
+  }
+  document.getElementById("b_aceptar_modal").addEventListener("click", deletO);
+  </script>
+  <script>
+  function validar() {
+        if (document.getElementById("tipoPlanta").value == -1) {
+            mostrarModal('Debe ingresar un tipo de planta para la semilla.');
+            return;
+        }
+        if (document.getElementById("modulo").value == -1) {
+            mostrarModal('Debe ingresar un módulo de semillas para la semilla.');
+            return;
+        }
+        posxcombo = document.getElementById("posx");
+        if (!Number.isInteger(Number(posxcombo.value))) {
+            mostrarModal('La columna ingresada no es válida.');
+            return;            
+        }
+        if (posxcombo.value == '') {
+            mostrarModal('Debe ingresar la columna del módulo donde se ubicará la semilla.');
+            return;
+        }
+        if (posxcombo.value < posxcombo.min || posxcombo.value > posxcombo.max) {
+            mostrarModal('La columna ingresada no es válida.');
+            return;        
+        }
+        posycombo = document.getElementById("posy");
+        if (!Number.isInteger(Number(posycombo.value))) {
+            mostrarModal('La fila ingresada no es válida.');
+            return;        
+        }
+        if (posycombo.value == '') {
+            mostrarModal('Debe ingresar la fila del módulo donde se ubicará la semilla.');
+            return;
+        }
+        if (posycombo.value < posycombo.min || posycombo.value > posycombo.max) {
+            mostrarModal('La fila ingresada no es válida.');
+            return;        
+        }
+        document.getElementById("nuevaSemilla").submit();
+        return;        
+    }
+  
+  </script>
+  <script>
+  function cambiarMax(comboModulo) {
+    moduloSeleccionado = Number(comboModulo.value);
+    switch(moduloSeleccionado) {
+        {% for fmodulo in listaModulos %}
+            case {{fmodulo.idmodulo}}:
+                posxcombo = document.getElementById("posx");
+                posxcombo.max = {{fmodulo.columnas}};
+                posycombo = document.getElementById("posy");
+                posycombo.max = {{fmodulo.filas}};
+                if (posxcombo.value > posxcombo.max) {
+                    posxcombo.value = posxcombo.max;
+                }
+                
+                if (posycombo.value > posycombo.max) {
+                    posycombo.value = posycombo.max;
+                }                
+                break;
+        {% endfor %}
+    }
+  }
+  </script>
+  <script>
+  function mostrarModal(cadena) {
+    new PNotify({
+        title: 'Error',
+        text: cadena,
+        type: 'error',
+        styling: 'bootstrap3'
+    });
+  }
+  </script>  
+  {% if mostrarModalEditar %}
+  <script>
+    new PNotify({
+        title: 'Edición Exitosa',
+        text: 'Se editó la semilla satisfactoriamente.',
+        type: 'success',
+        styling: 'bootstrap3'
+    });
+  </script>
+  {% endif %}
+  {% if mensajeError != None %}
+  <script>
+  mostrarModal("{{mensajeError}}");
+  </script>
+  {% endif %}
+{% endblock javascripts %}
+
+

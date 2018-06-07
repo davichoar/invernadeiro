@@ -8,3 +8,6 @@ from .historia import *
 from .moduloSemilla import *
 from .inv import *
 from .estadisticas import *
+from .planta import *
+from .semilla import *
+from .panelluz import *

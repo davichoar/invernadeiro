@@ -78,8 +78,15 @@
 
   <script type="text/javascript">
 
-    var energy_5_data = {
-      labels: {{ labels_5|safe }},
+    var labels = {{labels|safe}}
+    var energy_data = {{energy|safe}}
+    var water_data = {{water|safe}}
+
+    var energyLineChart
+    var waterBarChart
+
+    var energy_data_chart = {
+      labels: labels.slice(0,5),
       datasets: [
         {
           label: "Consumo de energía",
@@ -91,56 +98,26 @@
           pointHoverBorderColor: "rgba(220,220,220,1)",
           pointBorderWidth: 1,
           lineTension: 0,
-          data: {{ energy_5|safe }}
+          data: energy_data.slice(0,5)
         }
       ]
     }
 
-    var energy_10_data = {
-      labels: {{ labels_10|safe }},
-      datasets: [
-        {
-          label: "Consumo de energía",
-          backgroundColor: "rgba(38, 185, 154, 0.31)",
-          borderColor: "rgba(38, 185, 154, 0.7)",
-          pointBorderColor: "rgba(38, 185, 154, 0.7)",
-          pointBackgroundColor: "rgba(38, 185, 154, 0.7)",
-          pointHoverBackgroundColor: "#fff",
-          pointHoverBorderColor: "rgba(220,220,220,1)",
-          pointBorderWidth: 1,
-          lineTension: 0,
-          data: {{ energy_10|safe }}
-        }
-      ]
-    }
-
-    var water_5_data = {
-      labels: {{ labels_5|safe }},
+    var water_data_chart = {
+      labels: labels.slice(0,5),
       datasets: [
         {
           label: "Nivel del tanque de agua",
           backgroundColor: "rgba(115, 135, 156, 0.8)",
           pointBorderWidth: 1,
-          data: {{ water_5|safe }}
-        }
-      ]
-    }
-
-    var water_10_data = {
-      labels: {{ labels_10|safe }},
-      datasets: [
-        {
-          label: "Nivel del tanque de agua",
-          backgroundColor: "rgba(115, 135, 156, 0.8)",
-          pointBorderWidth: 1,
-          data: {{ water_10|safe }}
+          data: water_data.slice(0,5)
         }
       ]
     }
 
     function setLineChart(data){
       var ctx = document.getElementById("energyLineChart")
-      var energyLineChart = new Chart(ctx, {
+      energyLineChart = new Chart(ctx, {
         type: 'line',
         data: data
       });
@@ -148,39 +125,29 @@
 
     function setBarChart(data){
       var ctx = document.getElementById("waterBarChart")
-      var energyLineChart = new Chart(ctx, {
+      waterBarChart = new Chart(ctx, {
         type: 'bar',
         data: data
       });
     }
 
     function updateLineChart(){
-      data_range = $('#sel1').val()
-      data_display = null
-      if (data_range == 5) {
-        data_display = energy_5_data
-      } else if (data_range == 10){
-        data_display = energy_10_data
-      }
-      console.log(data_display)
-      setLineChart(data_display)
+      let data_range = $('#sel1').val() 
+      energyLineChart.data.labels = labels.slice(10 - data_range, 10)
+      energyLineChart.data.datasets[0].data = energy_data.slice(10 - data_range, 10)
+      energyLineChart.update()
     }
 
     function updateBarChart(){
-      data_range = $('#sel2').val()
-      data_display = null
-      if (data_range == 5) {
-        data_display = water_5_data
-      } else if (data_range == 10){
-        data_display = water_10_data
-      }
-      console.log(data_display)
-      setBarChart(data_display)
+      let data_range = $('#sel2').val()
+      waterBarChart.data.labels = labels.slice(10 - data_range, 10)
+      waterBarChart.data.datasets[0].data = water_data.slice(10 - data_range, 10)
+      waterBarChart.update()
     }
 
     $(document).ready(function (){
-      setLineChart(energy_5_data)
-      setBarChart(water_5_data)
+      setLineChart(energy_data_chart)
+      setBarChart(water_data_chart)
     })
   
   </script>
