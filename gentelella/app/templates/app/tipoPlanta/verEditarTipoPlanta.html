@@ -1,0 +1,185 @@
+{% extends "app/base_site.html" %}
+
+
+{% block title %} {% if editable %} Editar {% else %} Ver {% endif %} Tipo de Planta {% endblock title %}
+
+{% block stylesheets %}
+ {{ block.super }}
+  <link href="/static/vendors/pnotify/dist/pnotify.css" rel="stylesheet">
+  <link href="/static/vendors/pnotify/dist/pnotify.buttons.css" rel="stylesheet">
+  <link href="/static/vendors/pnotify/dist/pnotify.nonblock.css" rel="stylesheet">
+{% endblock stylesheets %}
+
+{% block content %}
+
+  <div id="modalxd" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-hidden="true" >
+<form class="form-horizontal form-label-left"  method="POST" novalidate>
+    <div class="modal-dialog modal-sm">
+      <div class="modal-content">
+
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span>
+          </button>
+          <h4 class="modal-title" id="myModalLabel2">Confirmación de Eliminación</h4>
+        </div>
+        <div class="modal-body">
+          <p>¿Está seguro que desea eliminar el tipo de planta?</p>
+        </div>
+        <div class="modal-footer">
+            {% csrf_token %}
+            <center>
+              <button id="b_aceptar_modal" name="b_aceptar_modal" type="submit" class="btn btn-success" data-dismiss="modal">Aceptar</button>
+              <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+            </center>
+
+        </div>
+
+      </div>
+    </div>
+</form>
+  </div>
+
+<div class="right_col" role="main">
+   <div class="">
+     <div class="page-title">
+       <div class="title_left">
+         <h3>Tipos de Planta</h3>
+       </div>
+
+     </div>
+     <div class="clearfix"></div>
+
+     <div class="row">
+       <div class="col-md-12 col-sm-12 col-xs-12">
+         <div class="x_panel">
+
+           <div class="x_title">
+             <h2>{% if editable %} Editar {% else %} Ver {% endif %} Tipo de Planta<small></small></h2>
+                  <div class="clearfix"></div>
+           </div>
+
+                        {% load app_filters %}
+
+           <div class="x_content">
+
+             <form id="nuevoTipoPlanta" class="form-horizontal form-label-left" method="POST"  enctype="multipart/form-data">
+                                                                {% csrf_token %}
+
+                                                                
+               {% if not editable and tipoPlanta.idfoto != None %}
+			  <center><img src="/static/fotos_tipo_planta/{{listaFotos|getFoto:tipoPlanta.idtipoplanta}}" class="img-responsive" width="200dp"  alt="Cinque Terre"></center> <br>
+               {% endif %} 
+               <div class="item form-group">
+                 <label class="control-label col-md-3 col-sm-3 col-xs-12" for="nombreComun">Nombre Común <span class="required">*</span>
+                 </label>
+                 <div class="col-md-6 col-sm-6 col-xs-12">
+                   <input id="nombreComun" class="form-control col-md-7 col-xs-12" name="nombreComun" value="{{tipoPlanta.nombrecomun}}" type="text" {% if not editable %} disabled {% endif %}>
+                 </div>
+               </div>
+               <div class="item form-group">
+                 <label class="control-label col-md-3 col-sm-3 col-xs-12" for="nombreCientifico">Nombre Científico <span class="required">*</span>
+                 </label>
+                 <div class="col-md-6 col-sm-6 col-xs-12">
+                   <input id="nombreCientifico" class="form-control col-md-7 col-xs-12" name="nombreCientifico" value="{{tipoPlanta.nombrecientifico}}" type="text" {% if not editable %} disabled {% endif %}>
+                 </div>
+               </div>
+               {% if editable %}
+               <div class="item form-group">
+                 <label class="control-label col-md-3 col-sm-3 col-xs-12" for="nombreCientifico">Foto
+                 </label>
+                 <div class="col-md-6 col-sm-6 col-xs-12">
+                   <input id="foto" class="form-control col-md-7 col-xs-12" style="border-color: white; box-shadow: none;" name="foto" value="" type="file" accept="image/*">
+                 </div>
+               </div>
+               {% endif %}
+               <div class="ln_solid"></div>
+               <div class="form-group">
+                 <div class="col-xs-12">
+				 <center>
+                   {% if editable %}
+                        <button id="send" name="b_aceptar" type="button" class="btn btn-success" onclick="validar()">Aceptar</button>
+                        <a href="/tipoplanta/{{ tipoPlanta.idtipoplanta }}"><button id="cancel" name="b_cancelar" type="button" class="btn btn-default">Cancelar</button></a>   
+                   {% else %}
+                        <button id="edit" name="b_editar" type="submit" class="btn btn-success">Editar</button>
+                        <a href="/tipoplanta/"><button id="cancel" name="b_cancelar" type="button" class="btn btn-default">Regresar</button></a>                   
+                   {% endif %}
+                    <button id="b_eliminar" name="b_eliminar"  type="button" class="btn btn-danger" style="float:right">Eliminar</button>
+                   
+				  </center>
+                 </div>
+               </div>
+             </form>
+           </div>
+         </div>
+       </div>
+     </div>
+   </div>
+ </div>
+{% endblock content %}
+
+{% block javascripts %}
+ {{ block.super }}
+  <script src="/static/vendors/jquery.inputmask/dist/min/jquery.inputmask.bundle.min.js"></script>
+  <script src="/static/vendors/pnotify/dist/pnotify.js"></script>
+  <script src="/static/vendors/pnotify/dist/pnotify.buttons.js"></script>
+  <script src="/static/vendors/pnotify/dist/pnotify.nonblock.js"></script>
+  <script>
+  function activate_modal() {
+     $("#modalxd").modal()
+  }
+  document.getElementById("b_eliminar").addEventListener("click", activate_modal);
+  </script>
+  <script>
+  function deletO(){
+     document.getElementById("b_aceptar_modal").click();
+  }
+  document.getElementById("b_aceptar_modal").addEventListener("click", deletO);
+  </script>
+  <script>
+  function validar() {
+        if (document.getElementById("nombreComun").value == '') {
+            mostrarModal('Debe ingresar el nombre común del tipo de planta.');
+            return;
+        }
+        if (document.getElementById("nombreCientifico").value == '') {
+            mostrarModal('Debe ingresar el nombre científico del tipo de planta.');
+            return;
+        }
+       document.getElementById("nuevoTipoPlanta").submit();
+       return;        
+    }
+  
+  </script>
+  <script>
+  function mostrarModal(cadena) {
+    new PNotify({
+        title: 'Error',
+        text: cadena,
+        type: 'error',
+        styling: 'bootstrap3'
+    });
+  }
+  </script>
+  {% if mostrarModalEditar %}
+  <script>
+    new PNotify({
+        title: 'Edición Exitosa',
+        text: 'Se editó el tipo de planta satisfactoriamente.',
+        type: 'success',
+        styling: 'bootstrap3'
+    });
+  </script>
+  {% endif %}
+  {% if mensajeError != None %}
+  <script>
+  mostrarModal("{{mensajeError}}");
+  </script>
+  {% endif %}
+  {% if mostrarModalEliminarFallo %}
+  <script>
+  mostrarModal("No puede eliminar el tipo de planta.");
+  </script>
+  {% endif %}
+{% endblock javascripts %}
+
+
