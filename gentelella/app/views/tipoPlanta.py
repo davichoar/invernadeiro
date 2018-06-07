@@ -120,7 +120,7 @@ def detalle(request, idTipoPlanta, template = 'app/tipoPlanta/verEditarTipoPlant
             }
             return render(request, template, context)
         if 'b_aceptar_modal' in request.POST:
-            if (len(Semilla.objects.filter(idtipoplanta = idTipoPlanta)) > 0 or len(Planta.objects.filter(idtipoplanta = idTipoPlanta)) > 0):
+            if (len(Semilla.objects.filter(idtipoplanta = idTipoPlanta, habilitado = True)) > 0 or len(Planta.objects.filter(idtipoplanta = idTipoPlanta, habilitado = True)) > 0):
                 request.session['mensajeTipoPlantaEliminarFallo'] = True
                 return redirect('tipoPlantaDetalle', idTipoPlanta)
             try:
