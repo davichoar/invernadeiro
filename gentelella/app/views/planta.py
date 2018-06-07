@@ -58,7 +58,7 @@ def crear(request,
                            }
                 return render(request, template, context)
             else:
-                request.session['mensajeModuloCrear'] = True
+                request.session['mensajePlantaCrear'] = True
         return redirect('plantaListar')
     else:
         return redirect('plantaListar')
@@ -236,7 +236,7 @@ def detalle(request,idPlanta):
         if "b_aceptar_modal" in request.POST:
             print("Aceptar Modal")
             try:
-                eliminarModulo(request, idPlanta)
+                eliminarPlanta(request, idPlanta)
                 request.session['mensajePlantaEliminar'] = True
             except Exception as e:
                 print(e)
@@ -245,12 +245,12 @@ def detalle(request,idPlanta):
         else:
             return redirect('plantaListar')
 
-def eliminarModulo(request,idModulo):
+def eliminarPlanta(request,idPlanta):
     idUsuarioActual = int(request.session.get('idUsuarioActual'))
-    modulo,created = Modulosemilla.objects.update_or_create(
-        idmodulo=idModulo, defaults={"habilitado":False,"idusuarioauditado":idUsuarioActual})
+    planta,created = Modulosemilla.objects.update_or_create(
+        idplanta=idPlanta, defaults={"habilitado":False,"idusuarioauditado":idUsuarioActual})
     print(created)
-    modulo.save()
+    planta.save()
     return
 
 
@@ -334,7 +334,7 @@ def grabarData(request,idPlanta):
         return "Ocurrió un error al tratar de crear la zona. Intente de nuevo en un momento."
     idUsuarioActual = int(idUsuarioObtenido)
 
-    moduloObtenidoBd = None
+    plantaObtenidaBd = None
     if idPlanta is None:
         idMax = Planta.objects.all().aggregate(Max('idplanta'))['idplanta__max']
         if idMax is None:

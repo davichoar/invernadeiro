@@ -82,6 +82,18 @@ urlpatterns = [
         views.planta.detalle,
         name='plantaDetalle'),
 
+### PANEL LUZ
+
+    url('^panel/crear/$',
+        views.panelluz.crear,
+        name='panelCrear'),
+    url('^panel/$',
+        views.panelluz.listar,
+        name='panelListar'),
+    url('^panel/(?P<idPanel>.*)$',
+        views.panelluz.detalle,
+        name='panelDetalle'),
+
 ### SEMILLAS
 
     url('^semilla/crear/(?P<idModulo>.*)/(?P<columna>.*)/(?P<fila>.*)$',
