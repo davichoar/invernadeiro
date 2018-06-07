@@ -49,9 +49,9 @@ def crear(request,
                 return render(request, template, context)
             else:
                 request.session['mensajePanelCrear'] = True
-        return redirect('planelListar')
+        return redirect('panelListar')
     else:
-        return redirect('planelListar')
+        return redirect('panelListar')
 
 
 def listar(request,
