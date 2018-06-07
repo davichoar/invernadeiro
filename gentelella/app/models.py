@@ -144,6 +144,8 @@ class Panelluz(models.Model):
     idpanel = models.IntegerField(primary_key=True)
     codigopaneljson = models.IntegerField()
     idzona = models.IntegerField()
+    encendido = models.NullBooleanField()
+    fechacreacion = models.DateTimeField()
     habilitado = models.BooleanField()
     idusuarioauditado = models.IntegerField()
 
