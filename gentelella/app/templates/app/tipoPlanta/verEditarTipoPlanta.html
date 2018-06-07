@@ -62,9 +62,13 @@
 
            <div class="x_content">
 
-             <form id="nuevoTipoPlanta" class="form-horizontal form-label-left" method="POST">
+             <form id="nuevoTipoPlanta" class="form-horizontal form-label-left" method="POST"  enctype="multipart/form-data">
                                                                 {% csrf_token %}
 
+                                                                
+               {% if not editable and tipoPlanta.idfoto != None %}
+			  <center><img src="/static/fotos_tipo_planta/{{listaFotos|getFoto:tipoPlanta.idtipoplanta}}" class="img-responsive" width="200dp"  alt="Cinque Terre"></center> <br>
+               {% endif %} 
                <div class="item form-group">
                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="nombreComun">Nombre Común <span class="required">*</span>
                  </label>
@@ -79,14 +83,12 @@
                    <input id="nombreCientifico" class="form-control col-md-7 col-xs-12" name="nombreCientifico" value="{{tipoPlanta.nombrecientifico}}" type="text" {% if not editable %} disabled {% endif %}>
                  </div>
                </div>
-               {% if not editable %} {% if tipoPlanta.idfoto != None %}
-			  <center><img src="/static/fotos_tipo_planta/{{listaFotos|getFoto:tipoPlanta.idtipoplanta}}" class="img-responsive" width="200dp"  alt="Cinque Terre"></center>
-               {% endif %} {% else %}
+               {% if editable %}
                <div class="item form-group">
-                 <label class="control-label col-md-3 col-sm-3 col-xs-12" for="nombreCientifico">Foto <span class="required">*</span>
+                 <label class="control-label col-md-3 col-sm-3 col-xs-12" for="nombreCientifico">Foto
                  </label>
                  <div class="col-md-6 col-sm-6 col-xs-12">
-                   <input id="foto" class="form-control col-md-7 col-xs-12" name="foto" value="" type="file" accept="image/*">
+                   <input id="foto" class="form-control col-md-7 col-xs-12" style="border-color: white; box-shadow: none;" name="foto" value="" type="file" accept="image/*">
                  </div>
                </div>
                {% endif %}
