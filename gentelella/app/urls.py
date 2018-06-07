@@ -80,6 +80,10 @@ urlpatterns = [
             views.historia.prueba,
             name='historia'),
 
+    url('^estadisticas/',
+        views.estadisticas.index,
+        name='estadisticas')
+
 ### GENTELELLA
 
     url(r'^.*\.html', views.views.gentella_html, name='gentella'),
