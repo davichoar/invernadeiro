@@ -121,10 +121,6 @@ urlpatterns = [
             views.historia.prueba,
             name='historia'),
 
-    url('^estadisticas/',
-        views.estadisticas.index,
-        name='estadisticas'),
-
 ### GENTELELLA
 
     url(r'^.*\.html', views.views.gentella_html, name='gentella'),
@@ -140,5 +136,9 @@ urlpatterns = [
 ### CAMBIAR INVERNADERO
     
     url(r'^cambiarInvernadero/$', views.cambiarInvernadero, name='cambiarInvernadero'),
+
+## ESTADISTICAS
+
+    url('^estadisticas/$', views.estadisticas.stats_all, name='estadisticas')
     
 ]

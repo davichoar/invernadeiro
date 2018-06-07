@@ -2,7 +2,7 @@ from django.shortcuts import render
 from app.models import Historiainvernadero, Zona
 import json
 
-def index(request):
+def stats_all(request):
     template = 'app/estadisticas/index.html'
     idInvernadero = request.session['idInvernadero']
     stats_invernadero = Historiainvernadero.objects.filter(idinvernadero=idInvernadero).order_by('fecharegistro')[:10]
