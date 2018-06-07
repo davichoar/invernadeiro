@@ -164,7 +164,7 @@ def detalle(request,idModulo):
             except Exception as e:
                 mensajeError = "No se puede crear la zona en este momento"
                 print(e)
-            modulo = obtenerModuloRequest(request)
+            modulo = obtenerModuloRequest(request, idModulo)
             context['modulo'] = modulo
             if mensajeError:
 
@@ -217,7 +217,7 @@ def eliminarModulo(request,idModulo):
     return
 
 
-def obtenerModuloRequest(request):
+def obtenerModuloRequest(request, idModulo = None):
     moduloDataLlenada = Modulosemilla()
 
     nombreObtenido = request.POST.get('nombre')
@@ -241,7 +241,7 @@ def obtenerModuloRequest(request):
     filas = request.POST.get('filas')
     columnas = request.POST.get('columnas')
 
-
+    moduloDataLlenada.idmodulo = idModulo
     moduloDataLlenada.nombre = nombreObtenido
     moduloDataLlenada.codigomodulojson = codigoModulo
     moduloDataLlenada.idzona = idzona
@@ -260,8 +260,8 @@ def obtenerModuloRequest(request):
     moduloDataLlenada.nivelaguaideal = nivelAguaIdeal
     moduloDataLlenada.nivelaguamin = nivelAguaMin
     moduloDataLlenada.nivelaguamax = nivelAguaMax
-    moduloDataLlenada.filas = filas
-    moduloDataLlenada.columnas = columnas
+    moduloDataLlenada.filas = int(filas)
+    moduloDataLlenada.columnas = int(columnas)
 
     return moduloDataLlenada
 
