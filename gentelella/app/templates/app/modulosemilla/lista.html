@@ -123,4 +123,25 @@
         </script>
     {% endif %}
 
+    {% if mensajeCrearEditarError %}
+        <script>
+            new PNotify({
+                                title: 'Error',
+                                text: "En este momento no se puede acceder o crear un módulo.",
+                                type: 'error',
+                                styling: 'bootstrap3'
+                            });
+        </script>
+    {% endif %}
+    {% if mensajeObtenerZonaError %}
+        <script>
+            new PNotify({
+                                title: 'Error al obtener los módulos',
+                                text: "Ocurrió un problema al obtener las zonas de los módulos.",
+                                type: 'error',
+                                styling: 'bootstrap3'
+                            });
+        </script>
+    {% endif %}
+
 {% endblock javascripts %}
