@@ -32,19 +32,33 @@
 
             </div>
 
+
             <form class="form-horizontal form-label-left"  method="GET" novalidate>
                 {% csrf_token %}
-            <div class="title_right">
-              <div class="col-md-5 col-sm-5 col-xs-12 form-group pull-right top_search">
-                <div class="input-group">
-                  <input type="text" class="form-control" id="textoBusqueda" name="textoBusqueda" placeholder="Buscar...">
-                  <span class="input-group-btn">
-                    <button class="btn btn-default" id="b_buscar" name="b_buscar" type="submit" >Buscar</button>
-                  </span>
+
+                <div class="title_right">
+                  <div class="col-md-5 col-sm-5 col-xs-12 form-group pull-right top_search">
+                    <div class="input-group">
+                      <input type="text" class="form-control" id="textoBusqueda" name="textoBusqueda" placeholder="Buscar...">
+                      <span class="input-group-btn">
+                        <button class="btn btn-default" id="b_buscar" name="b_buscar" type="submit" >Buscar</button>
+                      </span>
+                    </div>
+                  </div>
+
+                    <div class="col-md-5 col-sm-5 col-xs-12 form-group">
+                      <label class="control-label col-md-3 col-sm-3 col-xs-12">Zona</label>
+                      <div class="col-md-6 col-sm-6 col-xs-12">
+                        <select id = "comboZona" class="form-control" name="comboZona" >
+                          <option value="-1" {% if -1 == idseleccionado %} selected {% endif %} >- Todas las zonas -</option>
+                          {% for zona in listaZonas %}
+                          <option value="{{zona.idzona}}" {% if zona.idzona == idseleccionado %} selected {% endif %}>{{zona.nombre}}</option>
+                          {% endfor %}
+                        </select>
+                      </div>
+                    </div>
                 </div>
-              </div>
-            </div>
-              </form>
+            </form>
 
 
             <div class="row">

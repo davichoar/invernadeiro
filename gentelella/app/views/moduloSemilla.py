@@ -154,7 +154,12 @@ def detalle(request,idModulo):
 
     template = 'app/modulosemilla/verEditar.html'
     modulo = Modulosemilla.objects.get(idmodulo=idModulo)
+    semillasModulo = Semilla.objects.filter(idmodulo=idModulo, habilitado=True)
 
+    if len(semillasModulo) > 0:
+        moduloConSemillas = True
+    else:
+        moduloConSemillas = False
     try:
         idInvernadero = int(request.session.get('idInvernadero'))
         listaZonas = Zona.objects.filter(idinvernadero=idInvernadero, idtipozona=ID_TIPO_ZONAS_SEMILLAS,habilitado=True)
@@ -183,7 +188,7 @@ def detalle(request,idModulo):
         nivelAguaok = None
         co2ok = None
 
-    context = {"historiaModulo": historiaModulo, "listaZonas": listaZonas, "modulo": modulo,
+    context = {"moduloConSemillas":moduloConSemillas,"historiaModulo": historiaModulo, "listaZonas": listaZonas, "modulo": modulo,
                'nombreUsuario': request.session.get('nomreUsuario'),
                'nombreInvernadero': request.session.get('nombreInvernadero'), "editable": False,
                "temperaturaok": temperaturaok, "humedadTierraok": humedadTierraok,
@@ -507,6 +512,7 @@ def grabarData(request,idModulo):
     else:
         moduloObtenidoBd = Modulosemilla.objects.filter(codigomodulojson=codigoModulo, habilitado=True).exclude(idmodulo=idModulo)
         print(moduloObtenidoBd)
+
     if moduloObtenidoBd.exists():
         return "Ya existe el codigo de modulo. Ingrese un codigo de modulo distinto"
 
