@@ -1,0 +1,188 @@
+{% extends "app/base_site.html" %}
+{% block title %} Estadisticas {% endblock title %}
+
+{% block stylesheets %}
+  {{ block.super }}
+  <link href="/static/vendors/pnotify/dist/pnotify.css" rel="stylesheet">
+  <link href="/static/vendors/pnotify/dist/pnotify.buttons.css" rel="stylesheet">
+  <link href="/static/vendors/pnotify/dist/pnotify.nonblock.css" rel="stylesheet">
+{% endblock stylesheets %}
+
+{% block content %}
+<div class="right_col" role="main">
+    <div class="">
+      <div class="page-title">
+        <div class="title_left">
+          <h3>Estadisticas</h3>
+        </div>
+
+      </div>
+      <div class="clearfix"></div>
+
+      <div class="row">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+          <div class="x_panel">
+            <div class="x_title">
+              <h2>Invernadero</h2>
+              <div class="clearfix"></div>
+            </div>
+            <div class="x_content">
+              <div class="col-md-6 col-sm-12 col-xs-12">
+                <h4>Consumo de Energía</h3>
+                <div class="form-group">
+                  <label for="sel1">Periodo:</label>
+                  <select class="form-control" id="sel1" onchange="updateLineChart()">
+                    <option value=5>Ultimas 5 mediciones</option>
+                    <option value=10>Ultimas 10 mediciones</option>
+                  </select>
+                </div>
+                <canvas id='energyLineChart'></canvas>
+              </div>
+              <div class="col-md-6 col-sm-12 col-xs-12">
+                <h4>Nivel del tanque de agua</h3>
+                <div class="form-group">
+                    <label for="sel2">Periodo:</label>
+                    <select class="form-control" id="sel2" onchange="updateBarChart()">
+                      <option value=5>Ultimas 5 mediciones</option>
+                      <option value=10>Ultimas 10 mediciones</option>
+                    </select>
+                  </div>
+                <canvas id='waterBarChart'></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+          <div class="x_panel">
+            <div class="x_title">
+              <h2>Componentes</h2>
+              <div class="clearfix"></div>
+            </div>
+            <div class="x_content">
+              
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock content %}
+
+{% block javascripts %}
+  {{ block.super }}
+
+  <script src="/static/vendors/Chart.js/dist/Chart.min.js"></script>
+
+  <script type="text/javascript">
+
+    var energy_5_data = {
+      labels: {{ labels_5|safe }},
+      datasets: [
+        {
+          label: "Consumo de energía",
+          backgroundColor: "rgba(38, 185, 154, 0.31)",
+          borderColor: "rgba(38, 185, 154, 0.7)",
+          pointBorderColor: "rgba(38, 185, 154, 0.7)",
+          pointBackgroundColor: "rgba(38, 185, 154, 0.7)",
+          pointHoverBackgroundColor: "#fff",
+          pointHoverBorderColor: "rgba(220,220,220,1)",
+          pointBorderWidth: 1,
+          lineTension: 0,
+          data: {{ energy_5|safe }}
+        }
+      ]
+    }
+
+    var energy_10_data = {
+      labels: {{ labels_10|safe }},
+      datasets: [
+        {
+          label: "Consumo de energía",
+          backgroundColor: "rgba(38, 185, 154, 0.31)",
+          borderColor: "rgba(38, 185, 154, 0.7)",
+          pointBorderColor: "rgba(38, 185, 154, 0.7)",
+          pointBackgroundColor: "rgba(38, 185, 154, 0.7)",
+          pointHoverBackgroundColor: "#fff",
+          pointHoverBorderColor: "rgba(220,220,220,1)",
+          pointBorderWidth: 1,
+          lineTension: 0,
+          data: {{ energy_10|safe }}
+        }
+      ]
+    }
+
+    var water_5_data = {
+      labels: {{ labels_5|safe }},
+      datasets: [
+        {
+          label: "Nivel del tanque de agua",
+          backgroundColor: "rgba(115, 135, 156, 0.8)",
+          pointBorderWidth: 1,
+          data: {{ water_5|safe }}
+        }
+      ]
+    }
+
+    var water_10_data = {
+      labels: {{ labels_10|safe }},
+      datasets: [
+        {
+          label: "Nivel del tanque de agua",
+          backgroundColor: "rgba(115, 135, 156, 0.8)",
+          pointBorderWidth: 1,
+          data: {{ water_10|safe }}
+        }
+      ]
+    }
+
+    function setLineChart(data){
+      var ctx = document.getElementById("energyLineChart")
+      var energyLineChart = new Chart(ctx, {
+        type: 'line',
+        data: data
+      });
+    }
+
+    function setBarChart(data){
+      var ctx = document.getElementById("waterBarChart")
+      var energyLineChart = new Chart(ctx, {
+        type: 'bar',
+        data: data
+      });
+    }
+
+    function updateLineChart(){
+      data_range = $('#sel1').val()
+      data_display = null
+      if (data_range == 5) {
+        data_display = energy_5_data
+      } else if (data_range == 10){
+        data_display = energy_10_data
+      }
+      console.log(data_display)
+      setLineChart(data_display)
+    }
+
+    function updateBarChart(){
+      data_range = $('#sel2').val()
+      data_display = null
+      if (data_range == 5) {
+        data_display = water_5_data
+      } else if (data_range == 10){
+        data_display = water_10_data
+      }
+      console.log(data_display)
+      setBarChart(data_display)
+    }
+
+    $(document).ready(function (){
+      setLineChart(energy_5_data)
+      setBarChart(water_5_data)
+    })
+  
+  </script>
+
+{% endblock javascripts %}

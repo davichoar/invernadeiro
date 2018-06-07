@@ -82,7 +82,7 @@ urlpatterns = [
 
     url('^estadisticas/',
         views.estadisticas.index,
-        name='estadisticas')
+        name='estadisticas'),
 
 ### GENTELELLA
 
