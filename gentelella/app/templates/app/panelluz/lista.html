@@ -15,7 +15,7 @@
     <div class="">
       <div class="page-title">
         <div class="title_left">
-          <h3>Módulos de Semillas</h3>
+          <h3>Paneles de Luz</h3>
         </div>
 
       </div>
@@ -26,25 +26,39 @@
           <div class="x_panel">
 
             <div class="x_title">
-              <h2>Búsqueda de Módulos<small></small></h2>
+              <h2>Búsqueda de Paneles de Luz<small></small></h2>
                    <div class="clearfix"></div>
 
 
             </div>
 
+
             <form class="form-horizontal form-label-left"  method="GET" novalidate>
                 {% csrf_token %}
-            <div class="title_right">
-              <div class="col-md-5 col-sm-5 col-xs-12 form-group pull-right top_search">
-                <div class="input-group">
-                  <input type="text" class="form-control" id="textoBusqueda" name="textoBusqueda" placeholder="Buscar Módulo...">
-                  <span class="input-group-btn">
-                    <button class="btn btn-default" id="b_buscar" name="b_buscar" type="submit" >Buscar</button>
-                  </span>
+
+                <div class="title_right">
+                  <div class="col-md-5 col-sm-5 col-xs-12 form-group pull-right top_search">
+                    <div class="input-group">
+                      <input type="text" class="form-control" id="textoBusqueda" name="textoBusqueda" placeholder="Buscar...">
+                      <span class="input-group-btn">
+                        <button class="btn btn-default" id="b_buscar" name="b_buscar" type="submit" >Buscar</button>
+                      </span>
+                    </div>
+                  </div>
+
+                    <div class="col-md-5 col-sm-5 col-xs-12 form-group">
+                      <label class="control-label col-md-3 col-sm-3 col-xs-12">Zona</label>
+                      <div class="col-md-6 col-sm-6 col-xs-12">
+                        <select id = "comboZona" class="form-control" name="comboZona" >
+                          <option value="-1" {% if -1 == idseleccionado %} selected {% endif %} >- Todas las zonas -</option>
+                          {% for zona in listaZonas %}
+                          <option value="{{zona.idzona}}" {% if zona.idzona == idseleccionado %} selected {% endif %}>{{zona.nombre}}</option>
+                          {% endfor %}
+                        </select>
+                      </div>
+                    </div>
                 </div>
-              </div>
-            </div>
-              </form>
+            </form>
 
 
             <div class="row">
@@ -52,10 +66,10 @@
                   <div class="x_panel">
 
                     <div class="x_title">
-                        <h2>Lista de módulos</h2>
+                        <h2>Lista de paneles de luz</h2>
                         <form class="form-horizontal form-label-left"  method="POST" novalidate>
                         {% csrf_token %}
-                            <button id="b_crear" name="b_crear" type="submit" class="btn btn-success" style="float:right">Crear Módulo</button>
+                            <button id="b_crear" name="b_crear" type="submit" class="btn btn-success" style="float:right">Crear Panel</button>
                         </form>
                         <div class="clearfix"></div>
                     </div>
@@ -63,19 +77,21 @@
                     <div class="x_content">
 
                       <div class="row" style="width:100%; max-width:800px; margin:0 auto; float: left">
-                        {% for modulo in listaModulos%}
+                        {% for panel in listaPaneles%}
                         <div class="col-md-3" style="display: inline-block; height: 180px; width: 180px; margin:10px;">
-                          <div class="thumbnail" {% if modulo.condicionesshidas != None %} {% if modulo.condicionesshidas %} style="border-color: green;" {% else %} style="border-color: red;" {% endif %} {% endif %} >
-                            <a href="{% url 'moduloSemillaDetalle' idModulo=modulo.idmodulo %}">
+                          <div class="thumbnail" {% if panel.encendido != None %} {% if planta.encendido %} style="border-color: green;" {% else %} style="border-color: red;" {% endif %} {% endif %} >
+                            <a href="{% url 'panelDetalle' idPanel=panel.idpanel %}">
                             <div class="image view view-first">
-                                <img style="height: 100%; width: 100%; display: block;" src="/static/images/modulo.jpg" alt="image" />
+                                <img style="height: 100%; width: 100%; display: block;" src="/static/images/panelLuz1.png" alt="image" />
                               <div class="mask">
-                                <p>{{modulo.nombre}}</p>
+                                <p>Código: {{panel.codigopaneljson}}
+                                </p>
                               </div>
                             </div>
                             </a>
                             <div class="caption">
-                              <a href="{% url 'moduloSemillaDetalle' idModulo=modulo.idmodulo %}"><center><h2>{{modulo.nombre}}</h2></center></a>
+                              <a href="{% url 'panelDetalle' idPanel=panel.idpanel %}"><center><h2>
+                                  Código: {{panel.codigopaneljson}}</h2></center></a>
                             </div>
                           </div>
                         </div>
@@ -105,7 +121,7 @@
         <script>
             new PNotify({
                                 title: 'Creación Exitosa',
-                                text: "Se creó el módulo correctamente.",
+                                text: "Se creó la planta correctamente.",
                                 type: 'success',
                                 styling: 'bootstrap3'
                             });
@@ -116,18 +132,17 @@
         <script>
             new PNotify({
                                 title: 'Eliminación Exitosa',
-                                text: "Se eliminó el módulo correctamente.",
+                                text: "Se eliminó la planta correctamente.",
                                 type: 'success',
                                 styling: 'bootstrap3'
                             });
         </script>
     {% endif %}
-
-    {% if mensajeCrearEditarError %}
+    {% if mensajePlantaCrearEditarError %}
         <script>
             new PNotify({
                                 title: 'Error',
-                                text: "En este momento no se puede acceder o crear un módulo.",
+                                text: "En este momento no se puede acceder o crear una planta.",
                                 type: 'error',
                                 styling: 'bootstrap3'
                             });
@@ -136,8 +151,8 @@
     {% if mensajeObtenerZonaError %}
         <script>
             new PNotify({
-                                title: 'Error al obtener los módulos',
-                                text: "Ocurrió un problema al obtener las zonas de los módulos.",
+                                title: 'Error al obtener las plantas',
+                                text: "Ocurrió un problema al obtener las zonas de las plantas.",
                                 type: 'error',
                                 styling: 'bootstrap3'
                             });

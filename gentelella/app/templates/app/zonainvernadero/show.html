@@ -49,48 +49,50 @@
       </div>
       <div class="clearfix"></div>
 
-      {% if historiaZona  %}
-      <div class="x_panel">
+      {% if not editable %}
+        {% if historiaZona  %}
+        <div class="x_panel">
 
-        <div class="x_title">
-          <h2>Condiciones Actuales (Registradas el {{historiaZona.fecharegistro|date:"d/m/Y H:m:s"}})<small></small></h2>
-              <ul class="nav navbar-right panel_toolbox" >
-                <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
-                </li>
-              </ul>
-          <div class="clearfix"></div>
+          <div class="x_title">
+            <h2>Condiciones Actuales (Registradas el {{historiaZona.fecharegistro|date:"d/m/Y H:m:s"}})<small></small></h2>
+                <ul class="nav navbar-right panel_toolbox" >
+                  <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                  </li>
+                </ul>
+            <div class="clearfix"></div>
+          </div>
+
+
+          <div class="x_content">
+              <form class="form-horizontal form-label-left">
+                <div class="item form-group">
+                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="tempIdeal">Temperatura Actual<span class="required"></span>
+                  </label>
+                  <div class="col-md-2 col-sm-2 col-xs-6">
+                    <input required="required" id="temperaturaActual" value="{{historiaZona.temperatura}}"  {% if temperaturaok %} style="border-color: green; background-color: white;" {% else %} style="border-color: red; background-color: white;" {% endif %} data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12"  disabled >
+                  </div>
+                </div>
+
+                <div class="item form-group">
+                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="tempIdeal">PH Actual<span class="required"></span>
+                  </label>
+                  <div class="col-md-2 col-sm-2 col-xs-6">
+                    <input required="required" id="phActual" value="{{historiaZona.ph}}"  {% if phok %} style="border-color: green; background-color: white;" {% else %} style="border-color: red; background-color: white;" {% endif %} data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12"   disabled >
+                  </div>
+                </div>
+
+                <div class="item form-group">
+                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="tempIdeal">Concentración de CO2 Actual<span class="required"></span>
+                  </label>
+                  <div class="col-md-2 col-sm-2 col-xs-6">
+                    <input required="required" value="{{historiaZona.concentracionco2}}" {% if co2ok %} style="border-color: green; background-color: white;" {% else %} style="border-color: red; background-color: white;" {% endif %} data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12"  disabled >
+                  </div>
+                </div>
+              </form>
+          </div>
         </div>
 
-
-        <div class="x_content">
-            <form class="form-horizontal form-label-left">
-              <div class="item form-group">
-                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="tempIdeal">Temperatura Actual<span class="required"></span>
-                </label>
-                <div class="col-md-2 col-sm-2 col-xs-6">
-                  <input required="required" id="temperaturaActual" value="{{historiaZona.temperatura}}"  {% if temperaturaok %} style="border-color: green; background-color: white;" {% else %} style="border-color: red; background-color: white;" {% endif %} data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12"  disabled >
-                </div>
-              </div>
-
-              <div class="item form-group">
-                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="tempIdeal">PH Actual<span class="required"></span>
-                </label>
-                <div class="col-md-2 col-sm-2 col-xs-6">
-                  <input required="required" id="phActual" value="{{historiaZona.ph}}"  {% if phok %} style="border-color: green; background-color: white;" {% else %} style="border-color: red; background-color: white;" {% endif %} data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12"   disabled >
-                </div>
-              </div>
-
-              <div class="item form-group">
-                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="tempIdeal">Concentración de CO2 Actual<span class="required"></span>
-                </label>
-                <div class="col-md-2 col-sm-2 col-xs-6">
-                  <input required="required" value="{{historiaZona.concentracionco2}}" {% if co2ok %} style="border-color: green; background-color: white;" {% else %} style="border-color: red; background-color: white;" {% endif %} data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12"  disabled >
-                </div>
-              </div>
-            </form>
-        </div>
-      </div>
-
+        {% endif %}
       {% endif %}
 
       <div class="row">
@@ -98,7 +100,7 @@
           <div class="x_panel">
 
             <div class="x_title">
-              <h2>Crear Zona Invernadero<small></small></h2>
+              <h2>Ver Zona Invernadero<small></small></h2>
               <ul class="nav navbar-right panel_toolbox" >
                 <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
                 </li>

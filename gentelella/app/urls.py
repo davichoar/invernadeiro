@@ -19,12 +19,10 @@ urlpatterns = [
         
     url('^usuario/crear/$',
         views.usuario.crear,
-        name='usuarioCrear'),
-        
+        name='usuarioCrear'),        
     url('^usuario/$',
         views.usuario.listar,
-        name='usuariosLista'),
-        
+        name='usuariosLista'),        
     url('^usuario/(?P<idUsuario>.*)$',
         views.usuario.detalle,
         name='usuarioDetalle'),
@@ -51,12 +49,10 @@ urlpatterns = [
         
     url('^inv/crear/$',
         views.inv.crear,
-        name='invernaderoCrear'),
-        
+        name='invernaderoCrear'),        
     url('^inv/$',
         views.inv.listar,
-        name='invernaderoLista'),
-        
+        name='invernaderoLista'),        
     url('^inv/(?P<idInv>.*)$',
         views.inv.detalle,
         name='invernaderoDetalle'),
@@ -73,6 +69,51 @@ urlpatterns = [
     url('^modulosemilla/(?P<idModulo>.*)$',
         views.moduloSemilla.detalle,
         name='moduloSemillaDetalle'),
+
+### PLANTAS
+
+    url('^planta/crear/$',
+        views.planta.crear,
+        name='plantaCrear'),
+    url('^planta/$',
+        views.planta.listar,
+        name='plantaListar'),
+    url('^planta/(?P<idPlanta>.*)$',
+        views.planta.detalle,
+        name='plantaDetalle'),
+
+### PANEL LUZ
+
+    url('^panel/crear/$',
+        views.panelluz.crear,
+        name='panelCrear'),
+    url('^panel/$',
+        views.panelluz.listar,
+        name='panelListar'),
+    url('^panel/(?P<idPanel>.*)$',
+        views.panelluz.detalle,
+        name='panelDetalle'),
+
+### SEMILLAS
+
+    url('^semilla/crear/(?P<idModulo>.*)/(?P<columna>.*)/(?P<fila>.*)$',
+        views.semilla.crear,
+        name='semillaCrear'),
+    url('^semilla/(?P<idModulo>.*)/(?P<idSemilla>.*)$',
+        views.semilla.detalle,
+        name='semillaDetalle'),
+        
+### TIPO PLANTAS
+        
+    url('^tipoplanta/crear/$',
+        views.tipoPlanta.crear,
+        name='tipoPlantaCrear'),        
+    url('^tipoplanta/$',
+        views.tipoPlanta.listar,
+        name='tipoPlantaListar'),        
+    url('^tipoplanta/(?P<idTipoPlanta>.*)$',
+        views.tipoPlanta.detalle,
+        name='tipoPlantaDetalle'),
 
 ### HISTORIAS (RECIBIR JSONS)
 

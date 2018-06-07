@@ -49,11 +49,88 @@
       </div>
       <div class="clearfix"></div>
 
-      {% if historiaModulo  %}
+      {% if not editable %}
+        {% if historiaModulo  %}
+        <div class="x_panel">
+
+          <div class="x_title">
+            <h2>Condiciones Actuales (Registradas el {{historiaModulo.fecharegistro|date:"d/m/Y H:m:s"}})<small></small></h2>
+                <ul class="nav navbar-right panel_toolbox" >
+                  <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                  </li>
+                </ul>
+            <div class="clearfix"></div>
+          </div>
+
+
+          <div class="x_content">
+              <form class="form-horizontal form-label-left">
+                <div class="item form-group">
+                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="tempIdeal">Temperatura Actual<span class="required"></span>
+                  </label>
+                  <div class="col-md-2 col-sm-2 col-xs-6">
+                    <input required="required" id="temperaturaActual" value="{{historiaModulo.temperatura}}"  {% if temperaturaok %} style="border-color: green; background-color: white;" {% else %} style="border-color: red; background-color: white;" {% endif %} data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12"  disabled >
+                  </div>
+                </div>
+
+                <div class="item form-group">
+                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="tempIdeal">Humedad de la Tierra Actual<span class="required"></span>
+                  </label>
+                  <div class="col-md-2 col-sm-2 col-xs-6">
+                    <input required="required" id="humedadTieraActual" value="{{historiaModulo.humedadtierra}}"  {% if humedadTierraok %} style="border-color: green; background-color: white;" {% else %} style="border-color: red; background-color: white;" {% endif %} data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12"   disabled >
+                  </div>
+                </div>
+
+                <div class="item form-group">
+                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="tempIdeal">Humedad del Ambiente Actual<span class="required"></span>
+                  </label>
+                  <div class="col-md-2 col-sm-2 col-xs-6">
+                    <input required="required" id="humedadAmbienteActual" value="{{historiaModulo.humedadambiente}}"  {% if humedadAmbienteok %} style="border-color: green; background-color: white;" {% else %} style="border-color: red; background-color: white;" {% endif %} data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12"   disabled >
+                  </div>
+                </div>
+
+                <div class="item form-group">
+                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="tempIdeal">Concentración de CO2 Actual<span class="required"></span>
+                  </label>
+                  <div class="col-md-2 col-sm-2 col-xs-6">
+                    <input required="required" value="{{historiaModulo.concentracionco2}}" {% if co2ok %} style="border-color: green; background-color: white;" {% else %} style="border-color: red; background-color: white;" {% endif %} data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12"  disabled >
+                  </div>
+                </div>
+
+                <div class="item form-group">
+                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="tempIdeal">Nivel del Agua Actual<span class="required"></span>
+                  </label>
+                  <div class="col-md-2 col-sm-2 col-xs-6">
+                    <input required="required" id="nivelAguaActual" value="{{historiaModulo.nivelagua}}"  {% if nivelAguaok %} style="border-color: green; background-color: white;" {% else %} style="border-color: red; background-color: white;" {% endif %} data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12"   disabled >
+                  </div>
+                </div>
+
+                <div class="item form-group">
+                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="tempIdeal">Luz del módulo<span class="required"></span>
+                  </label>
+                  <div class="col-md-2 col-sm-2 col-xs-6">
+                      <div class="radio">
+                        <label>
+                          <input type="radio" class="flat" name="iCheck" {% if historiaModulo.luz %} checked {% endif%} > {% if historiaModulo.luz %} Encendida {% else %} Apagada {% endif %}
+                        </label>
+                      </div>
+                  </div>
+                </div>
+
+              </form>
+          </div>
+        </div>
+        {% endif %}
+      {% endif %}
+      
+      
+      <!-- Grilla de las semillitas -->
+      {% load app_filters %}
+      {% if not editable and modulo.filas > 0 and modulo.columnas > 0 %}
       <div class="x_panel">
 
         <div class="x_title">
-          <h2>Condiciones Actuales (Registradas el {{historiaModulo.fecharegistro|date:"d/m/Y H:m:s"}})<small></small></h2>
+          <h2>Disposición del Semillero<small></small></h2>
               <ul class="nav navbar-right panel_toolbox" >
                 <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
                 </li>
@@ -63,70 +140,44 @@
 
 
         <div class="x_content">
-            <form class="form-horizontal form-label-left">
-              <div class="item form-group">
-                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="tempIdeal">Temperatura Actual<span class="required"></span>
-                </label>
-                <div class="col-md-2 col-sm-2 col-xs-6">
-                  <input required="required" id="temperaturaActual" value="{{historiaModulo.temperatura}}"  {% if temperaturaok %} style="border-color: green; background-color: white;" {% else %} style="border-color: red; background-color: white;" {% endif %} data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12"  disabled >
-                </div>
-              </div>
-
-              <div class="item form-group">
-                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="tempIdeal">Humedad de la Tierra Actual<span class="required"></span>
-                </label>
-                <div class="col-md-2 col-sm-2 col-xs-6">
-                  <input required="required" id="humedadTieraActual" value="{{historiaModulo.humedadtierra}}"  {% if humedadTierraok %} style="border-color: green; background-color: white;" {% else %} style="border-color: red; background-color: white;" {% endif %} data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12"   disabled >
-                </div>
-              </div>
-
-              <div class="item form-group">
-                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="tempIdeal">Humedad del Ambiente Actual<span class="required"></span>
-                </label>
-                <div class="col-md-2 col-sm-2 col-xs-6">
-                  <input required="required" id="humedadAmbienteActual" value="{{historiaModulo.humedadambiente}}"  {% if humedadAmbienteok %} style="border-color: green; background-color: white;" {% else %} style="border-color: red; background-color: white;" {% endif %} data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12"   disabled >
-                </div>
-              </div>
-
-              <div class="item form-group">
-                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="tempIdeal">Concentración de CO2 Actual<span class="required"></span>
-                </label>
-                <div class="col-md-2 col-sm-2 col-xs-6">
-                  <input required="required" value="{{historiaModulo.concentracionco2}}" {% if co2ok %} style="border-color: green; background-color: white;" {% else %} style="border-color: red; background-color: white;" {% endif %} data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12"  disabled >
-                </div>
-              </div>
-
-              <div class="item form-group">
-                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="tempIdeal">Nivel del Agua Actual<span class="required"></span>
-                </label>
-                <div class="col-md-2 col-sm-2 col-xs-6">
-                  <input required="required" id="nivelAguaActual" value="{{historiaModulo.nivelagua}}"  {% if nivelAguaok %} style="border-color: green; background-color: white;" {% else %} style="border-color: red; background-color: white;" {% endif %} data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12"   disabled >
-                </div>
-              </div>
-
-              <div class="item form-group">
-                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="tempIdeal">Luz del módulo<span class="required"></span>
-                </label>
-                <div class="col-md-2 col-sm-2 col-xs-6">
-                    <div class="radio">
-                      <label>
-                        <input type="radio" class="flat" name="iCheck" {% if historiaModulo.luz %} checked {% endif%} > {% if historiaModulo.luz %} Encendida {% else %} Apagada {% endif %}
-                      </label>
-                    </div>
-                </div>
-              </div>
-
-            </form>
+            <center>
+            <table class="table-bordered">
+            <tbody>
+            <tr>
+            <th width="30dp" height="30dp" style="border-color:grey; background-color: lightgray"></th>
+            {% for columna in rangeColumnas %}
+            <th width="30dp" height="30dp" style="border-color:grey; background-color: lightgray"><center>{{columna}}</center></th>
+            {% endfor %}
+            </tr>
+            {% for fila in rangeFilas %}
+                <tr>
+                <td width="30dp" height="30dp" style="border-color:grey; background-color: lightgray"><center>{{fila}}</center></th>
+                {% for columna in rangeColumnas %}
+                <td width="30dp" height="30dp"
+                {% if listaSemillas|haskey:columna and listaSemillas|get:columna|haskey:fila %}
+                    style="border-color:grey; background-color:gray;" data-toggle="tooltip" data-placement="top" title="{{ listaSemillas|get:columna|get:fila|get:1 }}" onclick="location.href='/semilla/{{modulo.idmodulo}}/{{ listaSemillas|get:columna|get:fila|get:0|idsemilla }}';"
+                {% else %}
+                    style="border-color:grey;" data-toggle="tooltip" data-placement="top" title="Agregar Semilla" onclick="location.href='/semilla/crear/{{modulo.idmodulo}}/{{columna}}/{{fila}}';"
+                {% endif %}><center></center></td>
+                {% endfor %}
+                </tr>
+            {% endfor %}
+            </tbody>
+            </table>
+            </center>
         </div>
       </div>
       {% endif %}
-
+      <!-- /Grilla de las semillitas -->      
+      
+      
+      
       <div class="row">
         <div class="col-md-12 col-sm-12 col-xs-12">
           <div class="x_panel">
 
             <div class="x_title">
-              <h2>Detalle de Módulo de Semillas<small></small></h2>
+              <h2>Ver Módulo de Semillas<small></small></h2>
               <ul class="nav navbar-right panel_toolbox" >
                 <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
                 </li>
@@ -279,14 +330,14 @@
                   <label class="control-label col-md-3 col-sm-3 col-xs-12" for="filas">Cantidad de Filas<span class="required">*</span>
                   </label>
                   <div class="col-md-2 col-sm-2 col-xs-6">
-                    <input type="number" id="filas" name="filas" required="required" value="{{modulo.filas}}" data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12" {% if not editable %} disabled {% endif %}>
+                    <input type="number" id="filas" name="filas" required="required" value="{{modulo.filas}}" data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12" {% if moduloConSemillas %} title="No se puede editar el valor de las filas si hay semillas asignadas" disabled {% else %} {% if not editable %} disabled {% endif %} {% endif %}  >
                   </div>
                 </div>
                 <div class="item form-group">
                   <label class="control-label col-md-3 col-sm-3 col-xs-12" for="columnas">Cantidad de Columnas<span class="required">*</span>
                   </label>
                   <div class="col-md-2 col-sm-2 col-xs-6">
-                    <input type="number" id="columnas" name="columnas" required="required" value="{{modulo.columnas}}" data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12" {% if not editable %} disabled {% endif %}>
+                    <input type="number" id="columnas" name="columnas" required="required" value="{{modulo.columnas}}" data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12"  {% if  moduloConSemillas %} title="No se puede editar el valor de las columnas si hay semillas asignadas" disabled {% else %} {% if not editable %} disabled {% endif %} {% endif %} >
                   </div>
                 </div>
 
@@ -342,6 +393,27 @@
           styling: 'bootstrap3'
       });
     </script>
+  {% endif %}
+
+  {% if mostrarModalCrear %}
+    <script>
+      new PNotify({
+          title: 'Creación Exitosa',
+          text: 'Se creó la semilla satisfactoriamente.',
+          type: 'success',
+          styling: 'bootstrap3'
+      });
+    </script>
+  {% endif %}
+  {% if mostrarModalEliminar %}
+  <script>
+    new PNotify({
+        title: 'Eliminación Exitosa',
+        text: 'Se eliminó la semilla satisfactoriamente.',
+        type: 'success',
+        styling: 'bootstrap3'
+    });
+  </script>
   {% endif %}
   <script>
     function activate_modal() {
