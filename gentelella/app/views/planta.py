@@ -6,6 +6,7 @@ from app.models import Zona, Tipozona, Historiainvernadero, Historiazona, Modulo
     Planta, Semilla, Historiaplanta
 
 ID_TIPO_ZONAS_PLANTAS = 2
+ID_TODAS_ZONAS = -1
 def crear(request,
           template='app/planta/crear.html',
           extra_context=None):
@@ -74,13 +75,24 @@ def listar(request,
         print('LISTAR PLANTAS')
         listaIdZonas = []
         try:
+            zonaSeleccionada = request.GET.get('comboZona')
+        except Exception as e:
+            print(e)
+            zonaSeleccionada = None
+        print('Zona seleccionada --')
+        print(zonaSeleccionada)
+        try:
             idInvernadero = int(request.session.get('idInvernadero'))
             listaZonas = Zona.objects.filter(idinvernadero=idInvernadero,idtipozona = ID_TIPO_ZONAS_PLANTAS, habilitado=True)
-            for zona in listaZonas:
-                listaIdZonas.append(zona.idzona)
+            if zonaSeleccionada == None or int(zonaSeleccionada) == -1:
+                for zona in listaZonas:
+                    listaIdZonas.append(zona.idzona)
+            else:
+                listaIdZonas.append(zonaSeleccionada)
         except Exception as e:
             print(e)
             listaZonas = None
+
 
         mensajeEliminar = False
         mensajeObtenerZonaError = False
@@ -94,7 +106,12 @@ def listar(request,
                 if (valorBusqueda is None):
                     valorBusqueda = ""
                 try:
-                    listaPlantas = Planta.objects.filter(idzona__in = listaIdZonas,nombre__icontains=valorBusqueda, habilitado=True)
+
+                    listaTipoPlantas = Tipoplanta.objects.filter(nombrecomun__icontains=valorBusqueda, habilitado=True)
+                    listaIdTipoPlanta = []
+                    for tipoPlanta in listaTipoPlantas:
+                        listaIdTipoPlanta.append(tipoPlanta.idtipoplanta)
+                    listaPlantas = Planta.objects.filter(idtipoplanta__in = listaIdTipoPlanta,idzona__in = listaIdZonas, habilitado=True)
                 except Exception as e:
                     print(e)
                     listaPlantas = None
@@ -114,10 +131,14 @@ def listar(request,
 
         else:
             mensajeObtenerZonaError = True
+            zonaSeleccionada = ID_TODAS_ZONAS
 
         print('Lista de plantas')
         print(listaPlantas)
-        context = {"listaTipoPlantas":listaTipoPlantas,"listaPlantas": listaPlantas, 'nombreUsuario': request.session.get('nomreUsuario'),
+        print(zonaSeleccionada)
+        if zonaSeleccionada != None:
+            zonaSeleccionada = int(zonaSeleccionada)
+        context = {"idseleccionado":zonaSeleccionada,"listaZonas":listaZonas,"listaTipoPlantas":listaTipoPlantas,"listaPlantas": listaPlantas, 'nombreUsuario': request.session.get('nomreUsuario'),
                    'nombreInvernadero': request.session.get('nombreInvernadero'),"mensajeCreacion": mensajeCreacion,"mensajeEliminacion": mensajeEliminar,"mensajePlantaCrearEditarError":mensajePlantaCrearEditarError,"mensajeObtenerZonaError":mensajeObtenerZonaError}
         return render(request, template, context)
 

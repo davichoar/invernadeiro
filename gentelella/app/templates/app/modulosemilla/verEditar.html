@@ -330,14 +330,14 @@
                   <label class="control-label col-md-3 col-sm-3 col-xs-12" for="filas">Cantidad de Filas<span class="required">*</span>
                   </label>
                   <div class="col-md-2 col-sm-2 col-xs-6">
-                    <input type="number" id="filas" name="filas" required="required" value="{{modulo.filas}}" data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12" {% if not editable %} disabled {% endif %}>
+                    <input type="number" id="filas" name="filas" required="required" value="{{modulo.filas}}" data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12" {% if moduloConSemillas %} title="No se puede editar el valor de las filas si hay semillas asignadas" disabled {% else %} {% if not editable %} disabled {% endif %} {% endif %}  >
                   </div>
                 </div>
                 <div class="item form-group">
                   <label class="control-label col-md-3 col-sm-3 col-xs-12" for="columnas">Cantidad de Columnas<span class="required">*</span>
                   </label>
                   <div class="col-md-2 col-sm-2 col-xs-6">
-                    <input type="number" id="columnas" name="columnas" required="required" value="{{modulo.columnas}}" data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12" {% if not editable %} disabled {% endif %}>
+                    <input type="number" id="columnas" name="columnas" required="required" value="{{modulo.columnas}}" data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12"  {% if  moduloConSemillas %} title="No se puede editar el valor de las columnas si hay semillas asignadas" disabled {% else %} {% if not editable %} disabled {% endif %} {% endif %} >
                   </div>
                 </div>
 
