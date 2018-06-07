@@ -23,7 +23,7 @@
           <h4 class="modal-title" id="myModalLabel2">Confirmación de Eliminación</h4>
         </div>
         <div class="modal-body">
-          <p>¿Está seguro que desea eliminar la planta?</p>
+          <p>¿Está seguro que desea eliminar el panel?</p>
         </div>
         <div class="modal-footer">
             {% csrf_token %}
@@ -43,18 +43,18 @@
     <div class="">
       <div class="page-title">
         <div class="title_left">
-          <h3>Plantas</h3>
+          <h3>Paneles de Luz</h3>
         </div>
 
       </div>
       <div class="clearfix"></div>
 
       {% if not editable %}
-        {% if historiaPlanta  %}
+        {% if historiaPanel  %}
         <div class="x_panel">
 
           <div class="x_title">
-            <h2>Condiciones Actuales (Registradas el {{historiaPlanta.fecharegistro|date:"d/m/Y H:m:s"}})<small></small></h2>
+            <h2>Condiciones Actuales (Registradas el {{historiaPanel.fecharegistro|date:"d/m/Y H:m:s"}})<small></small></h2>
                 <ul class="nav navbar-right panel_toolbox" >
                   <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
                   </li>
@@ -67,10 +67,10 @@
               <form class="form-horizontal form-label-left">
 
                 <div class="item form-group">
-                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="tempIdeal">Humedad Actual<span class="required"></span>
+                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="luzActual">Luz<span class="required"></span>
                   </label>
                   <div class="col-md-2 col-sm-2 col-xs-6">
-                    <input required="required" id="humedadActual" value="{{historiaPlanta.humedad}}"  {% if humedadok %} style="border-color: green; background-color: white;" {% else %} style="border-color: red; background-color: white;" {% endif %} data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12"   disabled >
+                    <input required="required" id="luzActual" value="{{historiaPanel.encendido}}"  {% if historiaPanel.encendido %} style="border-color: green; background-color: white;" {% else %} style="border-color: red; background-color: white;" {% endif %} data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12"   disabled >
                   </div>
                 </div>
 
@@ -86,7 +86,7 @@
           <div class="x_panel">
 
             <div class="x_title">
-              <h2>Ver Planta<small></small></h2>
+              <h2>Ver Panel de Luz<small></small></h2>
               <ul class="nav navbar-right panel_toolbox" >
                 <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
                 </li>
@@ -99,18 +99,7 @@
 
               <form class="form-horizontal form-label-left"  method="POST" novalidate>
                 {% csrf_token %}
-                <div class="item form-group">
-                  <label
-                    class="control-label col-md-3 col-sm-3 col-xs-12" for="zona">Tipo de Planta <span class="required">*</span>
-                  </label>
-                  <div class="col-md-6 col-sm-6 col-xs-12">
-                    <select id="tipoPlanta" name="tipoPlanta"  class="form-control" required {% if not editable %} disabled {% endif %}>
-                      {% for tipoPlanta in listaTipoPlantas %}
-                        <option value="{{tipoPlanta.idtipoplanta}}" {% if tipoPlanta.idtipoplanta == planta.idtipoplanta %}selected{% endif %}>{{tipoPlanta.nombrecomun}}</option>
-                      {% endfor %}
-                    </select>
-                  </div>
-                </div>
+
                 <div class="item form-group">
                   <label
                     class="control-label col-md-3 col-sm-3 col-xs-12" for="zona">Zona <span class="required">*</span>
@@ -118,42 +107,20 @@
                   <div class="col-md-6 col-sm-6 col-xs-12">
                     <select id="zona" name="zona"  class="form-control" required {% if not editable %} disabled {% endif %}>
                       {% for zona in listaZonas %}
-                        <option value="{{zona.idzona}}" {% if zona.idzona == planta.idzona %}selected{% endif %}>{{zona.nombre}}</option>
+                        <option value="{{zona.idzona}}" {% if zona.idzona == panel.idzona %}selected{% endif %}>{{zona.nombre}}</option>
                       {% endfor %}
                     </select>
                   </div>
                 </div>
 
                 <div class="item form-group">
-                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="codigoPlanta">Código de planta <span class="required">*</span>
+                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="codigoPanel">Código de panel de luz <span class="required">*</span>
                   </label>
                   <div class="col-md-2 col-sm-2 col-xs-6">
-                    <input  type="number" id="codigoPlanta" name="codigoPlanta"  value ="{{planta.codigoplantajson}}" required="required" class="form-control col-md-7 col-xs-12" {% if not editable %} disabled {% endif %}>
+                    <input  type="number" id="codigoPanel" name="codigoPanel"  value ="{{panel.codigopaneljson}}" required="required" class="form-control col-md-7 col-xs-12" {% if not editable %} disabled {% endif %}>
                   </div>
                 </div>
 
-                 <div class="item form-group">
-                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="humedadIdeal">Humedad Ideal (%)<span class="required"></span>
-                  </label>
-                  <div class="col-md-2 col-sm-2 col-xs-6">
-                    <input type="number" id="humedadIdeal" name="humedadIdeal" value="{{planta.humedadideal}}" required="required" data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12" {% if not editable %} disabled {% endif %}>
-                  </div>
-                </div>
-
-                <div class="item form-group">
-                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="humedadMin">Humedad Mínima (%)<span class="required"></span>
-                  </label>
-                  <div class="col-md-2 col-sm-2 col-xs-6">
-                    <input type="number" id="humedadMin" name="humedadMin" value="{{planta.humedadmin}}" required="required" data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12" {% if not editable %} disabled {% endif %}>
-                  </div>
-                </div>
-                <div class="item form-group">
-                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="humedadMax">Humedad Máxima (%)<span class="required">*</span>
-                  </label>
-                  <div class="col-md-2 col-sm-2 col-xs-6">
-                    <input type="number" id="humedadMax" name="humedadMax" value="{{planta.humedadmax}}" required="required" data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12" {% if not editable %} disabled {% endif %}>
-                  </div>
-                </div>
 
                 <div class="ln_solid"></div>
                 <div class="form-group">
@@ -201,7 +168,7 @@
     <script>
       new PNotify({
           title: 'Edición Exitosa',
-          text: 'Se editó la planta satisfactoriamente.',
+          text: 'Se editó el panel de luz satisfactoriamente.',
           type: 'success',
           styling: 'bootstrap3'
       });
