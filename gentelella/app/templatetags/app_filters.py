@@ -16,3 +16,10 @@ def get(value, arg):
 @register.filter(name='idsemilla')
 def idsemilla(value):
     return value.idsemilla
+
+@register.filter(name='getFoto')
+def getFoto(value, arg):
+    for foto in value:
+        if (foto[0] == arg):
+            return foto[1]
+    return '../images/zona3.png'

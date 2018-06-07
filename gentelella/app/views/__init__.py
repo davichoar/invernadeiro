@@ -9,3 +9,4 @@ from .moduloSemilla import *
 from .inv import *
 from .planta import *
 from .semilla import *
+from .tipoPlanta import *
