@@ -145,6 +145,7 @@ class Panelluz(models.Model):
     codigopaneljson = models.IntegerField()
     idzona = models.IntegerField()
     habilitado = models.BooleanField()
+    idusuarioauditado = models.IntegerField()
 
 
 class Permiso(models.Model):
@@ -194,6 +195,8 @@ class Tipoplanta(models.Model):
     nombrecientifico = models.CharField(max_length=255)
     habilitado = models.BooleanField()
     idfoto = models.IntegerField(blank=True, null=True)
+    idusuarioauditado = models.IntegerField()
+
 
 
 class Tipozona(models.Model):
@@ -217,6 +220,7 @@ class Usuario(models.Model):
     idusuarioauditado = models.IntegerField()
     habilitado = models.BooleanField()
 
+
     def getnombrecompleto(self):
         return self.nombres + ' ' + self.apellidopaterno
 
@@ -224,6 +228,7 @@ class Usuario(models.Model):
 class Usuarioxinvernadero(models.Model):
     idinvernadero = models.IntegerField(primary_key=True)
     idusuario = models.IntegerField()
+
 
 
 class Zona(models.Model):
