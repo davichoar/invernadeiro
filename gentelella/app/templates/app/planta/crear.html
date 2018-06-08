@@ -42,6 +42,7 @@
                   </label>
                   <div class="col-md-6 col-sm-6 col-xs-12">
                     <select id="tipoPlanta" name="tipoPlanta"  class="form-control" required >
+                      <option value="-1" selected disabled>- Seleccione -</option>
                       {% for tipoPlanta in listaTipoPlantas %}
                         <option value="{{tipoPlanta.idtipoplanta}}" {% if tipoPlanta.idtipoplanta == planta.idtipoplanta %}selected{% endif %}>{{tipoPlanta.nombrecomun}}</option>
                       {% endfor %}
@@ -54,6 +55,7 @@
                   </label>
                   <div class="col-md-6 col-sm-6 col-xs-12">
                     <select id="zona" name="zona"  class="form-control" required >
+                      <option value="-1" selected disabled>- Seleccione -</option>
                       {% for zona in listaZonas %}
                         <option value="{{zona.idzona}}" {% if zona.idzona == planta.idzona %}selected{% endif %}>{{zona.nombre}}</option>
                       {% endfor %}

@@ -1,13 +1,11 @@
 from django.db.models import Max
-from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
-from django.shortcuts import render, redirect, render_to_response
+from django.shortcuts import render, redirect
 from datetime import datetime
-from django.template import loader
-from django.urls import reverse
-
-from app.models import Usuario, Invernadero, Usuarioxinvernadero, Zona, Tipozona, Historiainvernadero, Historiazona
+from django.db import transaction
+from app.models import Invernadero,Zona, Tipozona, Historiainvernadero, Historiazona,Planta, Modulosemilla, Panelluz
 
 CANTIDAD_CADENA_MAXIMA = 250
+CODIGO_GENERAL_COMBO = -1
 def crear(request,
           template='app/zonainvernadero/create.html',
           extra_context=None):
@@ -37,6 +35,7 @@ def crear(request,
                     zona = obtenerZonaRequest(request)
                 except Exception as e:
                     zona = None
+                    print(e)
                     print("Error obteniendo la data del request")
 
                 listaTipoZonas = Tipozona.objects.filter(habilitado=True)
@@ -116,7 +115,9 @@ def detalle(request,idZona):
     zona = Zona.objects.get(idzona=idZona)
     listaTipoZonas = Tipozona.objects.filter(habilitado=True)
 
-
+    zonaConPlanta = hayPlantasAsociadasZona(idZona)
+    zonaConModulo = hayModulosAsociadasZona(idZona)
+    zonaConPanel = hayPanelesAsociadasZona(idZona)
     try:
         historiaZona = Historiazona.objects.filter(idzona=idZona).order_by('-fecharegistro')[0]
     except Exception as e:
@@ -132,12 +133,18 @@ def detalle(request,idZona):
         phok = None
         co2ok = None
 
-    context = {"historiaZona": historiaZona, "listaTipoZonas": listaTipoZonas, "zona": zona,
+    context = {"zonaConPlanta":zonaConPlanta,"zonaConModulo":zonaConModulo,"zonaConPanel":zonaConPanel,"historiaZona": historiaZona, "listaTipoZonas": listaTipoZonas, "zona": zona,
                'nombreUsuario': request.session.get('nomreUsuario'),
                'nombreInvernadero': request.session.get('nombreInvernadero'), "editable": False,
                "temperaturaok": temperaturaok, "phok": phok, "co2ok": co2ok}
 
     if request.method == 'GET':
+        if "b_ver_paneles" in request.GET:
+            print('Ver Paneles de Luz')
+            request.session['idZonaPanelesLuz'] = idZona
+            return redirect('panelListar')
+
+
         print('Mostrar Zona Invernadero')
         ## context es el mismo de arriba
         context['editable'] = False ## es un saludo a la bandera, solo para aclarar que la vista no sera editable
@@ -159,7 +166,7 @@ def detalle(request,idZona):
             try:
                 zona = obtenerZonaRequest(request)
             except Exception as e:
-                zona = None
+                print(e)
                 print("Error obteniendo la data del request")
                 if mensajeError is not None:
                     mensajeError = "Ocurrió un error inesperado. Intente editar más tarde"
@@ -193,6 +200,32 @@ def detalle(request,idZona):
             return render(request, template, context)
         if "b_aceptar_modal" in request.POST:
             print("Aceptar Modal")
+
+            errorDependencia = False
+
+
+            if zonaConPlanta:
+                context['editable'] = False
+                context['mensajeError'] = "No se puede eliminar la zona porque hay plantas asociadas"
+                errorDependencia = True
+
+
+            if zonaConModulo:
+                context['editable'] = False
+                context['mensajeError'] = "No se puede eliminar la zona porque hay módulos asociados"
+                errorDependencia = True
+
+
+            if zonaConPanel:
+                context['editable'] = False
+                context['mensajeError'] = "No se puede eliminar la zona porque hay paneles de luz asociados"
+                errorDependencia = True
+
+
+
+            if errorDependencia:
+                return render(request, template, context)
+
             try:
                 eliminarZona(request, idZona)
                 request.session['mensajeZonaEliminar'] = True
@@ -202,6 +235,32 @@ def detalle(request,idZona):
             return redirect('zonaInvernaderoListar')
         else:
             return redirect('zonaInvernaderoListar')
+
+
+
+def hayPlantasAsociadasZona(idZona):
+    plantasZona = Planta.objects.filter(idzona=idZona, habilitado=True)
+
+    if len(plantasZona) > 0:
+        return True
+    else:
+        return False
+
+def hayModulosAsociadasZona(idZona):
+    modulosZonas = Modulosemilla.objects.filter(idzona=idZona, habilitado=True)
+
+    if len(modulosZonas) > 0:
+        return True
+    else:
+        return False
+
+def hayPanelesAsociadasZona(idZona):
+    panelesZonas = Panelluz.objects.filter(idzona=idZona, habilitado=True)
+
+    if len(panelesZonas) > 0:
+        return True
+    else:
+        return False
 
 def eliminarZona(request,idZona):
     idUsuarioActual = int(request.session.get('idUsuarioActual'))
@@ -233,7 +292,8 @@ def obtenerZonaRequest(request):
 
     zonaDataLlenada.nombre = nombreObtenido
     zonaDataLlenada.codigozonajson = codigoZonaObtenido
-    zonaDataLlenada.idtipozona = int(tipoZonaEscogido)
+    if tipoZonaEscogido != None:
+        zonaDataLlenada.idtipozona = int(tipoZonaEscogido)
     zonaDataLlenada.area = area
     zonaDataLlenada.temperaturaideal = tempIdeal
     zonaDataLlenada.temperaturamin = tempMin
@@ -282,7 +342,10 @@ def grabarData(request,idZona):
         if codigoZona < 0:
             return "El código de la zona debe ser mayor a cero"
     else:
-        return "Falta ingresar el codigo para la zona."
+        return "Falta seleccionar el codigo para la zona."
+
+    if codigoZona == CODIGO_GENERAL_COMBO:
+        return "Falta seleccionar el codigo para la zona."
 
 
     if tipoZonaEscogido:
@@ -413,28 +476,27 @@ def grabarData(request,idZona):
     if zonaObtenidaBd.exists():
         return "Ya existe el codigo de zona. Ingrese un codigo de zona distinto"
 
+    with transaction.atomic():
+        zona,created = Zona.objects.update_or_create(
+            idzona=idZona, defaults={ "idtipozona" :tipoZona,
+            "idinvernadero" : idInvernadero,
+            "codigozonajson": codigoZona,
+            "nombre" : nombre,
+            "area" :area,
+            "temperaturaideal":tempIdeal,
+            "temperaturamin" :tempMin,
+            "temperaturamax" :tempMax,
+            "phideal": phIdeal,
+            "phmin": phMin,
+            "phmax": phMax,
+            "concentracionco2ideal":co2Ideal,
+            "concentracionco2min":co2Min,
+            "concentracionco2max":co2Max,
+            "fechacreacion" :datetime.now(),
+            "habilitado":True,
+            "idusuarioauditado":idUsuarioActual}
+        )
 
-    zona,created = Zona.objects.update_or_create(
-        idzona=idZona, defaults={ "idtipozona" :tipoZona,
-        "idinvernadero" : idInvernadero,
-        "codigozonajson": codigoZona,
-        "nombre" : nombre,
-        "area" :area,
-        "temperaturaideal":tempIdeal,
-        "temperaturamin" :tempMin,
-        "temperaturamax" :tempMax,
-        "phideal": phIdeal,
-        "phmin": phMin,
-        "phmax": phMax,
-        "concentracionco2ideal":co2Ideal,
-        "concentracionco2min":co2Min,
-        "concentracionco2max":co2Max,
-        "fechacreacion" :datetime.now(),
-        "habilitado":True,
-        "idusuarioauditado":idUsuarioActual}
-    )
-
-    zona.save()
 
     return None
 

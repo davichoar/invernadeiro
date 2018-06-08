@@ -1,3 +1,4 @@
+from django.db import transaction
 from django.db.models import Max
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, redirect, render_to_response
@@ -5,10 +6,12 @@ from datetime import datetime
 from django.template import loader
 from django.urls import reverse
 
-from app.models import Zona, Tipozona, Historiainvernadero, Historiazona, Modulosemilla, Historiamodulo, Semilla, Historiasemilla, Tipoplanta
+from app.models import Zona, Tipozona, Historiainvernadero, Historiazona, Modulosemilla, Historiamodulo, Semilla, \
+    Historiasemilla, Tipoplanta, Planta
 
 ID_TIPO_ZONAS_SEMILLAS = 1
 CANTIDAD_CADENA_MAXIMA = 250
+CODIGO_GENERAL_COMBO = -1
 def crear(request,
           template='app/modulosemilla/crear.html',
           extra_context=None):
@@ -222,7 +225,7 @@ def detalle(request,idModulo):
             try:
                 modulo = obtenerModuloRequest(request)
             except Exception as e:
-                modulo = None
+                print(e)
                 print("Error obteniendo la data del request")
                 if mensajeError is not None:
                     mensajeError = "Ocurrió un error inesperado. Intente editar más tarde"
@@ -260,6 +263,11 @@ def detalle(request,idModulo):
             return render(request, template, context)
         if "b_aceptar_modal" in request.POST:
             print("Aceptar Modal")
+
+            if moduloConSemillas:
+                context['editable'] = False
+                context['mensajeError'] = "No se puede eliminar el módulo porque hay semillas asociadas"
+
             try:
                 eliminarModulo(request, idModulo)
                 request.session['mensajeModuloEliminar'] = True
@@ -269,6 +277,7 @@ def detalle(request,idModulo):
             return redirect('moduloSemillaListar')
         else:
             return redirect('moduloSemillaListar')
+
 
 def eliminarModulo(request,idModulo):
     idUsuarioActual = int(request.session.get('idUsuarioActual'))
@@ -306,7 +315,10 @@ def obtenerModuloRequest(request, idModulo = None):
     moduloDataLlenada.idmodulo = idModulo
     moduloDataLlenada.nombre = nombreObtenido
     moduloDataLlenada.codigomodulojson = codigoModulo
-    moduloDataLlenada.idzona = int(idzona)
+
+    if idzona != None:
+        moduloDataLlenada.idzona = int(idzona)
+
     moduloDataLlenada.temperaturaideal = tempIdeal
     moduloDataLlenada.temperaturamin = tempMin
     moduloDataLlenada.temperaturamax = tempMax
@@ -374,6 +386,9 @@ def grabarData(request,idModulo):
     if idzona:
         idzona = int(idzona)
     else:
+        return "Falta seleccionar la zona para el módulo"
+
+    if idzona == CODIGO_GENERAL_COMBO:
         return "Falta seleccionar la zona para el módulo"
 
 
@@ -545,34 +560,34 @@ def grabarData(request,idModulo):
     if moduloObtenidoBd.exists():
         return "Ya existe el codigo de modulo. Ingrese un codigo de modulo distinto"
 
-    modulo,created = Modulosemilla.objects.update_or_create(
-        idmodulo=idModulo, defaults={
-        "nombre":nombre,
-        "idzona":idzona,
-        "codigomodulojson" :codigoModulo,
-        "temperaturaideal":tempIdeal,
-        "temperaturamin" :tempMin,
-        "temperaturamax" :tempMax,
-        "humedadtierraideal": humTierraIdeal,
-        "humedadtierramin": humTierraMin,
-        "humedadtierramax": humTierraMax,
-        "humedadambienteideal": humAmbIdeal,
-        "humedadambientemin": humAmbMin,
-        "humedadambientemax": humAmbMax,
-        "concentracionco2ideal":co2Ideal,
-        "concentracionco2min":co2Min,
-        "concentracionco2max":co2Max,
-        "nivelaguaideal": nivelAguaIdeal,
-        "nivelaguamin": nivelAguaMin,
-        "nivelaguamax": nivelAguaMax,
-        "fechacreacion" :datetime.now(),
-        "filas":filas,
-        "columnas":columnas,
-        "habilitado":True,
-        "idusuarioauditado":idUsuarioActual}
-    )
+    with transaction.atomic():
+        modulo,created = Modulosemilla.objects.update_or_create(
+            idmodulo=idModulo, defaults={
+            "nombre":nombre,
+            "idzona":idzona,
+            "codigomodulojson" :codigoModulo,
+            "temperaturaideal":tempIdeal,
+            "temperaturamin" :tempMin,
+            "temperaturamax" :tempMax,
+            "humedadtierraideal": humTierraIdeal,
+            "humedadtierramin": humTierraMin,
+            "humedadtierramax": humTierraMax,
+            "humedadambienteideal": humAmbIdeal,
+            "humedadambientemin": humAmbMin,
+            "humedadambientemax": humAmbMax,
+            "concentracionco2ideal":co2Ideal,
+            "concentracionco2min":co2Min,
+            "concentracionco2max":co2Max,
+            "nivelaguaideal": nivelAguaIdeal,
+            "nivelaguamin": nivelAguaMin,
+            "nivelaguamax": nivelAguaMax,
+            "fechacreacion" :datetime.now(),
+            "filas":filas,
+            "columnas":columnas,
+            "habilitado":True,
+            "idusuarioauditado":idUsuarioActual}
+        )
 
-    modulo.save()
 
     return None
 

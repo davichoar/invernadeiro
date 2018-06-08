@@ -93,6 +93,37 @@
         </div>
 
         {% endif %}
+      {% if zonaConPanel %}
+        <div class="x_panel">
+
+          <div class="x_title">
+            <h2>Ver Paneles de Luz<small></small></h2>
+                <ul class="nav navbar-right panel_toolbox" >
+                  <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                  </li>
+                </ul>
+            <div class="clearfix"></div>
+          </div>
+
+
+
+            <div class="x_content">
+              <form class="form-horizontal form-label-left"  method="GET" >
+                <div class="item form-group">
+               <div class="form-group">
+                  <div class="col-xs-12">
+                    <center>
+                     <button id="b_ver_paneles" name="b_ver_paneles" type="submit" class="btn btn-success">Ver Paneles</button>
+                    </center>
+                  </div>
+                </div>
+                </div>
+              </form>
+            </div>
+          {% endif %}
+        </div>
+
+
       {% endif %}
 
       <div class="row">
@@ -132,7 +163,8 @@
                     class="control-label col-md-3 col-sm-3 col-xs-12" for="tipoZona">Tipo de Zona <span class="required">*</span>
                   </label>
                   <div class="col-md-6 col-sm-6 col-xs-12">
-                    <select id="tipoZona" name="tipoZona"  class="form-control" required {% if not editable %} disabled {% endif %}>
+                    <select id="tipoZona" name="tipoZona"  class="form-control" required {% if not editable  %} disabled {% elif zonaConPlanta %} title="No se puede editar el tipo de zona porque hay plantas asociadas" disabled {% elif zonaConModulo %} title="No se puede editar el tipo de zona porque hay módulos asociados" disabled {% elif zonaConPanel %}  title="No se puede editar el tipo de zona porque hay paneles de luz asociados" disabled  {% endif %} >
+                      <option value="-1" selected disabled>- Seleccione -</option>
                       {% for tipoZona in listaTipoZonas %}
                         <option value="{{tipoZona.idtipozona}}" {% if tipoZona.idtipozona == zona.idtipozona %}selected{% endif %}>{{tipoZona.nombre}}</option>
                       {% endfor %}
@@ -282,5 +314,11 @@
     }
 
   document.getElementById("b_aceptar_modal").addEventListener("click", deletO);
+  </script>
+
+  <script>
+  $("form").submit(function() {
+      $("#tipoZona").prop("disabled", false);
+  });
   </script>
 {% endblock javascripts %}

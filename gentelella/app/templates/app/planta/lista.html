@@ -33,7 +33,7 @@
             </div>
 
 
-            <form class="form-horizontal form-label-left"  method="GET" novalidate>
+            <form id="idFormBuscar" class="form-horizontal form-label-left"  method="GET" novalidate>
                 {% csrf_token %}
 
                 <div class="title_right">
@@ -161,5 +161,12 @@
                             });
         </script>
     {% endif %}
+
+    <script>
+        $("#comboZona").on('change', function (e) {
+              document.getElementById("textoBusqueda").value='' ;
+              document.getElementById("idFormBuscar").submit();
+        });
+    </script>
 
 {% endblock javascripts %}

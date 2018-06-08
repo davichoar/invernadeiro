@@ -1,3 +1,4 @@
+from django.db import transaction
 from django.db.models import Max
 from django.shortcuts import render, redirect, render_to_response
 from datetime import datetime
@@ -7,6 +8,7 @@ from app.models import Zona, Tipozona, Historiainvernadero, Historiazona, Modulo
 
 ID_TIPO_ZONAS_PLANTAS = 2
 ID_TODAS_ZONAS = -1
+CODIGO_GENERAL_COMBO = -1
 def crear(request,
           template='app/panelluz/crear.html',
           extra_context=None):
@@ -39,8 +41,14 @@ def crear(request,
 
             if mensajeError is not None:
                 print("MENSAJE ERROR CREAR PANELES DE LUZ")
-                panel = obtenerPanelRequest(request)
-                context = {"planta":panel,
+                try:
+                    panel = obtenerPanelRequest(request)
+                except Exception as e:
+                    panel = None
+                    print(e)
+                    print("Error obteniendo la data del request")
+
+                context = {"panel":panel,
                            'listaZonas': listaZonas,
                            'nombreUsuario': request.session.get('nomreUsuario'),
                            'nombreInvernadero': request.session.get('nombreInvernadero'),
@@ -63,11 +71,16 @@ def listar(request,
 
         print('LISTAR PANELES')
         listaIdZonas = []
-        try:
-            zonaSeleccionada = request.GET.get('comboZona')
-        except Exception as e:
-            print(e)
-            zonaSeleccionada = None
+        idZonaPanelesLuz = request.session.pop('idZonaPanelesLuz', False)
+        if idZonaPanelesLuz:
+            zonaSeleccionada = idZonaPanelesLuz
+        else:
+            try:
+                zonaSeleccionada = request.GET.get('comboZona')
+            except Exception as e:
+                print(e)
+                zonaSeleccionada = None
+
         print('Zona seleccionada --')
         print(zonaSeleccionada)
         try:
@@ -186,7 +199,15 @@ def detalle(request,idPanel):
             except Exception as e:
                 mensajeError = "No se puede crear el panel de luz en este momento"
                 print(e)
-            panel = obtenerPanelRequest(request)
+
+            try:
+                panel = obtenerPanelRequest(request)
+            except Exception as e:
+                print(e)
+                print("Error obteniendo la data del request")
+                if mensajeError is not None:
+                    mensajeError = "Ocurrió un error inesperado. Intente editar más tarde"
+
             context['panel'] = panel
             if mensajeError:
 
@@ -231,10 +252,10 @@ def obtenerPanelRequest(request):
 
     idzona = request.POST.get('zona')
     codigoPanel = request.POST.get('codigoPanel')
+    if idzona != None:
+        panelLuz.idzona = int(idzona)
 
-    panelLuz.idzona = idzona
     panelLuz.codigopaneljson = codigoPanel
-
     return panelLuz
 
 def grabarData(request,idPanel):
@@ -248,6 +269,8 @@ def grabarData(request,idPanel):
     else:
         return "Falta seleccionar la zona para el panel de luz"
 
+    if idzona == CODIGO_GENERAL_COMBO:
+        return "Falta seleccionar la zona para el panel de luz"
 
     if codigoPanel == "":
         return "Falta ingresar el código para el panel de luz."
@@ -281,16 +304,15 @@ def grabarData(request,idPanel):
     if panelObtenidoBd.exists():
         return "Ya existe el codigo del panel de luz. Ingrese un codigo de panel distinto"
 
-    panel,created = Panelluz.objects.update_or_create(
-        idpanel=idPanel, defaults={
-        "idzona":idzona,
-        "codigopaneljson" :codigoPanel,
-        "fechacreacion":datetime.now(),
-        "habilitado":True,
-        "idusuarioauditado":idUsuarioActual}
-    )
-
-    panel.save()
+    with transaction.atomic():
+        panel,created = Panelluz.objects.update_or_create(
+            idpanel=idPanel, defaults={
+            "idzona":idzona,
+            "codigopaneljson" :codigoPanel,
+            "fechacreacion":datetime.now(),
+            "habilitado":True,
+            "idusuarioauditado":idUsuarioActual}
+        )
 
     return None
 

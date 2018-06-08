@@ -1,3 +1,4 @@
+from django.db import transaction
 from django.db.models import Max
 from django.shortcuts import render, redirect
 from datetime import datetime
@@ -6,6 +7,7 @@ from app.models import Zona, Tipoplanta,Planta, Historiaplanta
 
 ID_TIPO_ZONAS_PLANTAS = 2
 ID_TODAS_ZONAS = -1
+CODIGO_GENERAL_COMBO = -1
 def crear(request,
           template='app/planta/crear.html',
           extra_context=None):
@@ -220,7 +222,6 @@ def detalle(request,idPlanta):
             except Exception as e:
                 print(e)
                 print("Error obteniendo la data del request")
-                planta = None
                 if mensajeError is not None:
                     mensajeError = "Ocurrió un error inesperado. Intente editar más tarde"
 
@@ -278,8 +279,12 @@ def obtenerPlantaRequest(request):
     humedadMin = request.POST.get('humedadMin')
     humedadMax = request.POST.get('humedadMax')
 
-    plantaDataLlenada.idtipoplanta = int(idTipoPlanta)
-    plantaDataLlenada.idzona = int(idzona)
+    if idTipoPlanta != None:
+        plantaDataLlenada.idtipoplanta = int(idTipoPlanta)
+
+    if idzona != None:
+        plantaDataLlenada.idzona = int(idzona)
+
     plantaDataLlenada.codigoplantajson = codigoPlanta
     plantaDataLlenada.humedadideal = humedadIdeal
     plantaDataLlenada.humedadmin = humedadMin
@@ -300,14 +305,20 @@ def grabarData(request,idPlanta):
 
     if idTipoPlanta:
         print('Tipo Planta correcto')
+        idTipoPlanta = int(idTipoPlanta)
     else:
-        return "Falta ingresar el tipo de planta."
+        return "Falta seleccionar el tipo de planta."
+
+    if idTipoPlanta == CODIGO_GENERAL_COMBO:
+        return "Falta seleccionar el tipo de planta."
 
     if idzona:
         idzona = int(idzona)
     else:
         return "Falta seleccionar la zona para la planta"
 
+    if idzona == CODIGO_GENERAL_COMBO:
+        return "Falta seleccionar la zona para la planta"
 
     if codigoPlanta == "":
         return "Falta ingresar el código para la planta."
@@ -362,20 +373,19 @@ def grabarData(request,idPlanta):
     if plantaObtenidaBd.exists():
         return "Ya existe el codigo de planta. Ingrese un codigo de planta distinto"
 
-    planta,created = Planta.objects.update_or_create(
-        idplanta=idPlanta, defaults={
-        "idtipoplanta":idTipoPlanta,
-        "idzona":idzona,
-        "codigoplantajson" :codigoPlanta,
-        "fechacreacion" :datetime.now(),
-        "humedadmin":humedadMin,
-        "humedadideal":humedadIdeal,
-        "humedadmax":humedadMax,
-        "habilitado":True,
-        "idusuarioauditado":idUsuarioActual}
-    )
-
-    planta.save()
+    with transaction.atomic():
+        planta,created = Planta.objects.update_or_create(
+            idplanta=idPlanta, defaults={
+            "idtipoplanta":idTipoPlanta,
+            "idzona":idzona,
+            "codigoplantajson" :codigoPlanta,
+            "fechacreacion" :datetime.now(),
+            "humedadmin":humedadMin,
+            "humedadideal":humedadIdeal,
+            "humedadmax":humedadMax,
+            "habilitado":True,
+            "idusuarioauditado":idUsuarioActual}
+        )
 
     return None
 
