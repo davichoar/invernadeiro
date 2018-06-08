@@ -33,7 +33,7 @@
             </div>
 
 
-            <form class="form-horizontal form-label-left"  method="GET" novalidate>
+            <form id="idFormBuscar" class="form-horizontal form-label-left"  method="GET" novalidate>
                 {% csrf_token %}
 
                 <div class="title_right">
@@ -84,9 +84,8 @@
                             <div class="image view view-first">
                                 <img style="height: 100%; width: 100%; display: block;" src="/static/images/zonaHerbacea2.png" alt="image" />
                               <div class="mask">
-                                <p>{% for tipoPlanta in listaTipoPlantas %}
-                                    {% if tipoPlanta.idtipoplanta == planta.idtipoplanta %} {{tipoPlanta.nombrecomun}} {% endif %}
-                                  {% endfor %}
+                                <p>
+                                    {{planta.codigoplantajson}}
                                 </p>
                               </div>
                             </div>
@@ -162,5 +161,12 @@
                             });
         </script>
     {% endif %}
+
+    <script>
+        $("#comboZona").on('change', function (e) {
+              document.getElementById("textoBusqueda").value='' ;
+              document.getElementById("idFormBuscar").submit();
+        });
+    </script>
 
 {% endblock javascripts %}
