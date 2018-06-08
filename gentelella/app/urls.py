@@ -136,5 +136,9 @@ urlpatterns = [
 ### CAMBIAR INVERNADERO
     
     url(r'^cambiarInvernadero/$', views.cambiarInvernadero, name='cambiarInvernadero'),
+
+## ESTADISTICAS
+
+    url('^estadisticas/$', views.estadisticas.stats_all, name='estadisticas')
     
 ]
