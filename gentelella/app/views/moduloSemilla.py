@@ -38,11 +38,16 @@ def crear(request,
                mensajeError = grabarData(request,None)
             except Exception as e:
                 mensajeError = "No se puede crear el modulo en este momento"
+                print("No se puede crear el modulo en este momento")
                 print(e)
 
             if mensajeError is not None:
-                print("MENSAJE ERROR CREAR ZONA")
-                modulo = obtenerModuloRequest(request)
+                print("MENSAJE ERROR CREAR MODULO DE SEMILLAS")
+                try:
+                    modulo = obtenerModuloRequest(request)
+                except Exception as e:
+                    modulo = None
+                    print("Error obteniendo la data del request")
                 context = {"modulo":modulo,
                            'listaZonas': listaZonas,
                            'nombreUsuario': request.session.get('nomreUsuario'),
@@ -214,7 +219,14 @@ def detalle(request,idModulo):
             except Exception as e:
                 mensajeError = "No se puede crear la zona en este momento"
                 print(e)
-            modulo = obtenerModuloRequest(request, idModulo)
+            try:
+                modulo = obtenerModuloRequest(request)
+            except Exception as e:
+                modulo = None
+                print("Error obteniendo la data del request")
+                if mensajeError is not None:
+                    mensajeError = "Ocurrió un error inesperado. Intente editar más tarde"
+
             context['modulo'] = modulo
             if mensajeError:
 
@@ -294,7 +306,7 @@ def obtenerModuloRequest(request, idModulo = None):
     moduloDataLlenada.idmodulo = idModulo
     moduloDataLlenada.nombre = nombreObtenido
     moduloDataLlenada.codigomodulojson = codigoModulo
-    moduloDataLlenada.idzona = idzona
+    moduloDataLlenada.idzona = int(idzona)
     moduloDataLlenada.temperaturaideal = tempIdeal
     moduloDataLlenada.temperaturamin = tempMin
     moduloDataLlenada.temperaturamax = tempMax
@@ -438,11 +450,13 @@ def grabarData(request,idModulo):
             return "El valor para las columnas debe ser mayor a cero"
 
 
-
+    tempMin = float(tempMin)
+    tempMax = float(tempMax)
     if tempMin > tempMax:
         return "La temperatura mínima debe ser menor a la temperatura máxima."
 
     if tempIdeal != "":
+        tempIdeal = float(tempIdeal)
         if (tempIdeal > tempMin) and (tempIdeal < tempMax):
             print("Temperatura Ideal Valida")
         else:
@@ -450,10 +464,14 @@ def grabarData(request,idModulo):
     else:
         tempIdeal = None
 
+
+    humTierraMax = float(humTierraMax)
+    humTierraMin = float(humTierraMin)
     if humTierraMin > humTierraMax:
         return "La humedad de la tierra mínima debe ser menor a la humedad de la tierra máxima."
 
     if humTierraIdeal != "":
+        humTierraIdeal = float(humTierraIdeal)
         if (humTierraIdeal > humTierraMin) and (humTierraIdeal < humTierraMax):
             print("Humedad Tierra Ideal Valida")
         else:
@@ -461,10 +479,14 @@ def grabarData(request,idModulo):
     else:
         humTierraIdeal = None
 
+
+    humAmbMin = float(humAmbMin)
+    humAmbMax = float(humAmbMax)
     if humAmbMin > humAmbMax:
         return "La humedad del ambiente mínima debe ser menor a la humedad del ambiente máxima."
 
     if humAmbIdeal != "":
+        humAmbIdeal = float(humAmbIdeal)
         if (humAmbIdeal > humAmbMin) and (humAmbIdeal < humAmbMax):
             print("Humedad Ambiente Ideal Valida")
         else:
@@ -472,10 +494,14 @@ def grabarData(request,idModulo):
     else:
         humAmbIdeal = None
 
+
+    co2Min = float(co2Min)
+    co2Max = float(co2Max)
     if co2Min > co2Max:
         return "La concentración de CO2 mínima debe ser menor a la concentración de CO2 máxima."
 
     if co2Ideal != "":
+        co2Ideal = float(co2Ideal)
         if (co2Ideal > co2Min) and (co2Ideal < co2Max):
             print("CO2 Ideal Valida")
         else:
@@ -484,10 +510,13 @@ def grabarData(request,idModulo):
         co2Ideal = None
 
 
+    nivelAguaMin = float(nivelAguaMin)
+    nivelAguaMax = float(nivelAguaMax)
     if nivelAguaMin > nivelAguaMax:
         return "El nivel del agua mínimo debe ser menor al nivel del agua máximo."
 
     if nivelAguaIdeal != "":
+        nivelAguaIdeal = float(nivelAguaIdeal)
         if (nivelAguaIdeal > nivelAguaMin) and (nivelAguaIdeal < nivelAguaMax):
             print("Nivel del Agua Ideal Valida")
         else:

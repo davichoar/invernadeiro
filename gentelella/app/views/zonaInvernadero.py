@@ -33,7 +33,12 @@ def crear(request,
 
             if mensajeError is not None:
                 print("MENSAJE ERROR CREAR ZONA")
-                zona = obtenerZonaRequest(request)
+                try:
+                    zona = obtenerZonaRequest(request)
+                except Exception as e:
+                    zona = None
+                    print("Error obteniendo la data del request")
+
                 listaTipoZonas = Tipozona.objects.filter(habilitado=True)
                 context = {"zona":zona,
                             "listaTipoZonas": listaTipoZonas,
@@ -151,7 +156,14 @@ def detalle(request,idZona):
             except Exception as e:
                 mensajeError = "No se puede crear la zona en este momento"
                 print(e)
-            zona = obtenerZonaRequest(request)
+            try:
+                zona = obtenerZonaRequest(request)
+            except Exception as e:
+                zona = None
+                print("Error obteniendo la data del request")
+                if mensajeError is not None:
+                    mensajeError = "Ocurrió un error inesperado. Intente editar más tarde"
+
             context['zona'] = zona
             if mensajeError:
                 context['editable'] = True
@@ -221,7 +233,7 @@ def obtenerZonaRequest(request):
 
     zonaDataLlenada.nombre = nombreObtenido
     zonaDataLlenada.codigozonajson = codigoZonaObtenido
-    zonaDataLlenada.idtipozona = tipoZonaEscogido
+    zonaDataLlenada.idtipozona = int(tipoZonaEscogido)
     zonaDataLlenada.area = area
     zonaDataLlenada.temperaturaideal = tempIdeal
     zonaDataLlenada.temperaturamin = tempMin

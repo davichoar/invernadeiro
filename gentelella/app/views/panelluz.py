@@ -38,7 +38,7 @@ def crear(request,
                 print(e)
 
             if mensajeError is not None:
-                print("MENSAJE ERROR CREAR ZONA")
+                print("MENSAJE ERROR CREAR PANELES DE LUZ")
                 panel = obtenerPanelRequest(request)
                 context = {"planta":panel,
                            'listaZonas': listaZonas,

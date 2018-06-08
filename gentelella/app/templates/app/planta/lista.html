@@ -84,9 +84,8 @@
                             <div class="image view view-first">
                                 <img style="height: 100%; width: 100%; display: block;" src="/static/images/zonaHerbacea2.png" alt="image" />
                               <div class="mask">
-                                <p>{% for tipoPlanta in listaTipoPlantas %}
-                                    {% if tipoPlanta.idtipoplanta == planta.idtipoplanta %} {{tipoPlanta.nombrecomun}} {% endif %}
-                                  {% endfor %}
+                                <p>
+                                    {{planta.codigoplantajson}}
                                 </p>
                               </div>
                             </div>
