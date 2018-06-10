@@ -92,7 +92,7 @@ def detalle(request, idTipoPlanta, template = 'app/tipoPlanta/verEditarTipoPlant
     tipoPlanta = Tipoplanta.objects.get(idtipoplanta = idTipoPlanta)
     if request.method == 'GET':
         with connection.cursor() as cursor:
-            cursor.execute("select app_tipoplanta.idtipoplanta, app_foto.nombresinextension || app_foto.extension from app_foto, app_tipoplanta where app_tipoplanta.idfoto = app_foto.idfoto;")
+            cursor.execute("select app_tipoplanta.idtipoplanta, app_foto.nombresinextension || app_foto.extension from app_foto, app_tipoplanta where app_tipoplanta.idfoto = app_foto.idfoto and app_tipoplanta.idtipoplanta = %s;", [tipoPlanta.idtipoplanta])
             listaFotos = cursor.fetchall()
         mostrarModalEditar = request.session.pop('mensajeTipoPlantaEditar', False)
         mostrarModalEliminarFallo = request.session.pop('mensajeTipoPlantaEliminarFallo', False)
@@ -109,7 +109,7 @@ def detalle(request, idTipoPlanta, template = 'app/tipoPlanta/verEditarTipoPlant
     elif request.method == 'POST':
         if 'b_editar' in request.POST:
             with connection.cursor() as cursor:
-                cursor.execute("select app_tipoplanta.idtipoplanta, app_foto.nombresinextension || app_foto.extension from app_foto, app_tipoplanta where app_tipoplanta.idfoto = app_foto.idfoto;")
+                cursor.execute("select app_tipoplanta.idtipoplanta, app_foto.nombresinextension || app_foto.extension from app_foto, app_tipoplanta where app_tipoplanta.idfoto = app_foto.idfoto and app_tipoplanta.idtipoplanta = %s;", [tipoPlanta.idtipoplanta])
                 listaFotos = cursor.fetchall()
             context = {
                 'nombreUsuario': request.session.get('nomreUsuario'),

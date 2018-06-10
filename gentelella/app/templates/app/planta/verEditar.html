@@ -99,6 +99,10 @@
 
               <form class="form-horizontal form-label-left"  method="POST" novalidate>
                 {% csrf_token %}
+                {% load app_filters %}
+                {% if not editable and tipoPlanta.idfoto != None %}
+			  <center><img src="/static/fotos_tipo_planta/{{listaFotos|getFoto:tipoPlanta.idtipoplanta}}" class="img-responsive" width="200dp"  alt="Cinque Terre"></center> <br>
+               {% endif %}
                 <div class="item form-group">
                   <label
                     class="control-label col-md-3 col-sm-3 col-xs-12" for="zona">Tipo de Planta <span class="required">*</span>
