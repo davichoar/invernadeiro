@@ -53,7 +53,7 @@
     var popup = marker.bindPopup("<b>Invernadero PUCP</b>");
     popup.openPopup();
     map.on('click', function(e) {
-        alert(e);
+        alert(e.latlng);
     });
     //map.on('click', function(e) {
     //    marker.setLatLng(e.latlng);

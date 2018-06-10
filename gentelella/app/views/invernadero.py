@@ -4,7 +4,7 @@ from app.models import Usuario, Invernadero, Usuarioxinvernadero
 
 
 def escoger(request,
-          template='app/escogerInvernadero.html',
+          template='app/escogerInvernaderoShido.html',
           extra_context=None):
 
     print('ESCOGER INVERANDERO')

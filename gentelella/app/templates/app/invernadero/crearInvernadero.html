@@ -135,16 +135,18 @@
                   <label class="control-label col-md-3 col-sm-3 col-xs-12" for="latitud">Latitud
                   </label>
                   <div class="col-md-2 col-sm-2 col-xs-6">
-                    <input  type="number" id="latitud" name="latitud" value="{{inv.latitud}}" class="form-control col-md-7 col-xs-12">
+                    <input  type="text" id="latitud" name="latitud" value="{{inv.latitud}}" class="form-control col-md-7 col-xs-12" readonly>
                   </div>
                 </div>
                 <div class="item form-group">
                   <label class="control-label col-md-3 col-sm-3 col-xs-12" for="longitud">Longitud
                   </label>
                   <div class="col-md-2 col-sm-2 col-xs-6">
-                    <input  type="number" id="longitud" name="longitud" value="{{inv.longitud}}" class="form-control col-md-7 col-xs-12">
+                    <input  type="text" id="longitud" name="longitud" value="{{inv.longitud}}" class="form-control col-md-7 col-xs-12" readonly>
                   </div>
                 </div>
+                <br>
+                <center><div id="mapid" style="height:540px; width:90%;"></div></center>
                <div class="ln_solid"></div>
                <div class="form-group">
                  <div class="col-xs-12">
@@ -169,6 +171,25 @@
   <script src="/static/vendors/pnotify/dist/pnotify.js"></script>
   <script src="/static/vendors/pnotify/dist/pnotify.buttons.js"></script>
   <script src="/static/vendors/pnotify/dist/pnotify.nonblock.js"></script>
+  <script>
+    var defaultLat = -12.06944;
+    var defaultLng = -77.07944;
+    map = new L.Map('mapid');
+	var osmUrl='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+	var osmAttrib='Map data © <a href="https://openstreetmap.org">OpenStreetMap</a> contributors';
+	var osm = new L.TileLayer(osmUrl, {maxZoom: 17, attribution: osmAttrib});
+	map.setView(new L.LatLng(defaultLat, defaultLng),16); //-12.416667, -76.783333
+	map.addLayer(osm);
+    var marker = L.marker([defaultLat, defaultLng]).addTo(map);
+    document.getElementById("latitud").value = defaultLat;
+    document.getElementById("longitud").value = defaultLng;
+    map.on('click', function(e) {
+        coords = L.latLng(e.latlng.lat.toFixed(5), e.latlng.lng.toFixed(5));
+        marker.setLatLng(coords);
+        document.getElementById("latitud").value = coords.lat;
+        document.getElementById("longitud").value = coords.lng;
+    });
+  </script>
   <script>
   function validar() {
         if (document.getElementById("nombre").value == '') {
