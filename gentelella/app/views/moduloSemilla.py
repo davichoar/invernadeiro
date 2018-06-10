@@ -7,7 +7,7 @@ from django.template import loader
 from django.urls import reverse
 
 from app.models import Zona, Tipozona, Historiainvernadero, Historiazona, Modulosemilla, Historiamodulo, Semilla, \
-    Historiasemilla, Tipoplanta, Planta
+    Historiasemilla, Tipoplanta, Planta, Foto
 
 ID_TIPO_ZONAS_SEMILLAS = 1
 CANTIDAD_CADENA_MAXIMA = 250
@@ -196,11 +196,13 @@ def detalle(request,idModulo):
         nivelAguaok = None
         co2ok = None
 
+    hayFotos = (len(Foto.objects.filter(idmodulo = idModulo)) > 0)
+    
     context = {"moduloConSemillas":moduloConSemillas,"historiaModulo": historiaModulo, "listaZonas": listaZonas, "modulo": modulo,
                'nombreUsuario': request.session.get('nomreUsuario'),
                'nombreInvernadero': request.session.get('nombreInvernadero'), "editable": False,
                "temperaturaok": temperaturaok, "humedadTierraok": humedadTierraok,
-               "humedadAmbienteok": humedadAmbienteok, "nivelAguaok": nivelAguaok, "co2ok": co2ok}
+               "humedadAmbienteok": humedadAmbienteok, "nivelAguaok": nivelAguaok, "co2ok": co2ok, 'hayFotos': hayFotos}
 
     if request.method == 'GET':
         print('Mostrar Modulo de Semilla')
@@ -590,4 +592,63 @@ def grabarData(request,idModulo):
 
 
     return None
+    
+def paginar(numeroPagina, totalPaginas):
+    paginacion = ""
+    paginacion += "<button class=\"btn btn-primary\" type=\"button\" disabled>%s</button>" % (numeroPagina)
+    cantidadBloques = 1
+    bloquesIzquierda = 2
+    bloquesDerecha = 2
+    if totalPaginas - numeroPagina < bloquesDerecha:
+        bloquesIzquierda += bloquesDerecha - (totalPaginas - numeroPagina)
+    pagina = numeroPagina - 1
+    while pagina > 0 and cantidadBloques < bloquesIzquierda + 1:
+        paginacion = "<button class=\"btn btn-default\" type=\"button\" onclick=\"location.href='?page=%s';\">%s</button>" % (pagina, pagina) + paginacion
+        pagina -= 1
+        cantidadBloques += 1
+    pagina = numeroPagina + 1
+    while pagina <= totalPaginas  and cantidadBloques < 5:
+        paginacion =  paginacion + "<button class=\"btn btn-default\" type=\"button\" onclick=\"location.href='?page=%s';\">%s</button>" % (pagina, pagina)
+        pagina += 1
+        cantidadBloques +=1
+    if numeroPagina > 1:
+        paginacion = "<button class=\"btn btn-default\" type=\"button\" onclick=\"location.href='?page=%s';\">Anterior</button>" % (numeroPagina - 1) + paginacion
+    else:
+        paginacion = "<button class=\"btn btn-default\" type=\"button\" disabled>Anterior</button>" + paginacion
+    if numeroPagina < totalPaginas:
+        paginacion += "<button class=\"btn btn-default\" type=\"button\" onclick=\"location.href='?page=%s';\">Siguiente</button>" % (numeroPagina + 1)
+    else:
+        paginacion += "<button class=\"btn btn-default\" type=\"button\" disabled>Siguiente</button>"
+    paginacion = "<div class=\"btn-group\" style=\"float: right;\">" + paginacion + "</div>"
+    return paginacion
 
+    #paginacion = ""
+    #if numeroPagina > 1:
+    #    paginacion += '<a href="?page=%s">Anterior</a>' % (numeroPagina - 1)
+    #paginacion += '<span class="current"> Página %s de %s </span>' % (numeroPagina, totalPaginas)
+    #if numeroPagina < totalPaginas:
+    #    paginacion += '<a href="?page=%s">Siguiente</a>' % (numeroPagina + 1)
+    #return paginacion
+
+def fotos(request, idModulo, template='app/modulosemilla/fotos.html'):
+    fotosPorPagina = 20
+    if request.method == 'GET':
+        fotosModulo = Foto.objects.filter(idmodulo=idModulo).order_by('-fecharegistro')
+        pagina = request.GET.get('page', '1')
+        pagina = int(pagina)
+        limite = fotosPorPagina * pagina
+        offset = limite - fotosPorPagina
+        fotosPagina = fotosModulo[offset:limite]
+        totalFotos = fotosModulo.count()
+        totalPaginas = totalFotos // fotosPorPagina
+        if totalFotos % fotosPorPagina != 0:
+            totalPaginas += 1
+        paginacion = paginar(pagina, totalPaginas)
+        context = {
+            'nombreUsuario': request.session.get('nomreUsuario'),
+            'nombreInvernadero': request.session.get('nombreInvernadero'),
+            'fotos': fotosPagina,
+            'paginacion': paginacion,
+            'modulo': Modulosemilla.objects.get(idmodulo = idModulo)
+        }
+        return render(request, template, context)
