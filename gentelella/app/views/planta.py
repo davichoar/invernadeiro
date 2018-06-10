@@ -1,6 +1,7 @@
 from django.db import transaction
 from django.db.models import Max
 from django.shortcuts import render, redirect
+from django.db import connection
 from datetime import datetime
 
 from app.models import Zona, Tipoplanta,Planta, Historiaplanta
@@ -147,6 +148,10 @@ def listar(request,
             zonaSeleccionada = int(zonaSeleccionada)
         context = {"idseleccionado":zonaSeleccionada,"listaZonas":listaZonas,"listaTipoPlantas":listaTipoPlantas,"listaPlantas": listaPlantas, 'nombreUsuario': request.session.get('nomreUsuario'),
                    'nombreInvernadero': request.session.get('nombreInvernadero'),"mensajeCreacion": mensajeCreacion,"mensajeEliminacion": mensajeEliminar,"mensajePlantaCrearEditarError":mensajePlantaCrearEditarError,"mensajeObtenerZonaError":mensajeObtenerZonaError}
+        with connection.cursor() as cursor:
+            cursor.execute("select app_tipoplanta.idtipoplanta, app_foto.nombresinextension || app_foto.extension from app_foto, app_tipoplanta where app_tipoplanta.idfoto = app_foto.idfoto;")
+            listaFotos = cursor.fetchall()
+        context['listaFotos'] = listaFotos
         return render(request, template, context)
 
     elif request.method == 'POST':
@@ -201,6 +206,12 @@ def detalle(request,idPlanta):
         print('Mostrar Planta')
         ## context es el mismo de arriba
         context['editable'] = False ## es un saludo a la bandera, solo para aclarar que la vista no sera editable
+        tipoPlanta = Tipoplanta.objects.get(idtipoplanta = planta.idtipoplanta)
+        with connection.cursor() as cursor:
+            cursor.execute("select app_tipoplanta.idtipoplanta, app_foto.nombresinextension || app_foto.extension from app_foto, app_tipoplanta where app_tipoplanta.idfoto = app_foto.idfoto and app_tipoplanta.idtipoplanta = %s;", [tipoPlanta.idtipoplanta])
+            listaFotos = cursor.fetchall()
+        context['tipoPlanta'] = tipoPlanta
+        context['listaFotos'] = listaFotos
         return render(request, template, context)
 
     elif request.method == 'POST':
@@ -241,12 +252,24 @@ def detalle(request,idPlanta):
                 context['editable'] = False
                 context['mostrarModalEditar'] = True
                 context['humedadok'] = humedadok
+                tipoPlanta = Tipoplanta.objects.get(idtipoplanta = planta.idtipoplanta)
+                with connection.cursor() as cursor:
+                    cursor.execute("select app_tipoplanta.idtipoplanta, app_foto.nombresinextension || app_foto.extension from app_foto, app_tipoplanta where app_tipoplanta.idfoto = app_foto.idfoto and app_tipoplanta.idtipoplanta = %s;", [tipoPlanta.idtipoplanta])
+                    listaFotos = cursor.fetchall()
+                context['tipoPlanta'] = tipoPlanta
+                context['listaFotos'] = listaFotos
 
                 return render(request, template, context)
 
         if "b_cancelar" in request.POST :
             ## context es el mismo de arriba
             context['editable'] = False  ## es un saludo a la bandera, solo para aclarar que la vista no sera editable
+            tipoPlanta = Tipoplanta.objects.get(idtipoplanta = planta.idtipoplanta)
+            with connection.cursor() as cursor:
+                cursor.execute("select app_tipoplanta.idtipoplanta, app_foto.nombresinextension || app_foto.extension from app_foto, app_tipoplanta where app_tipoplanta.idfoto = app_foto.idfoto and app_tipoplanta.idtipoplanta = %s;", [tipoPlanta.idtipoplanta])
+                listaFotos = cursor.fetchall()
+            context['tipoPlanta'] = tipoPlanta
+            context['listaFotos'] = listaFotos
             return render(request, template, context)
         if "b_aceptar_modal" in request.POST:
             print("Aceptar Modal")
