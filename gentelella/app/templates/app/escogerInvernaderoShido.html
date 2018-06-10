@@ -45,28 +45,10 @@
               <div class="clearfix"></div>
             </div>
             <div class="x_content">
-                {% if listaInvernaderos|length == 0 %} <center><h2>Ningún invernadero asociado a este usuario.</h2></center>{% endif %}
-              <div class="row" style="width:100%; max-width:800px; margin:0 auto; float: left">
-                {% for invernadero in listaInvernaderos%}
-                <div class="col-md-3" style="display: inline-block; height: 180px; width: 180px; margin:10px;">
-                  <div class="thumbnail">
-                    <a href="{% url 'index' idInvernadero=invernadero.idinvernadero %}">
-					<div class="image view view-first">
-                      <img style="height: 100%; width: 100%; display: block;" src="/static/images/invernadero3.png" alt="image" />
-                      <div class="mask">
-                        <p>{{invernadero.nombre}}</p>
-                        <p></p><p></p>
-                      </div>
-                    </div>
-					</a>
-                    <div class="caption">
-                        <p></p><p></p><p></p><p></p>
-                      <a href="{% url 'index' idInvernadero=invernadero.idinvernadero %}">{{invernadero.nombre}}</a>
-                    </div>
-                  </div>
-                </div>
-                {% endfor %}
-              </div>
+                {% if listaInvernaderos|length == 0 %} <center><h2>Ningún invernadero asociado a este usuario.</h2></center> {% else %}
+                <center><div id="mapid" style="height:540px; width:90%;"></div></center>
+              
+              {% endif %}
             </div>
 
           </div>
@@ -78,4 +60,23 @@
 
 {% block javascripts %}
   {{ block.super }}
+{% if listaInvernaderos|length != 0 %}
+<script>
+    map = new L.Map('mapid');
+	var osmUrl='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+	var osmAttrib='Map data © <a href="https://openstreetmap.org">OpenStreetMap</a> contributors';
+	var osm = new L.TileLayer(osmUrl, {maxZoom: 17, attribution: osmAttrib});
+	map.addLayer(osm);
+    var markers = []
+    var loopindex = 0;
+    {% for invernadero in listaInvernaderos %}
+        markers.push(L.marker([{{invernadero.latitud}}, {{invernadero.longitud}}]).addTo(map));
+        markers[loopindex].bindPopup("<a href ='{% url 'index' idInvernadero=invernadero.idinvernadero %}'>{{invernadero.nombre}}</a>");
+        loopindex++;
+    {% endfor %}
+    var group = L.featureGroup(markers);
+    map.fitBounds(group.getBounds());
+    map.zoomOut();
+</script>
+{% endif %}
 {% endblock javascripts %}
