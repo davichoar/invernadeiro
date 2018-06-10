@@ -57,7 +57,6 @@ urlpatterns = [
         views.inv.detalle,
         name='invernaderoDetalle'),
 
-
 ### MODULO SEMILLA
 
     url('^modulosemilla/crear/$',
@@ -69,6 +68,9 @@ urlpatterns = [
     url('^modulosemilla/(?P<idModulo>.*)$',
         views.moduloSemilla.detalle,
         name='moduloSemillaDetalle'),
+    url('^modulosemillafotos/(?P<idModulo>.*)$',
+        views.moduloSemilla.fotos,
+        name='moduloSemillaFotos'),
 
 ### PLANTAS
 

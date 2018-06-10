@@ -1,0 +1,147 @@
+{% extends "app/base_site.html" %}
+
+
+{% block title %} Lista{% endblock title %}
+
+{% block stylesheets %}
+  {{ block.super }}
+  <link href="/static/vendors/pnotify/dist/pnotify.css" rel="stylesheet">
+  <link href="/static/vendors/pnotify/dist/pnotify.buttons.css" rel="stylesheet">
+  <link href="/static/vendors/pnotify/dist/pnotify.nonblock.css" rel="stylesheet">
+{% endblock stylesheets %}
+
+{% block content %}
+ <div class="right_col" role="main">
+    <div class="">
+      <div class="page-title">
+        <div class="title_left">
+          <h3>Módulos de Semillas</h3>
+        </div>
+
+      </div>
+      <div class="clearfix"></div>
+
+      <div class="row">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+          <div class="x_panel">
+
+            <!--div class="x_title">
+              <h2>Búsqueda de Módulos<small></small></h2>
+                   <div class="clearfix"></div>
+
+
+            </div>
+
+            <form class="form-horizontal form-label-left"  method="GET" novalidate>
+                {% csrf_token %}
+            <div class="title_right">
+              <div class="col-md-5 col-sm-5 col-xs-12 form-group pull-right top_search">
+                <div class="input-group">
+                  <input type="text" class="form-control" id="textoBusqueda" name="textoBusqueda" placeholder="Buscar Módulo...">
+                  <span class="input-group-btn">
+                    <button class="btn btn-default" id="b_buscar" name="b_buscar" type="submit" >Buscar</button>
+                  </span>
+                </div>
+              </div>
+            </div>
+              </form-->
+
+
+            <div class="row">
+                <div class="col-md-12">
+                  <div class="x_panel">
+
+                    <div class="x_title">
+                        <h2>Fotos del Módulo "{{modulo.nombre}}"</h2>
+                        <div class="clearfix"></div>
+                    </div>
+
+                    <div class="x_content">
+
+                      <div class="row" style="width:100%; max-width:800px; margin:0 auto; float: left">
+                        {% for foto in fotos %}
+                        <div class="col-md-3" style="display: inline-block; height: 180px; width: 180px; margin:10px;">
+                          <div class="thumbnail">
+                            <a href="/static/received_images/{{foto.nombresinextension}}{{foto.extension}}">
+                            <div class="image view view-first">
+                                <img style="height: 100%; width: 100%; display: block;" src="/static/received_images/{{foto.nombresinextension}}{{foto.extension}}" alt="image" />
+                              <div class="mask">
+                                <p>{{foto.fecharegistro|date:"d/m/Y"}}</p>
+                              </div>
+                            </div>
+                            </a>
+                            <div class="caption">
+                              <a href="/static/received_images/{{foto.nombresinextension}}{{foto.extension}}"><center><h2>{{foto.fecharegistro|date:"d/m/Y"}}</h2></center></a>
+                            </div>
+                          </div>
+                        </div>
+                        {% empty %}
+                        <center><h2>No hay fotos que mostrar.</h2></center>
+                        {% endfor %}
+                      </div>
+                    </div>
+                    <p>&emsp;</p>
+                            {{paginacion|safe}}
+                  </div>
+                </div>
+                <center><a href="/modulosemilla/{{modulo.idmodulo}}"><button id="cancel" name="b_cancelar" type="button" class="btn btn-default">Regresar</button></a></center>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock content %}
+
+{% block javascripts %}
+  {{ block.super }}
+
+  <script src="/static/vendors/pnotify/dist/pnotify.js"></script>
+  <script src="/static/vendors/pnotify/dist/pnotify.buttons.js"></script>
+  <script src="/static/vendors/pnotify/dist/pnotify.nonblock.js"></script>
+
+    {% if mensajeCreacion %}
+        <script>
+            new PNotify({
+                                title: 'Creación Exitosa',
+                                text: "Se creó el módulo correctamente.",
+                                type: 'success',
+                                styling: 'bootstrap3'
+                            });
+        </script>
+    {% endif %}
+
+    {% if mensajeEliminacion %}
+        <script>
+            new PNotify({
+                                title: 'Eliminación Exitosa',
+                                text: "Se eliminó el módulo correctamente.",
+                                type: 'success',
+                                styling: 'bootstrap3'
+                            });
+        </script>
+    {% endif %}
+
+    {% if mensajeCrearEditarError %}
+        <script>
+            new PNotify({
+                                title: 'Error',
+                                text: "En este momento no se puede acceder o crear un módulo.",
+                                type: 'error',
+                                styling: 'bootstrap3'
+                            });
+        </script>
+    {% endif %}
+    {% if mensajeObtenerZonaError %}
+        <script>
+            new PNotify({
+                                title: 'Error al obtener los módulos',
+                                text: "Ocurrió un problema al obtener las zonas de los módulos.",
+                                type: 'error',
+                                styling: 'bootstrap3'
+                            });
+        </script>
+    {% endif %}
+
+{% endblock javascripts %}
