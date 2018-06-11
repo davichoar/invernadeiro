@@ -148,7 +148,9 @@
       {% endif %}
       
       <!-- /Ver fotos del módulo -->
-      
+
+
+
       <!-- Grilla de las semillitas -->
       {% load app_filters %}
       {% if not editable and modulo.filas > 0 and modulo.columnas > 0 %}
@@ -195,7 +197,34 @@
       {% endif %}
       <!-- /Grilla de las semillitas -->      
       
-      
+      <!-- Cronograma -->
+      {% if not editable %}
+      <form class="form-horizontal form-label-left"  method="POST" novalidate>
+        {% csrf_token %}
+        <div class="x_panel">
+          <div class="x_title">
+            <h2>Cronograma<small></small></h2>
+                <ul class="nav navbar-right panel_toolbox" >
+                  <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                  </li>
+                </ul>
+            <div class="clearfix"></div>
+          </div>
+
+
+
+            <div class="x_content">
+                  <div class="col-xs-12">
+                    <center>
+                     <button id="crearCronograma" name="b_cronograma" type="submit" class="btn btn-success">{% if hayCronograma %} Ver Cronograma {% else %} Añadir Cronograma {% endif %}</button>
+                    </center>
+                  </div>
+            </div>
+        </div>
+      </form>
+
+      {% endif %}
+      <!-- /Cronograma -->
       
       <div class="row">
         <div class="col-md-12 col-sm-12 col-xs-12">

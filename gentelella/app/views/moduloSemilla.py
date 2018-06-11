@@ -7,7 +7,7 @@ from django.template import loader
 from django.urls import reverse
 
 from app.models import Zona, Tipozona, Historiainvernadero, Historiazona, Modulosemilla, Historiamodulo, Semilla, \
-    Historiasemilla, Tipoplanta, Planta, Foto
+    Historiasemilla, Tipoplanta, Planta, Foto, Cronograma
 
 ID_TIPO_ZONAS_SEMILLAS = 1
 CANTIDAD_CADENA_MAXIMA = 250
@@ -24,13 +24,12 @@ def crear(request,
         return redirect('moduloSemillaListar')
 
 
-
-    if request.method == 'GET':
-        print('CREAR MODULO DE SEMILLAS')
-        context = {'listaZonas': listaZonas,
+    context = {'listaZonas': listaZonas,
                    'nombreUsuario': request.session.get('nomreUsuario'),
                    'nombreInvernadero': request.session.get('nombreInvernadero'),
                    }
+    if request.method == 'GET':
+        print('CREAR MODULO DE SEMILLAS')
         return render(request, template, context)
     elif request.method == 'POST':
 
@@ -197,12 +196,14 @@ def detalle(request,idModulo):
         co2ok = None
 
     hayFotos = (len(Foto.objects.filter(idmodulo = idModulo)) > 0)
+
+    hayCronograma = (len(Cronograma.objects.filter(idmodulo=idModulo)) > 0)
     
     context = {"moduloConSemillas":moduloConSemillas,"historiaModulo": historiaModulo, "listaZonas": listaZonas, "modulo": modulo,
                'nombreUsuario': request.session.get('nomreUsuario'),
                'nombreInvernadero': request.session.get('nombreInvernadero'), "editable": False,
                "temperaturaok": temperaturaok, "humedadTierraok": humedadTierraok,
-               "humedadAmbienteok": humedadAmbienteok, "nivelAguaok": nivelAguaok, "co2ok": co2ok, 'hayFotos': hayFotos}
+               "humedadAmbienteok": humedadAmbienteok, "nivelAguaok": nivelAguaok, "co2ok": co2ok, 'hayFotos': hayFotos,'hayCronograma':hayCronograma}
 
     if request.method == 'GET':
         print('Mostrar Modulo de Semilla')
@@ -212,6 +213,9 @@ def detalle(request,idModulo):
         return render(request, template, context)
 
     elif request.method == 'POST':
+        if "b_cronograma" in request.POST:
+            return redirect('moduloSemillaCronograma', idModulo = idModulo)
+
         if "b_editar" in request.POST:
             print('Editar Modulo Semilla')
             context['editable'] = True
@@ -652,3 +656,88 @@ def fotos(request, idModulo, template='app/modulosemilla/fotos.html'):
             'modulo': Modulosemilla.objects.get(idmodulo = idModulo)
         }
         return render(request, template, context)
+
+
+def grabarCronograma(request,idModulo,idCronograma,horaInicio,horaFin):
+    horaInicio = str(horaInicio)
+    horaFin = str(horaFin)
+    temperatura = request.POST.get('temperatura' + horaInicio + horaFin)
+    humedadTierra = request.POST.get('humedadtierra' + horaInicio + horaFin)
+    humedadAmbiente = request.POST.get('humedadambiente' + horaInicio + horaFin)
+    co2 = request.POST.get('co2' + horaInicio + horaFin)
+    valorLuz = request.POST.get('luz' + horaInicio + horaFin)
+    if valorLuz == "Encendido" :
+        luz = True
+    else:
+        luz = False
+
+    nivelAgua = request.POST.get('nivelagua'+horaInicio+horaFin)
+
+    if idCronograma is None:
+        idMax = Cronograma.objects.all().aggregate(Max('idcronograma'))['idcronograma__max']
+        if idMax is None:
+            idCronograma = 1
+        else:
+            idCronograma = idMax + 1
+
+    with transaction.atomic():
+        cronograma,created = Cronograma.objects.update_or_create(
+            idcronograma=idCronograma,idmodulo=idModulo,horainicio=horaInicio,horafin=horaFin, defaults={
+            "temperatura":temperatura,
+            "humedadtierra":humedadTierra,
+            "humedadambiente" :humedadAmbiente,
+            "concentracionco2":co2,
+            "luz" :luz,
+            "nivelagua" :nivelAgua}
+        )
+
+
+    return None
+
+def obtenerCronogramaVacio():
+    listaCronogramas = []
+    for i in range(0,24):
+        cronograma = Cronograma()
+        cronograma.idcronograma = None
+        cronograma.horainicio = i
+        cronograma.horafin = i+1
+        cronograma.temperatura = 0
+        cronograma.humedadambiente = 0
+        cronograma.humedadtierra = 0
+        cronograma.concentracionco2 = 0
+        cronograma.luz = False
+        cronograma.nivelagua = 0
+        listaCronogramas.append(cronograma)
+    return listaCronogramas
+
+def cronograma(request, idModulo):
+    template = 'app/modulosemilla/cronograma.html'
+    listaRegistrosCronograma = Cronograma.objects.filter(idmodulo=idModulo)
+
+    if listaRegistrosCronograma:
+        listaRegistrosCronograma = listaRegistrosCronograma.order_by('horainicio')
+    else:
+        listaRegistrosCronograma = obtenerCronogramaVacio()
+
+    context = {'listaRegistrosCronograma':listaRegistrosCronograma,'nombreUsuario': request.session.get('nomreUsuario'),
+               'nombreInvernadero': request.session.get('nombreInvernadero')}
+
+    if request.method == 'POST':
+        if "b_aceptar" in request.POST:
+            print(request.POST)
+            for registro in listaRegistrosCronograma:
+                try:
+                    grabarCronograma(request, idModulo,registro.idcronograma, registro.horainicio, registro.horafin)
+                except Exception as e:
+                    print(e)
+            listaRegistrosCronograma = Cronograma.objects.filter(idmodulo=idModulo)
+            if listaRegistrosCronograma:
+                listaRegistrosCronograma = listaRegistrosCronograma.order_by('horainicio')
+                context['listaRegistrosCronograma'] = listaRegistrosCronograma
+
+        if "b_cancelar" in request.POST:
+            return redirect('moduloSemillaDetalle',idModulo = idModulo)
+
+
+    return render(request, template, context)
+
