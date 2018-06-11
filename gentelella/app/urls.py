@@ -71,6 +71,9 @@ urlpatterns = [
     url('^modulosemillafotos/(?P<idModulo>.*)$',
         views.moduloSemilla.fotos,
         name='moduloSemillaFotos'),
+    url('^modulosemillacronograma/(?P<idModulo>.*)$',
+        views.moduloSemilla.cronograma,
+        name='moduloSemillaCronograma'),
 
 ### PLANTAS
 
