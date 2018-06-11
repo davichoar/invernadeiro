@@ -34,7 +34,7 @@ def prueba(request, template=None, extra_context=None):
         print('prueba del servidor')
         return HttpResponse(content, content_type='text/plain')
     if request.method == 'POST':
-        jsonATomar  = json.loads(request.body)
+        jsonATomar  = json.loads(request.body.decode('utf-8'))
         if jsonATomar['tipoJson'] == 0: #Foto
         	
             for jsonFoto in jsonATomar['listaFotos']:
