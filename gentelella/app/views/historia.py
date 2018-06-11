@@ -8,6 +8,7 @@ from django.conf import settings
 import json
 import base64
 import os
+import subprocess
 
 rutaDefault='app/static/received_images/'
 formatoDefault='.jpg'
@@ -60,7 +61,7 @@ def prueba(request, template=None, extra_context=None):
 	                fecharegistro = datetime.now() #maybe a corregir.
                 )
 
-                
+                #no hay alertas aquí (creo)
 
 
         elif jsonATomar['tipoJson'] == 1: #modulo semillero
