@@ -80,6 +80,7 @@ def prueba(request, template=None, extra_context=None):
                     fecharegistro = datetime.now(), #maybe a corregir.
                     comentario = 'meme'
                 )
+                #alerta
 
         elif jsonATomar['tipoJson'] == 2:
             nuevoid = selectID(Historiazona.objects.all().aggregate(Max('idhistoriazona'))['idhistoriazona__max']) + 1
@@ -91,6 +92,7 @@ def prueba(request, template=None, extra_context=None):
                 concentracionco2 = float(jsonATomar['concentracionCO2']),
                 fecharegistro= datetime.now()
             )
+            #alerta
             for jsonPlanta in jsonATomar['listaPlantas']:
                 nuevoplantaid = selectID(Historiaplanta.objects.all().aggregate(Max('idhistoriaplanta'))['idhistoriaplanta__max']) + 1
                 nuevaHPlanta = Historiaplanta.objects.create(
@@ -101,6 +103,7 @@ def prueba(request, template=None, extra_context=None):
                     fecharegistro= datetime.now(), #to change
                     comentario='meme'
                 )
+                #alerta
             for jsonPanel in jsonATomar['listaPanelesLuz']:
                 nuevopanelid = selectID(Historiapanel.objects.all().aggregate(Max('idhistoriapanel'))['idhistoriapanel__max']) + 1
                 nuevoHPanel = Historiapanel.objects.create(
@@ -122,4 +125,5 @@ def prueba(request, template=None, extra_context=None):
                 comentario = 'meme',
                 fecharegistro= datetime.now()
             )
+            #alerta
         return HttpResponse('nice', content_type='text/plain')
