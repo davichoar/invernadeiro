@@ -3,6 +3,7 @@ from django.shortcuts import render, redirect
 from datetime import datetime
 from django.db import transaction
 from app.models import Invernadero,Zona, Tipozona, Historiainvernadero, Historiazona,Planta, Modulosemilla, Panelluz
+from app.permissions import *
 
 CANTIDAD_CADENA_MAXIMA = 250
 CODIGO_GENERAL_COMBO = -1
@@ -10,6 +11,12 @@ def crear(request,
           template='app/zonainvernadero/create.html',
           extra_context=None):
     if request.method == 'GET':
+        if not 'idUsuarioActual' in request.session:
+            return redirect('loginIndex')
+        if not 'idInvernadero' in request.session:
+            return redirect('escogerInvernadero')
+        if not tienepermiso(request, "Crear Zona"):
+            return accesodenegado(request)
         print('CREAR ZONAS DEL INVERANDERO')
         listaTipoZonas = Tipozona.objects.filter(habilitado = True)
         context = {"listaTipoZonas": listaTipoZonas,
@@ -18,6 +25,12 @@ def crear(request,
                    }
         return render(request, template, context)
     elif request.method == 'POST':
+        if not 'idUsuarioActual' in request.session:
+            return redirect('loginIndex')
+        if not 'idInvernadero' in request.session:
+            return redirect('escogerInvernadero')
+        if not tienepermiso(request, "Crear Zona"):
+            return accesodenegado(request)
 
         idInvernadero = int(request.session.get('idInvernadero'))
         if "b_aceptar" in request.POST:
@@ -59,6 +72,12 @@ def listar(request,
     template = "app/zonainvernadero/list.html"
     listaZonas = []
     if request.method == 'GET':
+        if not 'idUsuarioActual' in request.session:
+            return redirect('loginIndex')
+        if not 'idInvernadero' in request.session:
+            return redirect('escogerInvernadero')
+        if not tienepermiso(request, "Ver Zona"):
+            return accesodenegado(request)
 
         print('LISTAR ZONAS INVERNADERO')
 
@@ -96,6 +115,13 @@ def listar(request,
     elif request.method == 'POST':
         if "b_crear" in request.POST:
             return redirect('zonaInvernaderoCrear')
+    ###Me parece q podriamos borrar toda esta webada de abajo
+    if not 'idUsuarioActual' in request.session:
+        return redirect('loginIndex')
+    if not 'idInvernadero' in request.session:
+        return redirect('escogerInvernadero')
+    if not tienepermiso(request, "Ver Zona"):
+        return accesodenegado(request)
     context = {}
     return render(request, template, context)
 
@@ -139,6 +165,12 @@ def detalle(request,idZona):
                "temperaturaok": temperaturaok, "phok": phok, "co2ok": co2ok}
 
     if request.method == 'GET':
+        if not 'idUsuarioActual' in request.session:
+            return redirect('loginIndex')
+        if not 'idInvernadero' in request.session:
+            return redirect('escogerInvernadero')
+        if not tienepermiso(request, "Ver Zona"):
+            return accesodenegado(request)
         if "b_ver_paneles" in request.GET:
             print('Ver Paneles de Luz')
             request.session['idZonaPanelesLuz'] = idZona
@@ -152,10 +184,22 @@ def detalle(request,idZona):
 
     elif request.method == 'POST':
         if "b_editar" in request.POST:
+            if not 'idUsuarioActual' in request.session:
+                return redirect('loginIndex')
+            if not 'idInvernadero' in request.session:
+                return redirect('escogerInvernadero')
+            if not tienepermiso(request, "Editar Zona"):
+                return accesodenegado(request)
             print('Editar Zona Invernadero')
             context['editable'] = True
             return render(request, template, context)
         if "b_aceptar" in request.POST:
+            if not 'idUsuarioActual' in request.session:
+                return redirect('loginIndex')
+            if not 'idInvernadero' in request.session:
+                return redirect('escogerInvernadero')
+            if not tienepermiso(request, "Editar Zona"):
+                return accesodenegado(request)
             print('Aceptar Zona Invernadero')
             mensajeError = None
             try:
@@ -195,10 +239,22 @@ def detalle(request,idZona):
                 return render(request, template, context)
 
         if "b_cancelar" in request.POST :
+            if not 'idUsuarioActual' in request.session:
+                return redirect('loginIndex')
+            if not 'idInvernadero' in request.session:
+                return redirect('escogerInvernadero')
+            if not tienepermiso(request, "Ver Zona"):
+                return accesodenegado(request)
             ## context es el mismo de arriba
             context['editable'] = False  ## es un saludo a la bandera, solo para aclarar que la vista no sera editable
             return render(request, template, context)
         if "b_aceptar_modal" in request.POST:
+            if not 'idUsuarioActual' in request.session:
+                return redirect('loginIndex')
+            if not 'idInvernadero' in request.session:
+                return redirect('escogerInvernadero')
+            if not tienepermiso(request, "Eliminar Zona"):
+                return accesodenegado(request)
             print("Aceptar Modal")
 
             errorDependencia = False

@@ -2,6 +2,7 @@ from django.db import transaction
 from django.db.models import Max
 from django.shortcuts import render, redirect, render_to_response
 from datetime import datetime
+from app.permissions import *
 
 from app.models import Zona, Tipozona, Historiainvernadero, Historiazona, Modulosemilla, Historiamodulo, Tipoplanta, \
     Planta, Semilla, Historiaplanta, Panelluz, Historiapanel
@@ -22,6 +23,12 @@ def crear(request,
         return redirect('panelListar')
 
     if request.method == 'GET':
+        if not 'idUsuarioActual' in request.session:
+            return redirect('loginIndex')
+        if not 'idInvernadero' in request.session:
+            return redirect('escogerInvernadero')
+        if not tienepermiso(request, "Crear Panelluz"):
+            return accesodenegado(request)
         print('CREAR PANELES')
         context = {'listaZonas':listaZonas,
                    'nombreUsuario': request.session.get('nomreUsuario'),
@@ -29,6 +36,12 @@ def crear(request,
                    }
         return render(request, template, context)
     elif request.method == 'POST':
+        if not 'idUsuarioActual' in request.session:
+            return redirect('loginIndex')
+        if not 'idInvernadero' in request.session:
+            return redirect('escogerInvernadero')
+        if not tienepermiso(request, "Crear Panelluz"):
+            return accesodenegado(request)
 
         if "b_aceptar" in request.POST:
 
@@ -68,6 +81,12 @@ def listar(request,
     template = "app/panelluz/lista.html"
     listaPaneles = []
     if request.method == 'GET':
+        if not 'idUsuarioActual' in request.session:
+            return redirect('loginIndex')
+        if not 'idInvernadero' in request.session:
+            return redirect('escogerInvernadero')
+        if not tienepermiso(request, "Ver Panelluz"):
+            return accesodenegado(request)
 
         print('LISTAR PANELES')
         listaIdZonas = []
@@ -142,6 +161,13 @@ def listar(request,
     elif request.method == 'POST':
         if "b_crear" in request.POST:
             return redirect('panelCrear')
+    ###Me parece q podriamos borrar toda esta webada de abajo
+    if not 'idUsuarioActual' in request.session:
+        return redirect('loginIndex')
+    if not 'idInvernadero' in request.session:
+        return redirect('escogerInvernadero')
+    if not tienepermiso(request, "Ver Panelluz"):
+        return accesodenegado(request)
     context = {}
     return render(request, template, context)
 
@@ -181,6 +207,12 @@ def detalle(request,idPanel):
                'nombreInvernadero': request.session.get('nombreInvernadero'), "editable": False,}
 
     if request.method == 'GET':
+        if not 'idUsuarioActual' in request.session:
+            return redirect('loginIndex')
+        if not 'idInvernadero' in request.session:
+            return redirect('escogerInvernadero')
+        if not tienepermiso(request, "Ver Panelluz"):
+            return accesodenegado(request)
         print('Mostrar Panel')
         ## context es el mismo de arriba
         context['editable'] = False ## es un saludo a la bandera, solo para aclarar que la vista no sera editable
@@ -188,10 +220,22 @@ def detalle(request,idPanel):
 
     elif request.method == 'POST':
         if "b_editar" in request.POST:
+            if not 'idUsuarioActual' in request.session:
+                return redirect('loginIndex')
+            if not 'idInvernadero' in request.session:
+                return redirect('escogerInvernadero')
+            if not tienepermiso(request, "Editar Panelluz"):
+                return accesodenegado(request)
             print('Editar Panel')
             context['editable'] = True
             return render(request, template, context)
         if "b_aceptar" in request.POST:
+            if not 'idUsuarioActual' in request.session:
+                return redirect('loginIndex')
+            if not 'idInvernadero' in request.session:
+                return redirect('escogerInvernadero')
+            if not tienepermiso(request, "Editar Panelluz"):
+                return accesodenegado(request)
             print('Aceptar Panel')
             mensajeError = None
             try:
@@ -223,10 +267,22 @@ def detalle(request,idPanel):
                 return render(request, template, context)
 
         if "b_cancelar" in request.POST :
+            if not 'idUsuarioActual' in request.session:
+                return redirect('loginIndex')
+            if not 'idInvernadero' in request.session:
+                return redirect('escogerInvernadero')
+            if not tienepermiso(request, "Ver Panelluz"):
+                return accesodenegado(request)
             ## context es el mismo de arriba
             context['editable'] = False  ## es un saludo a la bandera, solo para aclarar que la vista no sera editable
             return render(request, template, context)
         if "b_aceptar_modal" in request.POST:
+            if not 'idUsuarioActual' in request.session:
+                return redirect('loginIndex')
+            if not 'idInvernadero' in request.session:
+                return redirect('escogerInvernadero')
+            if not tienepermiso(request, "Eliminar Panelluz"):
+                return accesodenegado(request)
             print("Aceptar Modal")
             try:
                 eliminarPanel(request, idPanel)
