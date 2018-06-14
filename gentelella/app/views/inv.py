@@ -4,6 +4,7 @@ import datetime as dt
 from django.db.models import Max
 from app.models import Invernadero, Usuario
 from django.db import transaction
+from app.permissions import *
 
 def crearFake(request, idinvernadero = -1):
     invernaderoFake = Invernadero()
@@ -24,6 +25,12 @@ def crearFake(request, idinvernadero = -1):
 
 def listar(request, template='app/invernadero/listaInvernaderos.html', extra_context=None):
     if request.method == 'GET':
+        if not 'idUsuarioActual' in request.session:
+            return redirect('loginIndex')
+        if not 'idInvernadero' in request.session:
+            return redirect('escogerInvernadero')
+        if not tienepermiso(request, "Ver Invernadero"):
+            return accesodenegado(request)
         mostrarModalCrear = request.session.pop('mensajeInvernaderoCrear', False)
         mostrarModalEliminar = request.session.pop('mensajeInvernaderoEliminar', False)        
         if "b_buscar" in request.GET:
@@ -46,6 +53,12 @@ def listar(request, template='app/invernadero/listaInvernaderos.html', extra_con
         
 def crear(request, template='app/invernadero/crearInvernadero.html', extra_context=None):
     if request.method == 'GET':
+        if not 'idUsuarioActual' in request.session:
+            return redirect('loginIndex')
+        if not 'idInvernadero' in request.session:
+            return redirect('escogerInvernadero')
+        if not tienepermiso(request, "Crear Invernadero"):
+            return accesodenegado(request)
         listaUsuarios = Usuario.objects.filter(habilitado=True).exclude(idrol=-1)
         invernaderoFake = Invernadero()
         invernaderoFake.idadmin = -1
@@ -57,6 +70,12 @@ def crear(request, template='app/invernadero/crearInvernadero.html', extra_conte
         }
         return render(request, template, context)
     elif request.method == 'POST':
+        if not 'idUsuarioActual' in request.session:
+            return redirect('loginIndex')
+        if not 'idInvernadero' in request.session:
+            return redirect('escogerInvernadero')
+        if not tienepermiso(request, "Crear Invernadero"):
+            return accesodenegado(request)
         nuevoid = Invernadero.objects.all().aggregate(Max('idinvernadero'))['idinvernadero__max']
         if nuevoid is None:
             nuevoid = 1
@@ -128,6 +147,12 @@ def detalle(request, idInv):
     inv = Invernadero.objects.get(idinvernadero = idInv)
     listaUsuarios = Usuario.objects.filter(habilitado=True).exclude(idrol=-1)
     if request.method == 'GET':
+        if not 'idUsuarioActual' in request.session:
+            return redirect('loginIndex')
+        if not 'idInvernadero' in request.session:
+            return redirect('escogerInvernadero')
+        if not tienepermiso(request, "Ver Invernadero"):
+            return accesodenegado(request)
         mostrarModalEditar = request.session.pop('mensajeInvernaderoEditar', False)
         mostrarModalEliminarFallo = request.session.pop('mensajeInvernaderoEliminarFallo', False)
         context = {
@@ -142,6 +167,12 @@ def detalle(request, idInv):
         return render(request, template, context)
     if request.method == 'POST':
         if 'b_editar' in request.POST:
+            if not 'idUsuarioActual' in request.session:
+                return redirect('loginIndex')
+            if not 'idInvernadero' in request.session:
+                return redirect('escogerInvernadero')
+            if not tienepermiso(request, "Editar Invernadero"):
+                return accesodenegado(request)
             context = {
                 'listaUsuarios': listaUsuarios,
                 'nombreUsuario': request.session.get('nomreUsuario'), 
@@ -151,6 +182,12 @@ def detalle(request, idInv):
             }
             return render(request, template, context)
         if 'b_aceptar_modal' in request.POST:
+            if not 'idUsuarioActual' in request.session:
+                return redirect('loginIndex')
+            if not 'idInvernadero' in request.session:
+                return redirect('escogerInvernadero')
+            if not tienepermiso(request, "Eliminar Invernadero"):
+                return accesodenegado(request)
             if (int(request.session.get('idInvernadero')) == int(idInv)):
                 request.session['mensajeInvernaderoEliminarFallo'] = True
                 return redirect('invernaderoDetalle', idInv)
@@ -160,6 +197,12 @@ def detalle(request, idInv):
             except Exception as e:
                 print(e)
             return redirect('invernaderoLista')
+        if not 'idUsuarioActual' in request.session:
+            return redirect('loginIndex')
+        if not 'idInvernadero' in request.session:
+            return redirect('escogerInvernadero')
+        if not tienepermiso(request, "Editar Invernadero"):
+            return accesodenegado(request)
         if (len(Invernadero.objects.filter(habilitado=True, codigoinvernaderojson=int(request.POST.get('codigoInv'))).exclude(idinvernadero=idInv)) > 0):
             invFake = crearFake(request, idInv)
             listaUsuarios = Usuario.objects.filter(habilitado=True).exclude(idrol=-1)

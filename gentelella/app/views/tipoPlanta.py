@@ -5,10 +5,17 @@ from django.db.models import Max
 from django.db import transaction
 from django.db import connection
 from datetime import datetime
+from app.permissions import *
 import os
 
 def listar(request, template='app/tipoPlanta/listaTipoPlanta.html'):
     if request.method == 'GET':
+        if not 'idUsuarioActual' in request.session:
+            return redirect('loginIndex')
+        if not 'idInvernadero' in request.session:
+            return redirect('escogerInvernadero')
+        if not tienepermiso(request, "Ver Tipoplanta"):
+            return accesodenegado(request)
         with connection.cursor() as cursor:
             cursor.execute("select app_tipoplanta.idtipoplanta, app_foto.nombresinextension || app_foto.extension from app_foto, app_tipoplanta where app_tipoplanta.idfoto = app_foto.idfoto;")
             listaFotos = cursor.fetchall()
@@ -26,12 +33,24 @@ def listar(request, template='app/tipoPlanta/listaTipoPlanta.html'):
     
 def crear(request, template='app/tipoPlanta/crearTipoPlanta.html'):
     if request.method == 'GET':
+        if not 'idUsuarioActual' in request.session:
+            return redirect('loginIndex')
+        if not 'idInvernadero' in request.session:
+            return redirect('escogerInvernadero')
+        if not tienepermiso(request, "Crear Tipoplanta"):
+            return accesodenegado(request)
         context = {
             'nombreUsuario': request.session.get('nomreUsuario'),
             'nombreInvernadero': request.session.get('nombreInvernadero')    
         }
         return render(request, template, context)
     if request.method == 'POST':
+        if not 'idUsuarioActual' in request.session:
+            return redirect('loginIndex')
+        if not 'idInvernadero' in request.session:
+            return redirect('escogerInvernadero')
+        if not tienepermiso(request, "Crear Tipoplanta"):
+            return accesodenegado(request)
         nuevoid = Tipoplanta.objects.all().aggregate(Max('idtipoplanta'))['idtipoplanta__max']
         if nuevoid is None:
             nuevoid = 0
@@ -91,6 +110,12 @@ def crear(request, template='app/tipoPlanta/crearTipoPlanta.html'):
 def detalle(request, idTipoPlanta, template = 'app/tipoPlanta/verEditarTipoPlanta.html'):
     tipoPlanta = Tipoplanta.objects.get(idtipoplanta = idTipoPlanta)
     if request.method == 'GET':
+        if not 'idUsuarioActual' in request.session:
+            return redirect('loginIndex')
+        if not 'idInvernadero' in request.session:
+            return redirect('escogerInvernadero')
+        if not tienepermiso(request, "Ver Tipoplanta"):
+            return accesodenegado(request)
         with connection.cursor() as cursor:
             cursor.execute("select app_tipoplanta.idtipoplanta, app_foto.nombresinextension || app_foto.extension from app_foto, app_tipoplanta where app_tipoplanta.idfoto = app_foto.idfoto and app_tipoplanta.idtipoplanta = %s;", [tipoPlanta.idtipoplanta])
             listaFotos = cursor.fetchall()
@@ -108,6 +133,12 @@ def detalle(request, idTipoPlanta, template = 'app/tipoPlanta/verEditarTipoPlant
         return render(request, template, context)
     elif request.method == 'POST':
         if 'b_editar' in request.POST:
+            if not 'idUsuarioActual' in request.session:
+                return redirect('loginIndex')
+            if not 'idInvernadero' in request.session:
+                return redirect('escogerInvernadero')
+            if not tienepermiso(request, "Editar Tipoplanta"):
+                return accesodenegado(request)
             with connection.cursor() as cursor:
                 cursor.execute("select app_tipoplanta.idtipoplanta, app_foto.nombresinextension || app_foto.extension from app_foto, app_tipoplanta where app_tipoplanta.idfoto = app_foto.idfoto and app_tipoplanta.idtipoplanta = %s;", [tipoPlanta.idtipoplanta])
                 listaFotos = cursor.fetchall()
@@ -120,6 +151,12 @@ def detalle(request, idTipoPlanta, template = 'app/tipoPlanta/verEditarTipoPlant
             }
             return render(request, template, context)
         if 'b_aceptar_modal' in request.POST:
+            if not 'idUsuarioActual' in request.session:
+                return redirect('loginIndex')
+            if not 'idInvernadero' in request.session:
+                return redirect('escogerInvernadero')
+            if not tienepermiso(request, "Eliminar Tipoplanta"):
+                return accesodenegado(request)
             if (len(Semilla.objects.filter(idtipoplanta = idTipoPlanta, habilitado = True)) > 0 or len(Planta.objects.filter(idtipoplanta = idTipoPlanta, habilitado = True)) > 0):
                 request.session['mensajeTipoPlantaEliminarFallo'] = True
                 return redirect('tipoPlantaDetalle', idTipoPlanta)
@@ -130,6 +167,12 @@ def detalle(request, idTipoPlanta, template = 'app/tipoPlanta/verEditarTipoPlant
             except Exception as e:
                 print(e)
             return redirect('tipoPlantaListar')
+        if not 'idUsuarioActual' in request.session:
+            return redirect('loginIndex')
+        if not 'idInvernadero' in request.session:
+            return redirect('escogerInvernadero')
+        if not tienepermiso(request, "Editar Tipoplanta"):
+            return accesodenegado(request)
         if 'foto' in request.FILES:
             yaTieneFoto = (tipoPlanta.idfoto != None)
             print(yaTieneFoto)

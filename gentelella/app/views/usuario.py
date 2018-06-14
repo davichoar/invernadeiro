@@ -4,6 +4,7 @@ from datetime import datetime
 import datetime as dt
 from django.db.models import Max
 from django.db import transaction
+from app.permissions import *
 
 def mandarWebada(request, cadfecha, idusuario = -1):
     usuarioFake = Usuario()
@@ -21,6 +22,12 @@ def mandarWebada(request, cadfecha, idusuario = -1):
 
 def crear(request, template='app/usuario/crearUsuario.html', extra_context=None):
     if request.method == 'GET':
+        if not 'idUsuarioActual' in request.session:
+            return redirect('loginIndex')
+        if not 'idInvernadero' in request.session:
+            return redirect('escogerInvernadero')
+        if not tienepermiso(request, "Crear Usuario"):
+            return accesodenegado(request)
         listaRoles = Rol.objects.filter(habilitado=True).exclude(idrol=-1)
         listaInvernaderos = Invernadero.objects.filter(habilitado=True)
         usuarioFake = Usuario()
@@ -35,6 +42,12 @@ def crear(request, template='app/usuario/crearUsuario.html', extra_context=None)
         }
         return render(request, template, context)
     elif request.method == 'POST':
+        if not 'idUsuarioActual' in request.session:
+            return redirect('loginIndex')
+        if not 'idInvernadero' in request.session:
+            return redirect('escogerInvernadero')
+        if not tienepermiso(request, "Crear Usuario"):
+            return accesodenegado(request)
         nuevoid = Usuario.objects.all().aggregate(Max('idusuario'))['idusuario__max']
         if nuevoid is None:
             nuevoid = 1
@@ -97,6 +110,12 @@ def crear(request, template='app/usuario/crearUsuario.html', extra_context=None)
         
 def listar(request, template='app/usuario/listaUsuarios.html', extra_context=None):
     if request.method == 'GET':
+        if not 'idUsuarioActual' in request.session:
+            return redirect('loginIndex')
+        if not 'idInvernadero' in request.session:
+            return redirect('escogerInvernadero')
+        if not tienepermiso(request, "Ver Usuario"):
+            return accesodenegado(request)
         mostrarModalCrear = request.session.pop('mensajeUsuarioCrear', False)
         mostrarModalEliminar = request.session.pop('mensajeUsuarioEliminar', False)
         listaUsuarios = []
@@ -129,6 +148,12 @@ def detalle(request,idUsuario):
     for usuarioxinvernadero in InvernaderosUsuario:
         listaInvernaderosUsuario.append(usuarioxinvernadero.idinvernadero)
     if request.method == 'GET':
+        if not 'idUsuarioActual' in request.session:
+            return redirect('loginIndex')
+        if not 'idInvernadero' in request.session:
+            return redirect('escogerInvernadero')
+        if not tienepermiso(request, "Ver Usuario"):
+            return accesodenegado(request)
         mostrarModalEditar = request.session.pop('mensajeUsuarioEditar', False)
         mostrarModalEliminarFallo = request.session.pop('mensajeUsuarioEliminarFallo', False)
         context = {
@@ -147,6 +172,12 @@ def detalle(request,idUsuario):
         return render(request, template, context)
     if request.method == 'POST':
         if 'b_editar' in request.POST:
+            if not 'idUsuarioActual' in request.session:
+                return redirect('loginIndex')
+            if not 'idInvernadero' in request.session:
+                return redirect('escogerInvernadero')
+            if not tienepermiso(request, "Editar Usuario"):
+                return accesodenegado(request)
             context = {
                 'listaInvernaderos': listaInvernaderos,
                 'nombreUsuario': request.session.get('nomreUsuario'),
@@ -159,6 +190,12 @@ def detalle(request,idUsuario):
             }
             return render(request, template, context)
         if 'b_aceptar_modal' in request.POST:
+            if not 'idUsuarioActual' in request.session:
+                return redirect('loginIndex')
+            if not 'idInvernadero' in request.session:
+                return redirect('escogerInvernadero')
+            if not tienepermiso(request, "Eliminar Usuario"):
+                return accesodenegado(request)
             print(request.session.get('idUsuarioActual'))
             print(idUsuario)
             print(request.session.get('idUsuarioActual') == idUsuario)
@@ -171,6 +208,12 @@ def detalle(request,idUsuario):
             except Exception as e:
                 print(e)
             return redirect('usuariosLista')
+        if not 'idUsuarioActual' in request.session:
+            return redirect('loginIndex')
+        if not 'idInvernadero' in request.session:
+            return redirect('escogerInvernadero')
+        if not tienepermiso(request, "Editar Usuario"):
+            return accesodenegado(request)
         cadfecha = str(request.POST.get('fechanac'))
         dia, mes, anno = cadfecha.split('/')
         fechanacimientoshida = dt.date(int(anno),int(mes),int(dia))
