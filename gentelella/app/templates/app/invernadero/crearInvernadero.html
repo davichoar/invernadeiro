@@ -191,13 +191,23 @@
     });
   </script>
   <script>
+  function isInt(value) {
+  return !isNaN(value) && 
+         parseInt(Number(value)) == value && 
+         !isNaN(parseInt(value, 10));
+}
   function validar() {
         if (document.getElementById("nombre").value == '') {
             mostrarModal('Debe ingresar un nombre para el invernadero.');
             return;
         }
-        if (document.getElementById("codigoInv").value == '') {
+        var codigoInv = document.getElementById("codigoInv").value;
+        if (codigoInv == '') {
             mostrarModal('Debe ingresar el código de identificación del invernadero.');
+            return;
+        }
+        if (!isInt(codigoInv)){
+            mostrarModal('El código de invernadero debe ser un número entero.');
             return;
         }
         if (document.getElementById("admin").value == -1) {

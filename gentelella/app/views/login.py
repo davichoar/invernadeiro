@@ -26,7 +26,7 @@ def index(request,
         except:
             print('Error al consultar base de datos')
 
-        if usuario is not None:
+        if usuario is not None and usuario.habilitado == True:
             print('Nombre: '+usuario.nombres)
             print('Apellido Paterno'+usuario.apellidopaterno)
             print('Id Usuario'+str(usuario.idusuario))

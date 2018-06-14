@@ -48,7 +48,57 @@
 
      </div>
      <div class="clearfix"></div>
+      {% if not editable %}
+      {% if historiaInv %}
+        <div class="x_panel">
 
+          <div class="x_title">
+            <h2>Condiciones Actuales (Registradas el {{historiaInv.fecharegistro|date:"d/m/Y H:m:s"}})<small></small></h2>
+                <ul class="nav navbar-right panel_toolbox" >
+                  <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                  </li>
+                </ul>
+            <div class="clearfix"></div>
+          </div>
+
+
+          <div class="x_content">
+              <form class="form-horizontal form-label-left">
+              {% if historiaInv.nivelenergia %}
+                <div class="item form-group">
+                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="tempIdeal">Nivel de Energía<span class="required"></span>
+                  </label>
+                  <div class="col-md-2 col-sm-2 col-xs-6">
+                    <input required="required" id="temperaturaActual" value="{{historiaInv.nivelenergia}}"  {% if energiaok %} style="border-color: green; background-color: white;" {% else %} style="border-color: red; background-color: white;" {% endif %} data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12"  disabled >
+                  </div>
+                </div>
+                {% endif %}
+                <div class="item form-group">
+                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="tempIdeal">Nivel del Tanque de Agua<span class="required"></span>
+                  </label>
+                  <div class="col-md-2 col-sm-2 col-xs-6">
+                    <input required="required" id="phActual" value="{{historiaInv.niveltanqueagua}}"  {% if aguaok %} style="border-color: green; background-color: white;" {% else %} style="border-color: red; background-color: white;" {% endif %} data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12"   disabled >
+                  </div>
+                </div>
+              </form>
+          </div>
+        </div>
+        {% else %}<div class="x_panel">
+
+          <div class="x_title">
+            <h2>Condiciones Actuales<small></small></h2>
+                <ul class="nav navbar-right panel_toolbox" >
+                  <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                  </li>
+                </ul>
+            <div class="clearfix"></div>
+          </div>
+          <div class="x_content">
+                        <center><h2>No hay información que mostrar.</h2></center>
+          </div>
+        </div>
+        {% endif %}
+        {% endif %}
      <div class="row">
        <div class="col-md-12 col-sm-12 col-xs-12">
          <div class="x_panel">
@@ -221,13 +271,23 @@
   document.getElementById("b_aceptar_modal").addEventListener("click", deletO);
   </script>
   <script>
+  function isInt(value) {
+  return !isNaN(value) && 
+         parseInt(Number(value)) == value && 
+         !isNaN(parseInt(value, 10));
+  }
   function validar() {
         if (document.getElementById("nombre").value == '') {
             mostrarModal('Debe ingresar un nombre para el invernadero.');
             return;
         }
-        if (document.getElementById("codigoInv").value == '') {
+        var codigoInv = document.getElementById("codigoInv").value;
+        if (codigoInv == '') {
             mostrarModal('Debe ingresar el código de identificación del invernadero.');
+            return;
+        }
+        if (!isInt(codigoInv)){
+            mostrarModal('El código de invernadero debe ser un número entero.');
             return;
         }
         if (document.getElementById("admin").value == -1) {
@@ -299,6 +359,16 @@
   {% if mostrarModalEliminarFallo %}
   <script>
   mostrarModal("No puede eliminar el invernadero activo.");
+  </script>
+  {% endif %}
+  {% if mostrarModalEliminarFallo2 %}
+  <script>
+  mostrarModal("No se puede eliminar el invernadero porque aún hay zonas asociadas a dicho invernadero.");
+  </script>
+  {% endif %}
+  {% if mostrarModalEliminarFallo3 %}
+  <script>
+  mostrarModal("No se puede eliminar el invernadero porque aún hay usuarios asociados a dicho invernadero.");
   </script>
   {% endif %}
 {% endblock javascripts %}

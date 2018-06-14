@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from datetime import datetime
 import datetime as dt
 from django.db.models import Max
-from app.models import Invernadero, Usuario
+from app.models import Invernadero, Usuario, Zona, Usuarioxinvernadero, Historiainvernadero
 from django.db import transaction
 from app.permissions import *
 
@@ -142,6 +142,15 @@ def crear(request, template='app/invernadero/crearInvernadero.html', extra_conte
         return redirect('invernaderoLista')
         
         
+def validarRangoCondiciones(actual,min,max):
+    actual = float(actual)
+    min = float(min)
+    max = float(max)
+    if (actual > min) and (actual < max):
+        return True
+    else:
+        return False
+        
 def detalle(request, idInv):
     template = 'app/invernadero/verEditarInvernadero.html'
     inv = Invernadero.objects.get(idinvernadero = idInv)
@@ -153,8 +162,19 @@ def detalle(request, idInv):
             return redirect('escogerInvernadero')
         if not tienepermiso(request, "Ver Invernadero"):
             return accesodenegado(request)
+        historiaInv = Historiainvernadero.objects.filter(idinvernadero=idInv).order_by('-fecharegistro')
+        if len(historiaInv) > 0:
+            historiaInv = historiaInv[0]
+            aguaok = validarRangoCondiciones(historiaInv.niveltanqueagua,inv.niveltanqueaguamin,inv.niveltanqueaguamax)
+            energiaok = validarRangoCondiciones(historiaInv.nivelenergia,inv.nivelenergiamin,inv.nivelenergiamax)
+        else:
+            historiaInv = None
+            aguaok = None
+            energiaok = None
         mostrarModalEditar = request.session.pop('mensajeInvernaderoEditar', False)
         mostrarModalEliminarFallo = request.session.pop('mensajeInvernaderoEliminarFallo', False)
+        mostrarModalEliminarFallo2 = request.session.pop('mensajeInvernaderoEliminarFallo2', False)
+        mostrarModalEliminarFallo3 = request.session.pop('mensajeInvernaderoEliminarFallo3', False)
         context = {
             'listaUsuarios': listaUsuarios,
             'nombreUsuario': request.session.get('nomreUsuario'), 
@@ -162,7 +182,12 @@ def detalle(request, idInv):
             'inv': inv,
             'editable': False, 
             'mostrarModalEditar': mostrarModalEditar,
-            'mostrarModalEliminarFallo': mostrarModalEliminarFallo
+            'mostrarModalEliminarFallo': mostrarModalEliminarFallo,
+            'mostrarModalEliminarFallo2': mostrarModalEliminarFallo2,
+            'mostrarModalEliminarFallo3': mostrarModalEliminarFallo3,
+            'historiaInv': historiaInv,
+            'aguaok': aguaok,
+            'energiaok': energiaok
         }
         return render(request, template, context)
     if request.method == 'POST':
@@ -190,6 +215,12 @@ def detalle(request, idInv):
                 return accesodenegado(request)
             if (int(request.session.get('idInvernadero')) == int(idInv)):
                 request.session['mensajeInvernaderoEliminarFallo'] = True
+                return redirect('invernaderoDetalle', idInv)
+            if (len(Zona.objects.filter(idinvernadero = idInv, habilitado = True)) > 0):
+                request.session['mensajeInvernaderoEliminarFallo2'] = True
+                return redirect('invernaderoDetalle', idInv)
+            if (len(Usuarioxinvernadero.objects.filter(idinvernadero = idInv)) > 0):
+                request.session['mensajeInvernaderoEliminarFallo3'] = True
                 return redirect('invernaderoDetalle', idInv)
             try:
                 Invernadero.objects.filter(idinvernadero = idInv).update(habilitado=False, idusuarioauditado=request.session['idUsuarioActual'])
