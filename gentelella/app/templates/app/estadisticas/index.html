@@ -27,27 +27,29 @@
               <div class="clearfix"></div>
             </div>
             <div class="x_content">
-              <div class="col-md-6 col-sm-12 col-xs-12">
-                <h4>Consumo de Energía</h3>
-                <div class="form-group">
-                  <label for="sel1">Periodo:</label>
-                  <select class="form-control" id="sel1" onchange="updateLineChart()">
-                    <option value=5>Ultimas 5 mediciones</option>
-                    <option value=10>Ultimas 10 mediciones</option>
-                  </select>
+              <div class="row">
+                <div class="col-md-6 col-sm-12 col-xs-12">
+                  <h4>Consumo de Energía</h4>
+                  <div class="form-group">
+                    <label for="sel1">Periodo:</label>
+                    <select class="form-control" id="sel1" onchange="updateLineChart()">
+                      <option value=5>Ultimas 5 mediciones</option>
+                      <option value=10>Ultimas 10 mediciones</option>
+                    </select>
+                  </div>
+                  <canvas id='energyLineChart'></canvas>
                 </div>
-                <canvas id='energyLineChart'></canvas>
-              </div>
-              <div class="col-md-6 col-sm-12 col-xs-12">
-                <h4>Nivel del tanque de agua</h3>
-                <div class="form-group">
-                  <label for="sel2">Periodo:</label>
-                  <select class="form-control" id="sel2" onchange="updateBarChart()">
-                    <option value=5>Ultimas 5 mediciones</option>
-                    <option value=10>Ultimas 10 mediciones</option>
-                  </select>
+                <div class="col-md-6 col-sm-12 col-xs-12">
+                  <h4>Nivel del tanque de agua</h4>
+                  <div class="form-group">
+                    <label for="sel2">Periodo:</label>
+                    <select class="form-control" id="sel2" onchange="updateBarChart()">
+                      <option value=5>Ultimas 5 mediciones</option>
+                      <option value=10>Ultimas 10 mediciones</option>
+                    </select>
+                  </div>
+                  <canvas id='waterBarChart'></canvas>
                 </div>
-                <canvas id='waterBarChart'></canvas>
               </div>
             </div>
           </div>
@@ -62,42 +64,81 @@
               <div class="clearfix"></div>
             </div>
             <div class="x_content">
-              <div class="col-lg-3 col-md-3 col-sm-4 col-xs-12">
-                <div class="form-group">
-                  <label for="zona">Zona:</label>
-                  <select class="form-control" id="zona" onchange="">
-                    <option value=5>Ultimas 5 mediciones</option>
-                    <option value=10>Ultimas 10 mediciones</option>
-                  </select>
+              <div class="row">
+                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                  <div class="form-group">
+                    <label for="zona">Zona:</label>
+                    <select class="form-control" id="zona" onchange="changeZone()">
+                      {% for zone in zones %}
+                      <option value="{{zone.idzona}}">{{zone.nombre}}</option>
+                      {% endfor %}
+                    </select>
+                  </div>
                 </div>
-              </div>
-              <div class="col-lg-3 col-md-3 col-sm-4 col-xs-12 hidden">
-                <div class="form-group">
-                  <label for="modulo">Modulo:</label>
-                  <select class="form-control" id="modulo" onchange="">
-                    <option value=5>Ultimas 5 mediciones</option>
-                    <option value=10>Ultimas 10 mediciones</option>
-                  </select>
+                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12" style="display: none;" id="divComboModules">
+                  <div class="form-group">
+                    <label for="modulo">Modulo:</label>
+                    <select class="form-control" id="comboModule" onchange="changeModule()">
+                    </select>
+                  </div>
+                </div>  
+                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12" style="display: none;" id="divComboPlants">
+                  <div class="form-group">
+                    <label for="planta">Planta:</label>
+                    <select class="form-control" id="comboPlant" onchange="changePlant()">
+                    </select>
+                  </div>
                 </div>
-              </div>  
-              <div class="col-lg-3 col-md-3 col-sm-4 col-xs-12 hidden">
-              <div class="form-group">
-                <label for="planta">Planta:</label>
-                <select class="form-control" id="planta" onchange="">
-                  <option value=5>Ultimas 5 mediciones</option>
-                  <option value=10>Ultimas 10 mediciones</option>
-                </select>
-              </div>
-              </div>
-              <div class="col-lg-3 col-md-3 col-sm-4 col-xs-12 hidden">
+                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12" style="display: none;">
                   <div class="form-group">
                     <label for="condicion">Condición:</label>
                     <select class="form-control" id="condicion" onchange="">
-                      <option value=5>Ultimas 5 mediciones</option>
-                      <option value=10>Ultimas 10 mediciones</option>
                     </select>
                   </div>
-                  </div>
+                </div>
+              </div>
+              <div class="row" id="zoneCharts" style="display: none;">
+                <div class="col-xl-6 col-lg-8 col-md-12 col-sm-12 col-xs-12">
+                  <h4>Temperatura</h4>
+                  <canvas id='zoneTempLineChart'></canvas>
+                </div>
+                <div class="col-xl-6 col-lg-8 col-md-12 col-sm-12 col-xs-12">
+                  <h4>pH</h4>
+                  <canvas id='zonePHLineChart'></canvas>
+                </div>
+                <div class="col-xl-6 col-lg-8 col-md-12 col-sm-12 col-xs-12">
+                  <h4>CO2</h4>
+                  <canvas id='zoneCO2LineChart'></canvas>
+                </div>
+              </div>
+              <div class="row" id="moduleCharts" style="display: none;">
+                <div class="col-xl-6 col-lg-9 col-md-12 col-sm-12 col-xs-12">
+                  <h4>Temperatura</h4>
+                  <canvas id='moduleTempLineChart'></canvas>
+                </div>
+                <div class="col-xl-6 col-lg-9 col-md-12 col-sm-12 col-xs-12">
+                  <h4>Humedad - Tierra</h4>
+                  <canvas id='moduleGroundHumidityLineChart'></canvas>
+                </div>
+                <div class="col-xl-6 col-lg-9 col-md-12 col-sm-12 col-xs-12">
+                  <h4>Humedad - Ambiente</h4>
+                  <canvas id='moduleEnvHumidityLineChart'></canvas>
+                </div>
+                <div class="col-xl-6 col-lg-9 col-md-12 col-sm-12 col-xs-12">
+                  <h4>Nivel de Agua</h4>
+                  <canvas id='moduleWaterBarChart'></canvas>
+                </div>
+                <div class="col-xl-6 col-lg-9 col-md-12 col-sm-12 col-xs-12">
+                  <h4>Concentracion CO2</h4>
+                  <canvas id='moduleCO2BarChart'></canvas>
+                </div>
+              </div>
+              <div class="row" id="plantCharts" style="display: none;">
+                <div class="col-xl-6 col-lg-9 col-md-12 col-sm-12 col-xs-12">
+                  <h4>Humedad - Ambiente</h4>
+                  <canvas id='plantEnvHumidityLineChart'></canvas>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -110,7 +151,7 @@
   {{ block.super }}
 
   <script src="/static/vendors/Chart.js/dist/Chart.min.js"></script>
-
+  <script src="/static/build/js/estadisticas.js"></script>
   <script type="text/javascript">
 
     var labels = {{labels|safe}}
@@ -121,7 +162,7 @@
     var waterBarChart
 
     var energy_data_chart = {
-      labels: labels.slice(0,5),
+      labels: labels.slice(5,10),
       datasets: [
         {
           label: "Consumo de energía",
@@ -133,19 +174,19 @@
           pointHoverBorderColor: "rgba(220,220,220,1)",
           pointBorderWidth: 1,
           lineTension: 0,
-          data: energy_data.slice(0,5)
+          data: energy_data.slice(5,10)
         }
       ]
     }
 
     var water_data_chart = {
-      labels: labels.slice(0,5),
+      labels: labels.slice(5,10),
       datasets: [
         {
           label: "Nivel del tanque de agua",
           backgroundColor: "rgba(115, 135, 156, 0.8)",
           pointBorderWidth: 1,
-          data: water_data.slice(0,5)
+          data: water_data.slice(5,10)
         }
       ]
     }
@@ -196,6 +237,10 @@
       waterBarChart.data.labels = labels.slice(10 - data_range, 10)
       waterBarChart.data.datasets[0].data = water_data.slice(10 - data_range, 10)
       waterBarChart.update()
+    }
+
+    function updateZone(){
+      console.log($('#zona').val())
     }
 
     $(document).ready(function (){

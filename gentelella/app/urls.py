@@ -1,5 +1,5 @@
-from django.conf.urls import url
-from app import views
+from django.conf.urls import url, include
+from app import views, api
 
 urlpatterns = [
 
@@ -139,6 +139,9 @@ urlpatterns = [
 
 ## ESTADISTICAS
 
-    url('^estadisticas/$', views.estadisticas.stats_all, name='estadisticas')
+    url(r'^estadisticas/$', views.estadisticas.stats_all, name='estadisticas'),
+
+## API PARA CONTENIDO DINAMICO
+    url(r'^api/', include(api.apipatterns))
     
 ]
