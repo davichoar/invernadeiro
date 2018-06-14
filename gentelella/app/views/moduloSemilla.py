@@ -29,9 +29,21 @@ def crear(request,
                    'nombreInvernadero': request.session.get('nombreInvernadero'),
                    }
     if request.method == 'GET':
+        if not 'idUsuarioActual' in request.session:
+            return redirect('login')
+        if not 'idInvernadero' in request.session:
+            return redirect('escogerInvernadero')
+        if not tienepermiso(request, "Crear Modulosemilla"):
+            return accesodenegado(request)
         print('CREAR MODULO DE SEMILLAS')
         return render(request, template, context)
     elif request.method == 'POST':
+        if not 'idUsuarioActual' in request.session:
+            return redirect('login')
+        if not 'idInvernadero' in request.session:
+            return redirect('escogerInvernadero')
+        if not tienepermiso(request, "Crear Modulosemilla"):
+            return accesodenegado(request)
 
         if "b_aceptar" in request.POST:
 
@@ -70,6 +82,12 @@ def listar(request,
     template = "app/modulosemilla/lista.html"
     listaModulos = []
     if request.method == 'GET':
+        if not 'idUsuarioActual' in request.session:
+            return redirect('login')
+        if not 'idInvernadero' in request.session:
+            return redirect('escogerInvernadero')
+        if not tienepermiso(request, "Ver Modulosemilla"):
+            return accesodenegado(request)
 
         print('LISTAR MODULOS SEMILLAS')
         listaIdZonas = []
@@ -124,6 +142,13 @@ def listar(request,
     elif request.method == 'POST':
         if "b_crear" in request.POST:
             return redirect('moduloSemillaCrear')
+    ###Me parece q podriamos borrar toda esta webada de abajo
+    if not 'idUsuarioActual' in request.session:
+        return redirect('login')
+    if not 'idInvernadero' in request.session:
+        return redirect('escogerInvernadero')
+    if not tienepermiso(request, "Ver Modulosemilla"):
+        return accesodenegado(request)
     context = {}
     return render(request, template, context)
 
@@ -206,6 +231,12 @@ def detalle(request,idModulo):
                "humedadAmbienteok": humedadAmbienteok, "nivelAguaok": nivelAguaok, "co2ok": co2ok, 'hayFotos': hayFotos,'hayCronograma':hayCronograma}
 
     if request.method == 'GET':
+        if not 'idUsuarioActual' in request.session:
+            return redirect('login')
+        if not 'idInvernadero' in request.session:
+            return redirect('escogerInvernadero')
+        if not tienepermiso(request, "Ver Modulosemilla"):
+            return accesodenegado(request)
         print('Mostrar Modulo de Semilla')
         ## context es el mismo de arriba
         context['editable'] = False ## es un saludo a la bandera, solo para aclarar que la vista no sera editable
@@ -217,10 +248,22 @@ def detalle(request,idModulo):
             return redirect('moduloSemillaCronograma', idModulo = idModulo)
 
         if "b_editar" in request.POST:
+            if not 'idUsuarioActual' in request.session:
+                return redirect('login')
+            if not 'idInvernadero' in request.session:
+                return redirect('escogerInvernadero')
+            if not tienepermiso(request, "Editar Modulosemilla"):
+                return accesodenegado(request)
             print('Editar Modulo Semilla')
             context['editable'] = True
             return render(request, template, context)
         if "b_aceptar" in request.POST:
+            if not 'idUsuarioActual' in request.session:
+                return redirect('login')
+            if not 'idInvernadero' in request.session:
+                return redirect('escogerInvernadero')
+            if not tienepermiso(request, "Editar Modulosemilla"):
+                return accesodenegado(request)
             print('Aceptar Modulo Semilla')
             mensajeError = None
             try:
@@ -263,11 +306,23 @@ def detalle(request,idModulo):
                 return render(request, template, context)
 
         if "b_cancelar" in request.POST :
+            if not 'idUsuarioActual' in request.session:
+                return redirect('login')
+            if not 'idInvernadero' in request.session:
+                return redirect('escogerInvernadero')
+            if not tienepermiso(request, "Ver Modulosemilla"):
+                return accesodenegado(request)
             ## context es el mismo de arriba
             context['editable'] = False  ## es un saludo a la bandera, solo para aclarar que la vista no sera editable
             contextParaGrilla(request, context, modulo)
             return render(request, template, context)
         if "b_aceptar_modal" in request.POST:
+            if not 'idUsuarioActual' in request.session:
+                return redirect('login')
+            if not 'idInvernadero' in request.session:
+                return redirect('escogerInvernadero')
+            if not tienepermiso(request, "Eliminar Modulosemilla"):
+                return accesodenegado(request)
             print("Aceptar Modal")
 
             if moduloConSemillas:
@@ -637,6 +692,12 @@ def paginar(numeroPagina, totalPaginas):
 def fotos(request, idModulo, template='app/modulosemilla/fotos.html'):
     fotosPorPagina = 20
     if request.method == 'GET':
+        if not 'idUsuarioActual' in request.session:
+            return redirect('login')
+        if not 'idInvernadero' in request.session:
+            return redirect('escogerInvernadero')
+        if not tienepermiso(request, "Ver Modulosemilla"):
+            return accesodenegado(request)
         fotosModulo = Foto.objects.filter(idmodulo=idModulo).order_by('-fecharegistro')
         pagina = request.GET.get('page', '1')
         pagina = int(pagina)
@@ -713,7 +774,7 @@ def obtenerCronogramaVacio():
 def cronograma(request, idModulo):
     template = 'app/modulosemilla/cronograma.html'
     listaRegistrosCronograma = Cronograma.objects.filter(idmodulo=idModulo)
-
+    
     if listaRegistrosCronograma:
         listaRegistrosCronograma = listaRegistrosCronograma.order_by('horainicio')
     else:
@@ -724,6 +785,12 @@ def cronograma(request, idModulo):
 
     if request.method == 'POST':
         if "b_aceptar" in request.POST:
+            if not 'idUsuarioActual' in request.session:
+                return redirect('login')
+            if not 'idInvernadero' in request.session:
+                return redirect('escogerInvernadero')
+            if not tienepermiso(request, "Editar Modulosemilla"):
+                return accesodenegado(request)
             print(request.POST)
             for registro in listaRegistrosCronograma:
                 try:
@@ -738,6 +805,12 @@ def cronograma(request, idModulo):
         if "b_cancelar" in request.POST:
             return redirect('moduloSemillaDetalle',idModulo = idModulo)
 
-
+    ##Supongo q aqui es donde se renderiza si request.method == GET, no se, q1 revisalo ctmr
+    if not 'idUsuarioActual' in request.session:
+        return redirect('login')
+    if not 'idInvernadero' in request.session:
+        return redirect('escogerInvernadero')
+    if not tienepermiso(request, "Ver Modulosemilla"):
+        return accesodenegado(request)
     return render(request, template, context)
 

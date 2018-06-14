@@ -3,6 +3,7 @@ from django.db.models import Max
 from django.shortcuts import render, redirect
 from django.db import connection
 from datetime import datetime
+from app.permissions import *
 
 from app.models import Zona, Tipoplanta,Planta, Historiaplanta
 
@@ -17,7 +18,7 @@ def crear(request,
         listaTipoPlantas = Tipoplanta.objects.filter(habilitado=True)
     except Exception as e:
         print(e)
-        request.session['mensajePlantaCrearEditarError'] = True
+        request.session['mensajePlantaCrearEditarError'] = True ###Revisa esta webada q1
         return redirect('plantaListar')
 
 
@@ -30,6 +31,12 @@ def crear(request,
         return redirect('plantaListar')
 
     if request.method == 'GET':
+        if not 'idUsuarioActual' in request.session:
+            return redirect('login')
+        if not 'idInvernadero' in request.session:
+            return redirect('escogerInvernadero')
+        if not tienepermiso(request, "Crear Planta"):
+            return accesodenegado(request)
         print('CREAR PLANTAS')
         context = {'listaTipoPlantas': listaTipoPlantas,
                    'listaZonas':listaZonas,
@@ -38,6 +45,12 @@ def crear(request,
                    }
         return render(request, template, context)
     elif request.method == 'POST':
+        if not 'idUsuarioActual' in request.session:
+            return redirect('login')
+        if not 'idInvernadero' in request.session:
+            return redirect('escogerInvernadero')
+        if not tienepermiso(request, "Crear Planta"):
+            return accesodenegado(request)
 
         if "b_aceptar" in request.POST:
 
@@ -79,6 +92,12 @@ def listar(request,
     listaPlantas = []
     listaTipoPlantas = Tipoplanta.objects.filter(habilitado=True)
     if request.method == 'GET':
+        if not 'idUsuarioActual' in request.session:
+            return redirect('login')
+        if not 'idInvernadero' in request.session:
+            return redirect('escogerInvernadero')
+        if not tienepermiso(request, "Ver Planta"):
+            return accesodenegado(request)
 
         print('LISTAR PLANTAS')
         listaIdZonas = []
@@ -157,6 +176,13 @@ def listar(request,
     elif request.method == 'POST':
         if "b_crear" in request.POST:
             return redirect('plantaCrear')
+    ###Me parece q podriamos borrar toda esta webada de abajo
+    if not 'idUsuarioActual' in request.session:
+        return redirect('login')
+    if not 'idInvernadero' in request.session:
+        return redirect('escogerInvernadero')
+    if not tienepermiso(request, "Ver Planta"):
+        return accesodenegado(request)
     context = {}
     return render(request, template, context)
 
@@ -203,6 +229,12 @@ def detalle(request,idPlanta):
                "humedadok": humedadok}
 
     if request.method == 'GET':
+        if not 'idUsuarioActual' in request.session:
+            return redirect('login')
+        if not 'idInvernadero' in request.session:
+            return redirect('escogerInvernadero')
+        if not tienepermiso(request, "Ver Planta"):
+            return accesodenegado(request)
         print('Mostrar Planta')
         ## context es el mismo de arriba
         context['editable'] = False ## es un saludo a la bandera, solo para aclarar que la vista no sera editable
@@ -216,10 +248,22 @@ def detalle(request,idPlanta):
 
     elif request.method == 'POST':
         if "b_editar" in request.POST:
+            if not 'idUsuarioActual' in request.session:
+                return redirect('login')
+            if not 'idInvernadero' in request.session:
+                return redirect('escogerInvernadero')
+            if not tienepermiso(request, "Editar Planta"):
+                return accesodenegado(request)
             print('Editar Planta')
             context['editable'] = True
             return render(request, template, context)
         if "b_aceptar" in request.POST:
+            if not 'idUsuarioActual' in request.session:
+                return redirect('login')
+            if not 'idInvernadero' in request.session:
+                return redirect('escogerInvernadero')
+            if not tienepermiso(request, "Editar Planta"):
+                return accesodenegado(request)
             print('Aceptar Planta')
             mensajeError = None
             try:
@@ -262,6 +306,12 @@ def detalle(request,idPlanta):
                 return render(request, template, context)
 
         if "b_cancelar" in request.POST :
+            if not 'idUsuarioActual' in request.session:
+                return redirect('login')
+            if not 'idInvernadero' in request.session:
+                return redirect('escogerInvernadero')
+            if not tienepermiso(request, "Ver Planta"):
+                return accesodenegado(request)
             ## context es el mismo de arriba
             context['editable'] = False  ## es un saludo a la bandera, solo para aclarar que la vista no sera editable
             tipoPlanta = Tipoplanta.objects.get(idtipoplanta = planta.idtipoplanta)
@@ -272,6 +322,12 @@ def detalle(request,idPlanta):
             context['listaFotos'] = listaFotos
             return render(request, template, context)
         if "b_aceptar_modal" in request.POST:
+            if not 'idUsuarioActual' in request.session:
+                return redirect('login')
+            if not 'idInvernadero' in request.session:
+                return redirect('escogerInvernadero')
+            if not tienepermiso(request, "Eliminar Planta"):
+                return accesodenegado(request)
             print("Aceptar Modal")
             try:
                 eliminarPlanta(request, idPlanta)
