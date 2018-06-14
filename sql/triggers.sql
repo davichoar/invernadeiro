@@ -42,7 +42,7 @@ if nivelAgua > vals[0]["nivelaguamax"] or nivelAgua < vals[0]["nivelaguamin"]:
 
 msgBody += "\nValores recuperados el "+str(fechaRegistro)+"\n"
 
-prep_q = plpy.prepare("SELECT DISTINCT u.correo, i.nombre as nombrei, z.nombre as nombrez, ms.nombre as nombrem from app_usuario u INNER JOIN app_usuarioxinvernadero ui on u.idusuario = ui.idusuario INNER JOIN app_invernadero i on ui.idinvernadero = i.idinvernadero INNER JOIN app_zona z on i.idinvernadero = z.idinvernadero INNER JOIN app_modulosemilla ms on z.idzona = ms.idzona WHERE ms.idmodulo = $1", ["int"] AND u.idrol = 1)
+prep_q = plpy.prepare("SELECT DISTINCT u.correo, i.nombre as nombrei, z.nombre as nombrez, ms.nombre as nombrem from app_usuario u INNER JOIN app_usuarioxinvernadero ui on u.idusuario = ui.idusuario INNER JOIN app_invernadero i on ui.idinvernadero = i.idinvernadero INNER JOIN app_zona z on i.idinvernadero = z.idinvernadero INNER JOIN app_modulosemilla ms on z.idzona = ms.idzona WHERE ms.idmodulo = $1  AND u.idrol = 1", ["int"])
 infoMails= plpy.execute(prep_q, [idModulo])
 
 fromaddr = "alertas.invernaderos.pucp@gmail.com"
@@ -113,7 +113,7 @@ if concentracionCO2 > vals[0]["concentracionco2max"] or concentracionCO2 < vals[
 
 msgBody += "\nValores recuperados el: "+str(fechaRegistro)+"\n"
 
-prep_q = plpy.prepare("SELECT DISTINCT u.correo, i.nombre as nombrei, z.nombre as nombrez from app_usuario u INNER JOIN app_usuarioxinvernadero ui on u.idusuario = ui.idusuario INNER JOIN app_invernadero i on ui.idinvernadero = i.idinvernadero INNER JOIN app_zona z on i.idinvernadero = z.idinvernadero WHERE z.idzona = $1", ["int"] AND u.idrol = 1)
+prep_q = plpy.prepare("SELECT DISTINCT u.correo, i.nombre as nombrei, z.nombre as nombrez from app_usuario u INNER JOIN app_usuarioxinvernadero ui on u.idusuario = ui.idusuario INNER JOIN app_invernadero i on ui.idinvernadero = i.idinvernadero INNER JOIN app_zona z on i.idinvernadero = z.idinvernadero WHERE z.idzona = $1  AND u.idrol = 1", ["int"])
 infoMails= plpy.execute(prep_q, [idZona])
 
 fromaddr = "alertas.invernaderos.pucp@gmail.com"
@@ -176,7 +176,7 @@ if humedad > vals[0]["humedadmax"] or humedad < vals[0]["humedadmin"]:
 
 msgBody += "\nValores recuperados el: "+str(fechaRegistro)+"\n"
 
-prep_q = plpy.prepare("SELECT DISTINCT u.correo, i.nombre as nombrei, z.nombre as nombrez, tp.nombrecomun from app_usuario u INNER JOIN app_usuarioxinvernadero ui on u.idusuario = ui.idusuario INNER JOIN app_invernadero i on ui.idinvernadero = i.idinvernadero INNER JOIN app_zona z on i.idinvernadero = z.idinvernadero INNER JOIN app_planta p on z.idzona = p.idzona INNER JOIN app_tipoplanta tp on p.idtipoplanta = tp.idtipoplanta WHERE p.idplanta = $1" , ["int"] AND u.idrol = 1)
+prep_q = plpy.prepare("SELECT DISTINCT u.correo, i.nombre as nombrei, z.nombre as nombrez, tp.nombrecomun from app_usuario u INNER JOIN app_usuarioxinvernadero ui on u.idusuario = ui.idusuario INNER JOIN app_invernadero i on ui.idinvernadero = i.idinvernadero INNER JOIN app_zona z on i.idinvernadero = z.idinvernadero INNER JOIN app_planta p on z.idzona = p.idzona INNER JOIN app_tipoplanta tp on p.idtipoplanta = tp.idtipoplanta WHERE p.idplanta = $1 AND u.idrol = 1" , ["int"])
 infoMails= plpy.execute(prep_q, [idPlanta])
 
 fromaddr = "alertas.invernaderos.pucp@gmail.com"
@@ -239,11 +239,11 @@ if nivelEnergia > vals[0]["nivelenergiamax"] or nivelEnergia < vals[0]["nivelene
 if nivelTanqueAgua > vals[0]["niveltanqueaguamax"] or nivelTanqueAgua < vals[0]["niveltanqueaguamin"]:
 	mailFlag=True
 	msgBody += "Agua disponible: "+ str(nivelTanqueAgua)+" L\n"
-"
+
 
 msgBody += "\nValores recuperados el: "+str(fechaRegistro)+"\n"
 
-prep_q = plpy.prepare("SELECT DISTINCT u.correo, i.nombre as nombrei from app_usuario u INNER JOIN app_usuarioxinvernadero ui on u.idusuario = ui.idusuario INNER JOIN app_invernadero i on ui.idinvernadero = i.idinvernadero WHERE i.idinvernadero = $1" , ["int"] AND u.idrol = 1)
+prep_q = plpy.prepare("SELECT DISTINCT u.correo, i.nombre as nombrei from app_usuario u INNER JOIN app_usuarioxinvernadero ui on u.idusuario = ui.idusuario INNER JOIN app_invernadero i on ui.idinvernadero = i.idinvernadero WHERE i.idinvernadero = $1 AND u.idrol = 1" , ["int"])
 infoMails= plpy.execute(prep_q, [idInvernadero])
 
 fromaddr = "alertas.invernaderos.pucp@gmail.com"
