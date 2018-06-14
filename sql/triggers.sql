@@ -63,7 +63,10 @@ if mailFlag:
 		server.starttls()
 		server.login(fromaddr, "invernadeiro2018")
 		text = msg.as_string()
-		server.sendmail(fromaddr, toaddr, text)
+		try:
+			server.sendmail(fromaddr, toaddr, text)
+		except Exception as e:
+			print(e)
 		server.quit()
  
 ' 
@@ -130,7 +133,10 @@ if mailFlag:
 		server.starttls()
 		server.login(fromaddr, "invernadeiro2018")
 		text = msg.as_string()
-		server.sendmail(fromaddr, toaddr, text)
+		try:
+			server.sendmail(fromaddr, toaddr, text)
+		except Exception as e:
+			print(e)
 		server.quit()
  
 ' 
@@ -190,7 +196,11 @@ if mailFlag:
 		server.starttls()
 		server.login(fromaddr, "invernadeiro2018")
 		text = msg.as_string()
-		server.sendmail(fromaddr, toaddr, text)
+		try:
+			server.sendmail(fromaddr, toaddr, text)
+			break
+		except Exception as e:
+			print(e)
 		server.quit()
  
 ' 
