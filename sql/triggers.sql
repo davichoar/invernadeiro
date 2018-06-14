@@ -48,7 +48,7 @@ infoMails= plpy.execute(prep_q, [idModulo])
 fromaddr = "alertas.invernaderos.pucp@gmail.com"
 
 if mailFlag:
-	prep_q = plpy.prepare("UPDATE app_modulosemilla SET condicionesshidas = false WHERE idmodulo = $1", ["int"] AND condicionesshidas = true)
+	prep_q = plpy.prepare("UPDATE app_modulosemilla SET condicionesshidas = false WHERE idmodulo = $1  AND condicionesshidas = true", ["int"])
 	plpy.execute(prep_q, [idModulo])
 
 	for dest in infoMails:
@@ -72,7 +72,7 @@ if mailFlag:
 			print(e)
 		server.quit()
 else:
-	prep_q = plpy.prepare("UPDATE app_modulosemilla SET condicionesshidas = true WHERE idmodulo = $1", ["int"] AND condicionesshidas = false)
+	prep_q = plpy.prepare("UPDATE app_modulosemilla SET condicionesshidas = true WHERE idmodulo = $1  AND condicionesshidas = false", ["int"])
 	plpy.execute(prep_q, [idModulo]) 
 ' 
 LANGUAGE plpythonu;
@@ -124,7 +124,7 @@ infoMails= plpy.execute(prep_q, [idZona])
 fromaddr = "alertas.invernaderos.pucp@gmail.com"
 
 if mailFlag:
-	prep_q = plpy.prepare("UPDATE app_zona SET condicionesshidas = false WHERE idzona = $1", ["int"] AND condicionesshidas = true)
+	prep_q = plpy.prepare("UPDATE app_zona SET condicionesshidas = false WHERE idzona = $1  AND condicionesshidas = true", ["int"])
 	plpy.execute(prep_q, [idZona])
 
 	for dest in infoMails:
@@ -147,7 +147,7 @@ if mailFlag:
 			print(e)
 		server.quit()
 else:
-	prep_q = plpy.prepare("UPDATE app_zona SET condicionesshidas = true WHERE idzona = $1", ["int"] AND condicionesshidas = false)
+	prep_q = plpy.prepare("UPDATE app_zona SET condicionesshidas = true WHERE idzona = $1  AND condicionesshidas = false", ["int"])
 	plpy.execute(prep_q, [idZona])
  
 ' 
@@ -193,7 +193,7 @@ infoMails= plpy.execute(prep_q, [idPlanta])
 fromaddr = "alertas.invernaderos.pucp@gmail.com"
 
 if mailFlag:
-	prep_q = plpy.prepare("UPDATE app_planta SET condicionesshidas = false WHERE idplanta = $1", ["int"] AND condicionesshidas = true)
+	prep_q = plpy.prepare("UPDATE app_planta SET condicionesshidas = false WHERE idplanta = $1  AND condicionesshidas = true", ["int"])
 	plpy.execute(prep_q, [idPlanta])
 
 	for dest in infoMails:
@@ -217,7 +217,7 @@ if mailFlag:
 			print(e)
 		server.quit()
 else:
-	prep_q = plpy.prepare("UPDATE app_planta SET condicionesshidas = true WHERE idplanta = $1", ["int"] AND condicionesshidas = false)
+	prep_q = plpy.prepare("UPDATE app_planta SET condicionesshidas = true WHERE idplanta = $1  AND condicionesshidas = false", ["int"])
 	plpy.execute(prep_q, [idPlanta])
  
 ' 
@@ -266,7 +266,7 @@ infoMails= plpy.execute(prep_q, [idInvernadero])
 fromaddr = "alertas.invernaderos.pucp@gmail.com"
 
 if mailFlag:
-	prep_q = plpy.prepare("UPDATE app_invernadero SET condicionesshidas = false WHERE idinvernadero = $1", ["int"] AND condicionesshidas = true)
+	prep_q = plpy.prepare("UPDATE app_invernadero SET condicionesshidas = false WHERE idinvernadero = $1  AND condicionesshidas = true", ["int"])
 	plpy.execute(prep_q, [idInvernadero])
 
 	for dest in infoMails:
@@ -290,7 +290,7 @@ if mailFlag:
 			print(e)
 		server.quit()
 else:
-	prep_q = plpy.prepare("UPDATE app_invernadero SET condicionesshidas = true WHERE idinvernadero = $1", ["int"] AND condicionesshidas = false)
+	prep_q = plpy.prepare("UPDATE app_invernadero SET condicionesshidas = true WHERE idinvernadero = $1  AND condicionesshidas = false", ["int"])
 	plpy.execute(prep_q, [idInvernadero])
 ' 
 LANGUAGE plpythonu;
