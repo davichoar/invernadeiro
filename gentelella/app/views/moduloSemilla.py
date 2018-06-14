@@ -5,6 +5,7 @@ from django.shortcuts import render, redirect, render_to_response
 from datetime import datetime
 from django.template import loader
 from django.urls import reverse
+from app.permissions import *
 
 from app.models import Zona, Tipozona, Historiainvernadero, Historiazona, Modulosemilla, Historiamodulo, Semilla, \
     Historiasemilla, Tipoplanta, Planta, Foto, Cronograma
