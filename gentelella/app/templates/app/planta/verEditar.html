@@ -99,12 +99,17 @@
 
               <form class="form-horizontal form-label-left"  method="POST" novalidate>
                 {% csrf_token %}
+                {% load app_filters %}
+                {% if not editable and tipoPlanta.idfoto != None %}
+			  <center><img src="/static/fotos_tipo_planta/{{listaFotos|getFoto:tipoPlanta.idtipoplanta}}" class="img-responsive" width="200dp"  alt="Cinque Terre"></center> <br>
+               {% endif %}
                 <div class="item form-group">
                   <label
                     class="control-label col-md-3 col-sm-3 col-xs-12" for="zona">Tipo de Planta <span class="required">*</span>
                   </label>
                   <div class="col-md-6 col-sm-6 col-xs-12">
                     <select id="tipoPlanta" name="tipoPlanta"  class="form-control" required {% if not editable %} disabled {% endif %}>
+                      <option value="-1" selected disabled>- Seleccione -</option>
                       {% for tipoPlanta in listaTipoPlantas %}
                         <option value="{{tipoPlanta.idtipoplanta}}" {% if tipoPlanta.idtipoplanta == planta.idtipoplanta %}selected{% endif %}>{{tipoPlanta.nombrecomun}}</option>
                       {% endfor %}
@@ -117,6 +122,7 @@
                   </label>
                   <div class="col-md-6 col-sm-6 col-xs-12">
                     <select id="zona" name="zona"  class="form-control" required {% if not editable %} disabled {% endif %}>
+                      <option value="-1" selected disabled>- Seleccione -</option>
                       {% for zona in listaZonas %}
                         <option value="{{zona.idzona}}" {% if zona.idzona == planta.idzona %}selected{% endif %}>{{zona.nombre}}</option>
                       {% endfor %}
@@ -141,7 +147,7 @@
                 </div>
 
                 <div class="item form-group">
-                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="humedadMin">Humedad Mínima (%)<span class="required"></span>
+                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="humedadMin">Humedad Mínima (%)<span class="required">*</span>
                   </label>
                   <div class="col-md-2 col-sm-2 col-xs-6">
                     <input type="number" id="humedadMin" name="humedadMin" value="{{planta.humedadmin}}" required="required" data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12" {% if not editable %} disabled {% endif %}>

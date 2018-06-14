@@ -123,7 +123,34 @@
         {% endif %}
       {% endif %}
       
+      <!-- Ver fotos del módulo -->
+      {% if not editable and hayFotos %}
+        <div class="x_panel">
+          <div class="x_title">
+            <h2>Ver Fotos del Módulo<small></small></h2>
+                <ul class="nav navbar-right panel_toolbox" >
+                  <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                  </li>
+                </ul>
+            <div class="clearfix"></div>
+          </div>
+
+
+
+            <div class="x_content">         
+                  <div class="col-xs-12">
+                    <center>
+                     <a href="/modulosemillafotos/{{modulo.idmodulo}}"><button id="b_ver_fotos" name="b_ver_fotos" type="button" class="btn btn-success">Ver Fotos</button></a>
+                    </center>
+                  </div>
+            </div>
+        </div>
+      {% endif %}
       
+      <!-- /Ver fotos del módulo -->
+
+
+
       <!-- Grilla de las semillitas -->
       {% load app_filters %}
       {% if not editable and modulo.filas > 0 and modulo.columnas > 0 %}
@@ -170,7 +197,34 @@
       {% endif %}
       <!-- /Grilla de las semillitas -->      
       
-      
+      <!-- Cronograma -->
+      {% if not editable %}
+      <form class="form-horizontal form-label-left"  method="POST" novalidate>
+        {% csrf_token %}
+        <div class="x_panel">
+          <div class="x_title">
+            <h2>Cronograma<small></small></h2>
+                <ul class="nav navbar-right panel_toolbox" >
+                  <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                  </li>
+                </ul>
+            <div class="clearfix"></div>
+          </div>
+
+
+
+            <div class="x_content">
+                  <div class="col-xs-12">
+                    <center>
+                     <button id="crearCronograma" name="b_cronograma" type="submit" class="btn btn-success">{% if hayCronograma %} Ver Cronograma {% else %} Añadir Cronograma {% endif %}</button>
+                    </center>
+                  </div>
+            </div>
+        </div>
+      </form>
+
+      {% endif %}
+      <!-- /Cronograma -->
       
       <div class="row">
         <div class="col-md-12 col-sm-12 col-xs-12">
@@ -209,7 +263,8 @@
                     class="control-label col-md-3 col-sm-3 col-xs-12" for="zona">Zona <span class="required">*</span>
                   </label>
                   <div class="col-md-6 col-sm-6 col-xs-12">
-                    <select id="zona" name="zona"  class="form-control" required {% if not editable %} disabled {% endif %}>
+                    <select id="zona" name="zona"  class="form-control" required {% if not editable %} disabled {% elif  moduloConSemillas %} title="No se puede editar la zona del módulo porque hay semillas asignadas" disabled {% endif %} >
+                      <option value="-1" selected disabled>- Seleccione -</option>
                       {% for zona in listaZonas %}
                         <option value="{{zona.idzona}}" {% if zona.idzona == modulo.idzona %}selected{% endif %}>{{zona.nombre}}</option>
                       {% endfor %}
@@ -330,14 +385,14 @@
                   <label class="control-label col-md-3 col-sm-3 col-xs-12" for="filas">Cantidad de Filas<span class="required">*</span>
                   </label>
                   <div class="col-md-2 col-sm-2 col-xs-6">
-                    <input type="number" id="filas" name="filas" required="required" value="{{modulo.filas}}" data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12" {% if moduloConSemillas %} title="No se puede editar el valor de las filas si hay semillas asignadas" disabled {% else %} {% if not editable %} disabled {% endif %} {% endif %}  >
+                    <input type="number" id="filas" name="filas" required="required" value="{{modulo.filas}}" data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12" {% if not editable %} disabled {% elif moduloConSemillas %} title="No se puede editar el valor de las filas si hay semillas asignadas" disabled {% endif %}  >
                   </div>
                 </div>
                 <div class="item form-group">
                   <label class="control-label col-md-3 col-sm-3 col-xs-12" for="columnas">Cantidad de Columnas<span class="required">*</span>
                   </label>
                   <div class="col-md-2 col-sm-2 col-xs-6">
-                    <input type="number" id="columnas" name="columnas" required="required" value="{{modulo.columnas}}" data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12"  {% if  moduloConSemillas %} title="No se puede editar el valor de las columnas si hay semillas asignadas" disabled {% else %} {% if not editable %} disabled {% endif %} {% endif %} >
+                    <input type="number" id="columnas" name="columnas" required="required" value="{{modulo.columnas}}" data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12"  {% if not editable %} disabled {% elif  moduloConSemillas %} title="No se puede editar el valor de las columnas si hay semillas asignadas" disabled {% endif %} >
                   </div>
                 </div>
 
@@ -432,4 +487,15 @@
 
   document.getElementById("b_aceptar_modal").addEventListener("click", deletO);
   </script>
+
+  <script>
+  $("form").submit(function() {
+      $("#zona").prop("disabled", false);
+      $("#filas").prop("disabled", false);
+      $("#columnas").prop("disabled", false);
+  });
+  </script>
+
+
+
 {% endblock javascripts %}

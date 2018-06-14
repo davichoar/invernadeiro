@@ -8,10 +8,10 @@ import json
 @csrf_exempt
 def prueba(request, template=None, extra_context=None):
     if request.method == 'GET':
-        content = 'prueba del servidor'
+        content = 'prueba del cliente'
         print('prueba del servidor')
         return HttpResponse(content, content_type='text/plain')
     if request.method == 'POST':
-        jsonATomar  = json.loads(request.body)
+        cadena = request.body.decode('utf-8')
         print(cadena)
-        return HttpResponse('ok', content_type='text/plain')
+        return HttpResponse('recibi tu mensaje', content_type='text/plain')

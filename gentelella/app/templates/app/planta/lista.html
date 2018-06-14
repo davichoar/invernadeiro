@@ -33,7 +33,7 @@
             </div>
 
 
-            <form class="form-horizontal form-label-left"  method="GET" novalidate>
+            <form id="idFormBuscar" class="form-horizontal form-label-left"  method="GET" novalidate>
                 {% csrf_token %}
 
                 <div class="title_right">
@@ -77,16 +77,16 @@
                     <div class="x_content">
 
                       <div class="row" style="width:100%; max-width:800px; margin:0 auto; float: left">
+                        {% load app_filters %}
                         {% for planta in listaPlantas%}
                         <div class="col-md-3" style="display: inline-block; height: 180px; width: 180px; margin:10px;">
                           <div class="thumbnail" {% if planta.condicionesshidas != None %} {% if planta.condicionesshidas %} style="border-color: green;" {% else %} style="border-color: red;" {% endif %} {% endif %} >
                             <a href="{% url 'plantaDetalle' idPlanta=planta.idplanta %}">
                             <div class="image view view-first">
-                                <img style="height: 100%; width: 100%; display: block;" src="/static/images/zonaHerbacea2.png" alt="image" />
+                                <img style="height: 100%; width: 100%; display: block;" src="/static/fotos_tipo_planta/{{listaFotos|getFoto:planta.idtipoplanta}}" alt="image" />
                               <div class="mask">
-                                <p>{% for tipoPlanta in listaTipoPlantas %}
-                                    {% if tipoPlanta.idtipoplanta == planta.idtipoplanta %} {{tipoPlanta.nombrecomun}} {% endif %}
-                                  {% endfor %}
+                                <p>
+                                    {{planta.codigoplantajson}}
                                 </p>
                               </div>
                             </div>
@@ -162,5 +162,12 @@
                             });
         </script>
     {% endif %}
+
+    <script>
+        $("#comboZona").on('change', function (e) {
+              document.getElementById("textoBusqueda").value='' ;
+              document.getElementById("idFormBuscar").submit();
+        });
+    </script>
 
 {% endblock javascripts %}

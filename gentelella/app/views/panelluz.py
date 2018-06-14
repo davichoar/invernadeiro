@@ -1,12 +1,15 @@
+from django.db import transaction
 from django.db.models import Max
 from django.shortcuts import render, redirect, render_to_response
 from datetime import datetime
+from app.permissions import *
 
 from app.models import Zona, Tipozona, Historiainvernadero, Historiazona, Modulosemilla, Historiamodulo, Tipoplanta, \
     Planta, Semilla, Historiaplanta, Panelluz, Historiapanel
 
 ID_TIPO_ZONAS_PLANTAS = 2
 ID_TODAS_ZONAS = -1
+CODIGO_GENERAL_COMBO = -1
 def crear(request,
           template='app/panelluz/crear.html',
           extra_context=None):
@@ -20,6 +23,12 @@ def crear(request,
         return redirect('panelListar')
 
     if request.method == 'GET':
+        if not 'idUsuarioActual' in request.session:
+            return redirect('loginIndex')
+        if not 'idInvernadero' in request.session:
+            return redirect('escogerInvernadero')
+        if not tienepermiso(request, "Crear Panelluz"):
+            return accesodenegado(request)
         print('CREAR PANELES')
         context = {'listaZonas':listaZonas,
                    'nombreUsuario': request.session.get('nomreUsuario'),
@@ -27,6 +36,12 @@ def crear(request,
                    }
         return render(request, template, context)
     elif request.method == 'POST':
+        if not 'idUsuarioActual' in request.session:
+            return redirect('loginIndex')
+        if not 'idInvernadero' in request.session:
+            return redirect('escogerInvernadero')
+        if not tienepermiso(request, "Crear Panelluz"):
+            return accesodenegado(request)
 
         if "b_aceptar" in request.POST:
 
@@ -38,9 +53,15 @@ def crear(request,
                 print(e)
 
             if mensajeError is not None:
-                print("MENSAJE ERROR CREAR ZONA")
-                panel = obtenerPanelRequest(request)
-                context = {"planta":panel,
+                print("MENSAJE ERROR CREAR PANELES DE LUZ")
+                try:
+                    panel = obtenerPanelRequest(request)
+                except Exception as e:
+                    panel = None
+                    print(e)
+                    print("Error obteniendo la data del request")
+
+                context = {"panel":panel,
                            'listaZonas': listaZonas,
                            'nombreUsuario': request.session.get('nomreUsuario'),
                            'nombreInvernadero': request.session.get('nombreInvernadero'),
@@ -60,14 +81,25 @@ def listar(request,
     template = "app/panelluz/lista.html"
     listaPaneles = []
     if request.method == 'GET':
+        if not 'idUsuarioActual' in request.session:
+            return redirect('loginIndex')
+        if not 'idInvernadero' in request.session:
+            return redirect('escogerInvernadero')
+        if not tienepermiso(request, "Ver Panelluz"):
+            return accesodenegado(request)
 
         print('LISTAR PANELES')
         listaIdZonas = []
-        try:
-            zonaSeleccionada = request.GET.get('comboZona')
-        except Exception as e:
-            print(e)
-            zonaSeleccionada = None
+        idZonaPanelesLuz = request.session.pop('idZonaPanelesLuz', False)
+        if idZonaPanelesLuz:
+            zonaSeleccionada = idZonaPanelesLuz
+        else:
+            try:
+                zonaSeleccionada = request.GET.get('comboZona')
+            except Exception as e:
+                print(e)
+                zonaSeleccionada = None
+
         print('Zona seleccionada --')
         print(zonaSeleccionada)
         try:
@@ -129,6 +161,13 @@ def listar(request,
     elif request.method == 'POST':
         if "b_crear" in request.POST:
             return redirect('panelCrear')
+    ###Me parece q podriamos borrar toda esta webada de abajo
+    if not 'idUsuarioActual' in request.session:
+        return redirect('loginIndex')
+    if not 'idInvernadero' in request.session:
+        return redirect('escogerInvernadero')
+    if not tienepermiso(request, "Ver Panelluz"):
+        return accesodenegado(request)
     context = {}
     return render(request, template, context)
 
@@ -168,6 +207,12 @@ def detalle(request,idPanel):
                'nombreInvernadero': request.session.get('nombreInvernadero'), "editable": False,}
 
     if request.method == 'GET':
+        if not 'idUsuarioActual' in request.session:
+            return redirect('loginIndex')
+        if not 'idInvernadero' in request.session:
+            return redirect('escogerInvernadero')
+        if not tienepermiso(request, "Ver Panelluz"):
+            return accesodenegado(request)
         print('Mostrar Panel')
         ## context es el mismo de arriba
         context['editable'] = False ## es un saludo a la bandera, solo para aclarar que la vista no sera editable
@@ -175,10 +220,22 @@ def detalle(request,idPanel):
 
     elif request.method == 'POST':
         if "b_editar" in request.POST:
+            if not 'idUsuarioActual' in request.session:
+                return redirect('loginIndex')
+            if not 'idInvernadero' in request.session:
+                return redirect('escogerInvernadero')
+            if not tienepermiso(request, "Editar Panelluz"):
+                return accesodenegado(request)
             print('Editar Panel')
             context['editable'] = True
             return render(request, template, context)
         if "b_aceptar" in request.POST:
+            if not 'idUsuarioActual' in request.session:
+                return redirect('loginIndex')
+            if not 'idInvernadero' in request.session:
+                return redirect('escogerInvernadero')
+            if not tienepermiso(request, "Editar Panelluz"):
+                return accesodenegado(request)
             print('Aceptar Panel')
             mensajeError = None
             try:
@@ -186,7 +243,15 @@ def detalle(request,idPanel):
             except Exception as e:
                 mensajeError = "No se puede crear el panel de luz en este momento"
                 print(e)
-            panel = obtenerPanelRequest(request)
+
+            try:
+                panel = obtenerPanelRequest(request)
+            except Exception as e:
+                print(e)
+                print("Error obteniendo la data del request")
+                if mensajeError is not None:
+                    mensajeError = "Ocurrió un error inesperado. Intente editar más tarde"
+
             context['panel'] = panel
             if mensajeError:
 
@@ -202,10 +267,22 @@ def detalle(request,idPanel):
                 return render(request, template, context)
 
         if "b_cancelar" in request.POST :
+            if not 'idUsuarioActual' in request.session:
+                return redirect('loginIndex')
+            if not 'idInvernadero' in request.session:
+                return redirect('escogerInvernadero')
+            if not tienepermiso(request, "Ver Panelluz"):
+                return accesodenegado(request)
             ## context es el mismo de arriba
             context['editable'] = False  ## es un saludo a la bandera, solo para aclarar que la vista no sera editable
             return render(request, template, context)
         if "b_aceptar_modal" in request.POST:
+            if not 'idUsuarioActual' in request.session:
+                return redirect('loginIndex')
+            if not 'idInvernadero' in request.session:
+                return redirect('escogerInvernadero')
+            if not tienepermiso(request, "Eliminar Panelluz"):
+                return accesodenegado(request)
             print("Aceptar Modal")
             try:
                 eliminarPanel(request, idPanel)
@@ -231,10 +308,10 @@ def obtenerPanelRequest(request):
 
     idzona = request.POST.get('zona')
     codigoPanel = request.POST.get('codigoPanel')
+    if idzona != None:
+        panelLuz.idzona = int(idzona)
 
-    panelLuz.idzona = idzona
     panelLuz.codigopaneljson = codigoPanel
-
     return panelLuz
 
 def grabarData(request,idPanel):
@@ -248,6 +325,8 @@ def grabarData(request,idPanel):
     else:
         return "Falta seleccionar la zona para el panel de luz"
 
+    if idzona == CODIGO_GENERAL_COMBO:
+        return "Falta seleccionar la zona para el panel de luz"
 
     if codigoPanel == "":
         return "Falta ingresar el código para el panel de luz."
@@ -281,16 +360,15 @@ def grabarData(request,idPanel):
     if panelObtenidoBd.exists():
         return "Ya existe el codigo del panel de luz. Ingrese un codigo de panel distinto"
 
-    panel,created = Panelluz.objects.update_or_create(
-        idpanel=idPanel, defaults={
-        "idzona":idzona,
-        "codigopaneljson" :codigoPanel,
-        "fechacreacion":datetime.now(),
-        "habilitado":True,
-        "idusuarioauditado":idUsuarioActual}
-    )
-
-    panel.save()
+    with transaction.atomic():
+        panel,created = Panelluz.objects.update_or_create(
+            idpanel=idPanel, defaults={
+            "idzona":idzona,
+            "codigopaneljson" :codigoPanel,
+            "fechacreacion":datetime.now(),
+            "habilitado":True,
+            "idusuarioauditado":idUsuarioActual}
+        )
 
     return None
 

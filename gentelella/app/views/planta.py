@@ -1,12 +1,15 @@
+from django.db import transaction
 from django.db.models import Max
-from django.shortcuts import render, redirect, render_to_response
+from django.shortcuts import render, redirect
+from django.db import connection
 from datetime import datetime
+from app.permissions import *
 
-from app.models import Zona, Tipozona, Historiainvernadero, Historiazona, Modulosemilla, Historiamodulo, Tipoplanta, \
-    Planta, Semilla, Historiaplanta
+from app.models import Zona, Tipoplanta,Planta, Historiaplanta
 
 ID_TIPO_ZONAS_PLANTAS = 2
 ID_TODAS_ZONAS = -1
+CODIGO_GENERAL_COMBO = -1
 def crear(request,
           template='app/planta/crear.html',
           extra_context=None):
@@ -15,7 +18,7 @@ def crear(request,
         listaTipoPlantas = Tipoplanta.objects.filter(habilitado=True)
     except Exception as e:
         print(e)
-        request.session['mensajePlantaCrearEditarError'] = True
+        request.session['mensajePlantaCrearEditarError'] = True ###Revisa esta webada q1
         return redirect('plantaListar')
 
 
@@ -28,6 +31,12 @@ def crear(request,
         return redirect('plantaListar')
 
     if request.method == 'GET':
+        if not 'idUsuarioActual' in request.session:
+            return redirect('loginIndex')
+        if not 'idInvernadero' in request.session:
+            return redirect('escogerInvernadero')
+        if not tienepermiso(request, "Crear Planta"):
+            return accesodenegado(request)
         print('CREAR PLANTAS')
         context = {'listaTipoPlantas': listaTipoPlantas,
                    'listaZonas':listaZonas,
@@ -36,6 +45,12 @@ def crear(request,
                    }
         return render(request, template, context)
     elif request.method == 'POST':
+        if not 'idUsuarioActual' in request.session:
+            return redirect('loginIndex')
+        if not 'idInvernadero' in request.session:
+            return redirect('escogerInvernadero')
+        if not tienepermiso(request, "Crear Planta"):
+            return accesodenegado(request)
 
         if "b_aceptar" in request.POST:
 
@@ -47,8 +62,14 @@ def crear(request,
                 print(e)
 
             if mensajeError is not None:
-                print("MENSAJE ERROR CREAR ZONA")
-                planta = obtenerPlantaRequest(request)
+                print("MENSAJE ERROR CREAR PLANTA")
+                try:
+                    planta = obtenerPlantaRequest(request)
+                except Exception as e:
+                    print(e)
+                    print("Error obteniendo la data del request")
+                    planta = None
+
                 context = {"planta":planta,
                            'listaTipoPlantas': listaTipoPlantas,
                            'listaZonas': listaZonas,
@@ -71,6 +92,12 @@ def listar(request,
     listaPlantas = []
     listaTipoPlantas = Tipoplanta.objects.filter(habilitado=True)
     if request.method == 'GET':
+        if not 'idUsuarioActual' in request.session:
+            return redirect('login')
+        if not 'idInvernadero' in request.session:
+            return redirect('escogerInvernadero')
+        if not tienepermiso(request, "Ver Planta"):
+            return accesodenegado(request)
 
         print('LISTAR PLANTAS')
         listaIdZonas = []
@@ -140,11 +167,22 @@ def listar(request,
             zonaSeleccionada = int(zonaSeleccionada)
         context = {"idseleccionado":zonaSeleccionada,"listaZonas":listaZonas,"listaTipoPlantas":listaTipoPlantas,"listaPlantas": listaPlantas, 'nombreUsuario': request.session.get('nomreUsuario'),
                    'nombreInvernadero': request.session.get('nombreInvernadero'),"mensajeCreacion": mensajeCreacion,"mensajeEliminacion": mensajeEliminar,"mensajePlantaCrearEditarError":mensajePlantaCrearEditarError,"mensajeObtenerZonaError":mensajeObtenerZonaError}
+        with connection.cursor() as cursor:
+            cursor.execute("select app_tipoplanta.idtipoplanta, app_foto.nombresinextension || app_foto.extension from app_foto, app_tipoplanta where app_tipoplanta.idfoto = app_foto.idfoto;")
+            listaFotos = cursor.fetchall()
+        context['listaFotos'] = listaFotos
         return render(request, template, context)
 
     elif request.method == 'POST':
         if "b_crear" in request.POST:
             return redirect('plantaCrear')
+    ###Me parece q podriamos borrar toda esta webada de abajo
+    if not 'idUsuarioActual' in request.session:
+        return redirect('login')
+    if not 'idInvernadero' in request.session:
+        return redirect('escogerInvernadero')
+    if not tienepermiso(request, "Ver Planta"):
+        return accesodenegado(request)
     context = {}
     return render(request, template, context)
 
@@ -191,25 +229,57 @@ def detalle(request,idPlanta):
                "humedadok": humedadok}
 
     if request.method == 'GET':
+        if not 'idUsuarioActual' in request.session:
+            return redirect('login')
+        if not 'idInvernadero' in request.session:
+            return redirect('escogerInvernadero')
+        if not tienepermiso(request, "Ver Planta"):
+            return accesodenegado(request)
         print('Mostrar Planta')
         ## context es el mismo de arriba
         context['editable'] = False ## es un saludo a la bandera, solo para aclarar que la vista no sera editable
+        tipoPlanta = Tipoplanta.objects.get(idtipoplanta = planta.idtipoplanta)
+        with connection.cursor() as cursor:
+            cursor.execute("select app_tipoplanta.idtipoplanta, app_foto.nombresinextension || app_foto.extension from app_foto, app_tipoplanta where app_tipoplanta.idfoto = app_foto.idfoto and app_tipoplanta.idtipoplanta = %s;", [tipoPlanta.idtipoplanta])
+            listaFotos = cursor.fetchall()
+        context['tipoPlanta'] = tipoPlanta
+        context['listaFotos'] = listaFotos
         return render(request, template, context)
 
     elif request.method == 'POST':
         if "b_editar" in request.POST:
+            if not 'idUsuarioActual' in request.session:
+                return redirect('login')
+            if not 'idInvernadero' in request.session:
+                return redirect('escogerInvernadero')
+            if not tienepermiso(request, "Editar Planta"):
+                return accesodenegado(request)
             print('Editar Planta')
             context['editable'] = True
             return render(request, template, context)
         if "b_aceptar" in request.POST:
+            if not 'idUsuarioActual' in request.session:
+                return redirect('login')
+            if not 'idInvernadero' in request.session:
+                return redirect('escogerInvernadero')
+            if not tienepermiso(request, "Editar Planta"):
+                return accesodenegado(request)
             print('Aceptar Planta')
             mensajeError = None
             try:
                mensajeError = grabarData(request,idPlanta)
             except Exception as e:
-                mensajeError = "No se puede crear la planta en este momento"
+                mensajeError = "No se puede editar la planta en este momento"
                 print(e)
-            planta = obtenerPlantaRequest(request)
+
+            try:
+                planta = obtenerPlantaRequest(request)
+            except Exception as e:
+                print(e)
+                print("Error obteniendo la data del request")
+                if mensajeError is not None:
+                    mensajeError = "Ocurrió un error inesperado. Intente editar más tarde"
+
             context['planta'] = planta
             if mensajeError:
 
@@ -226,14 +296,38 @@ def detalle(request,idPlanta):
                 context['editable'] = False
                 context['mostrarModalEditar'] = True
                 context['humedadok'] = humedadok
+                tipoPlanta = Tipoplanta.objects.get(idtipoplanta = planta.idtipoplanta)
+                with connection.cursor() as cursor:
+                    cursor.execute("select app_tipoplanta.idtipoplanta, app_foto.nombresinextension || app_foto.extension from app_foto, app_tipoplanta where app_tipoplanta.idfoto = app_foto.idfoto and app_tipoplanta.idtipoplanta = %s;", [tipoPlanta.idtipoplanta])
+                    listaFotos = cursor.fetchall()
+                context['tipoPlanta'] = tipoPlanta
+                context['listaFotos'] = listaFotos
 
                 return render(request, template, context)
 
         if "b_cancelar" in request.POST :
+            if not 'idUsuarioActual' in request.session:
+                return redirect('login')
+            if not 'idInvernadero' in request.session:
+                return redirect('escogerInvernadero')
+            if not tienepermiso(request, "Ver Planta"):
+                return accesodenegado(request)
             ## context es el mismo de arriba
             context['editable'] = False  ## es un saludo a la bandera, solo para aclarar que la vista no sera editable
+            tipoPlanta = Tipoplanta.objects.get(idtipoplanta = planta.idtipoplanta)
+            with connection.cursor() as cursor:
+                cursor.execute("select app_tipoplanta.idtipoplanta, app_foto.nombresinextension || app_foto.extension from app_foto, app_tipoplanta where app_tipoplanta.idfoto = app_foto.idfoto and app_tipoplanta.idtipoplanta = %s;", [tipoPlanta.idtipoplanta])
+                listaFotos = cursor.fetchall()
+            context['tipoPlanta'] = tipoPlanta
+            context['listaFotos'] = listaFotos
             return render(request, template, context)
         if "b_aceptar_modal" in request.POST:
+            if not 'idUsuarioActual' in request.session:
+                return redirect('login')
+            if not 'idInvernadero' in request.session:
+                return redirect('escogerInvernadero')
+            if not tienepermiso(request, "Eliminar Planta"):
+                return accesodenegado(request)
             print("Aceptar Modal")
             try:
                 eliminarPlanta(request, idPlanta)
@@ -247,7 +341,7 @@ def detalle(request,idPlanta):
 
 def eliminarPlanta(request,idPlanta):
     idUsuarioActual = int(request.session.get('idUsuarioActual'))
-    planta,created = Modulosemilla.objects.update_or_create(
+    planta,created = Planta.objects.update_or_create(
         idplanta=idPlanta, defaults={"habilitado":False,"idusuarioauditado":idUsuarioActual})
     print(created)
     planta.save()
@@ -264,9 +358,12 @@ def obtenerPlantaRequest(request):
     humedadMin = request.POST.get('humedadMin')
     humedadMax = request.POST.get('humedadMax')
 
+    if idTipoPlanta != None:
+        plantaDataLlenada.idtipoplanta = int(idTipoPlanta)
 
-    plantaDataLlenada.idtipoplanta = idTipoPlanta
-    plantaDataLlenada.idzona = idzona
+    if idzona != None:
+        plantaDataLlenada.idzona = int(idzona)
+
     plantaDataLlenada.codigoplantajson = codigoPlanta
     plantaDataLlenada.humedadideal = humedadIdeal
     plantaDataLlenada.humedadmin = humedadMin
@@ -287,14 +384,20 @@ def grabarData(request,idPlanta):
 
     if idTipoPlanta:
         print('Tipo Planta correcto')
+        idTipoPlanta = int(idTipoPlanta)
     else:
-        return "Falta ingresar el tipo de planta."
+        return "Falta seleccionar el tipo de planta."
+
+    if idTipoPlanta == CODIGO_GENERAL_COMBO:
+        return "Falta seleccionar el tipo de planta."
 
     if idzona:
         idzona = int(idzona)
     else:
         return "Falta seleccionar la zona para la planta"
 
+    if idzona == CODIGO_GENERAL_COMBO:
+        return "Falta seleccionar la zona para la planta"
 
     if codigoPlanta == "":
         return "Falta ingresar el código para la planta."
@@ -349,20 +452,19 @@ def grabarData(request,idPlanta):
     if plantaObtenidaBd.exists():
         return "Ya existe el codigo de planta. Ingrese un codigo de planta distinto"
 
-    planta,created = Planta.objects.update_or_create(
-        idplanta=idPlanta, defaults={
-        "idtipoplanta":idTipoPlanta,
-        "idzona":idzona,
-        "codigoplantajson" :codigoPlanta,
-        "fechacreacion" :datetime.now(),
-        "humedadmin":humedadMin,
-        "humedadideal":humedadIdeal,
-        "humedadmax":humedadMax,
-        "habilitado":True,
-        "idusuarioauditado":idUsuarioActual}
-    )
-
-    planta.save()
+    with transaction.atomic():
+        planta,created = Planta.objects.update_or_create(
+            idplanta=idPlanta, defaults={
+            "idtipoplanta":idTipoPlanta,
+            "idzona":idzona,
+            "codigoplantajson" :codigoPlanta,
+            "fechacreacion" :datetime.now(),
+            "humedadmin":humedadMin,
+            "humedadideal":humedadIdeal,
+            "humedadmax":humedadMax,
+            "habilitado":True,
+            "idusuarioauditado":idUsuarioActual}
+        )
 
     return None
 

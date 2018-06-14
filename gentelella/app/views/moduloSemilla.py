@@ -1,14 +1,18 @@
+from django.db import transaction
 from django.db.models import Max
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, redirect, render_to_response
 from datetime import datetime
 from django.template import loader
 from django.urls import reverse
+from app.permissions import *
 
-from app.models import Zona, Tipozona, Historiainvernadero, Historiazona, Modulosemilla, Historiamodulo, Semilla, Historiasemilla, Tipoplanta
+from app.models import Zona, Tipozona, Historiainvernadero, Historiazona, Modulosemilla, Historiamodulo, Semilla, \
+    Historiasemilla, Tipoplanta, Planta, Foto, Cronograma
 
 ID_TIPO_ZONAS_SEMILLAS = 1
 CANTIDAD_CADENA_MAXIMA = 250
+CODIGO_GENERAL_COMBO = -1
 def crear(request,
           template='app/modulosemilla/crear.html',
           extra_context=None):
@@ -21,15 +25,26 @@ def crear(request,
         return redirect('moduloSemillaListar')
 
 
-
-    if request.method == 'GET':
-        print('CREAR MODULO DE SEMILLAS')
-        context = {'listaZonas': listaZonas,
+    context = {'listaZonas': listaZonas,
                    'nombreUsuario': request.session.get('nomreUsuario'),
                    'nombreInvernadero': request.session.get('nombreInvernadero'),
                    }
+    if request.method == 'GET':
+        if not 'idUsuarioActual' in request.session:
+            return redirect('loginIndex')
+        if not 'idInvernadero' in request.session:
+            return redirect('escogerInvernadero')
+        if not tienepermiso(request, "Crear Modulosemilla"):
+            return accesodenegado(request)
+        print('CREAR MODULO DE SEMILLAS')
         return render(request, template, context)
     elif request.method == 'POST':
+        if not 'idUsuarioActual' in request.session:
+            return redirect('loginIndex')
+        if not 'idInvernadero' in request.session:
+            return redirect('escogerInvernadero')
+        if not tienepermiso(request, "Crear Modulosemilla"):
+            return accesodenegado(request)
 
         if "b_aceptar" in request.POST:
 
@@ -38,11 +53,16 @@ def crear(request,
                mensajeError = grabarData(request,None)
             except Exception as e:
                 mensajeError = "No se puede crear el modulo en este momento"
+                print("No se puede crear el modulo en este momento")
                 print(e)
 
             if mensajeError is not None:
-                print("MENSAJE ERROR CREAR ZONA")
-                modulo = obtenerModuloRequest(request)
+                print("MENSAJE ERROR CREAR MODULO DE SEMILLAS")
+                try:
+                    modulo = obtenerModuloRequest(request)
+                except Exception as e:
+                    modulo = None
+                    print("Error obteniendo la data del request")
                 context = {"modulo":modulo,
                            'listaZonas': listaZonas,
                            'nombreUsuario': request.session.get('nomreUsuario'),
@@ -63,6 +83,12 @@ def listar(request,
     template = "app/modulosemilla/lista.html"
     listaModulos = []
     if request.method == 'GET':
+        if not 'idUsuarioActual' in request.session:
+            return redirect('loginIndex')
+        if not 'idInvernadero' in request.session:
+            return redirect('escogerInvernadero')
+        if not tienepermiso(request, "Ver Modulosemilla"):
+            return accesodenegado(request)
 
         print('LISTAR MODULOS SEMILLAS')
         listaIdZonas = []
@@ -117,6 +143,13 @@ def listar(request,
     elif request.method == 'POST':
         if "b_crear" in request.POST:
             return redirect('moduloSemillaCrear')
+    ###Me parece q podriamos borrar toda esta webada de abajo
+    if not 'idUsuarioActual' in request.session:
+        return redirect('loginIndex')
+    if not 'idInvernadero' in request.session:
+        return redirect('escogerInvernadero')
+    if not tienepermiso(request, "Ver Modulosemilla"):
+        return accesodenegado(request)
     context = {}
     return render(request, template, context)
 
@@ -188,13 +221,23 @@ def detalle(request,idModulo):
         nivelAguaok = None
         co2ok = None
 
+    hayFotos = (len(Foto.objects.filter(idmodulo = idModulo)) > 0)
+
+    hayCronograma = (len(Cronograma.objects.filter(idmodulo=idModulo)) > 0)
+    
     context = {"moduloConSemillas":moduloConSemillas,"historiaModulo": historiaModulo, "listaZonas": listaZonas, "modulo": modulo,
                'nombreUsuario': request.session.get('nomreUsuario'),
                'nombreInvernadero': request.session.get('nombreInvernadero'), "editable": False,
                "temperaturaok": temperaturaok, "humedadTierraok": humedadTierraok,
-               "humedadAmbienteok": humedadAmbienteok, "nivelAguaok": nivelAguaok, "co2ok": co2ok}
+               "humedadAmbienteok": humedadAmbienteok, "nivelAguaok": nivelAguaok, "co2ok": co2ok, 'hayFotos': hayFotos,'hayCronograma':hayCronograma}
 
     if request.method == 'GET':
+        if not 'idUsuarioActual' in request.session:
+            return redirect('loginIndex')
+        if not 'idInvernadero' in request.session:
+            return redirect('escogerInvernadero')
+        if not tienepermiso(request, "Ver Modulosemilla"):
+            return accesodenegado(request)
         print('Mostrar Modulo de Semilla')
         ## context es el mismo de arriba
         context['editable'] = False ## es un saludo a la bandera, solo para aclarar que la vista no sera editable
@@ -202,11 +245,26 @@ def detalle(request,idModulo):
         return render(request, template, context)
 
     elif request.method == 'POST':
+        if "b_cronograma" in request.POST:
+            return redirect('moduloSemillaCronograma', idModulo = idModulo)
+
         if "b_editar" in request.POST:
+            if not 'idUsuarioActual' in request.session:
+                return redirect('loginIndex')
+            if not 'idInvernadero' in request.session:
+                return redirect('escogerInvernadero')
+            if not tienepermiso(request, "Editar Modulosemilla"):
+                return accesodenegado(request)
             print('Editar Modulo Semilla')
             context['editable'] = True
             return render(request, template, context)
         if "b_aceptar" in request.POST:
+            if not 'idUsuarioActual' in request.session:
+                return redirect('loginIndex')
+            if not 'idInvernadero' in request.session:
+                return redirect('escogerInvernadero')
+            if not tienepermiso(request, "Editar Modulosemilla"):
+                return accesodenegado(request)
             print('Aceptar Modulo Semilla')
             mensajeError = None
             try:
@@ -214,7 +272,14 @@ def detalle(request,idModulo):
             except Exception as e:
                 mensajeError = "No se puede crear la zona en este momento"
                 print(e)
-            modulo = obtenerModuloRequest(request, idModulo)
+            try:
+                modulo = obtenerModuloRequest(request)
+            except Exception as e:
+                print(e)
+                print("Error obteniendo la data del request")
+                if mensajeError is not None:
+                    mensajeError = "Ocurrió un error inesperado. Intente editar más tarde"
+
             context['modulo'] = modulo
             if mensajeError:
 
@@ -242,12 +307,29 @@ def detalle(request,idModulo):
                 return render(request, template, context)
 
         if "b_cancelar" in request.POST :
+            if not 'idUsuarioActual' in request.session:
+                return redirect('loginIndex')
+            if not 'idInvernadero' in request.session:
+                return redirect('escogerInvernadero')
+            if not tienepermiso(request, "Ver Modulosemilla"):
+                return accesodenegado(request)
             ## context es el mismo de arriba
             context['editable'] = False  ## es un saludo a la bandera, solo para aclarar que la vista no sera editable
             contextParaGrilla(request, context, modulo)
             return render(request, template, context)
         if "b_aceptar_modal" in request.POST:
+            if not 'idUsuarioActual' in request.session:
+                return redirect('loginIndex')
+            if not 'idInvernadero' in request.session:
+                return redirect('escogerInvernadero')
+            if not tienepermiso(request, "Eliminar Modulosemilla"):
+                return accesodenegado(request)
             print("Aceptar Modal")
+
+            if moduloConSemillas:
+                context['editable'] = False
+                context['mensajeError'] = "No se puede eliminar el módulo porque hay semillas asociadas"
+
             try:
                 eliminarModulo(request, idModulo)
                 request.session['mensajeModuloEliminar'] = True
@@ -257,6 +339,7 @@ def detalle(request,idModulo):
             return redirect('moduloSemillaListar')
         else:
             return redirect('moduloSemillaListar')
+
 
 def eliminarModulo(request,idModulo):
     idUsuarioActual = int(request.session.get('idUsuarioActual'))
@@ -294,7 +377,10 @@ def obtenerModuloRequest(request, idModulo = None):
     moduloDataLlenada.idmodulo = idModulo
     moduloDataLlenada.nombre = nombreObtenido
     moduloDataLlenada.codigomodulojson = codigoModulo
-    moduloDataLlenada.idzona = idzona
+
+    if idzona != None:
+        moduloDataLlenada.idzona = int(idzona)
+
     moduloDataLlenada.temperaturaideal = tempIdeal
     moduloDataLlenada.temperaturamin = tempMin
     moduloDataLlenada.temperaturamax = tempMax
@@ -362,6 +448,9 @@ def grabarData(request,idModulo):
     if idzona:
         idzona = int(idzona)
     else:
+        return "Falta seleccionar la zona para el módulo"
+
+    if idzona == CODIGO_GENERAL_COMBO:
         return "Falta seleccionar la zona para el módulo"
 
 
@@ -438,11 +527,13 @@ def grabarData(request,idModulo):
             return "El valor para las columnas debe ser mayor a cero"
 
 
-
+    tempMin = float(tempMin)
+    tempMax = float(tempMax)
     if tempMin > tempMax:
         return "La temperatura mínima debe ser menor a la temperatura máxima."
 
     if tempIdeal != "":
+        tempIdeal = float(tempIdeal)
         if (tempIdeal > tempMin) and (tempIdeal < tempMax):
             print("Temperatura Ideal Valida")
         else:
@@ -450,10 +541,14 @@ def grabarData(request,idModulo):
     else:
         tempIdeal = None
 
+
+    humTierraMax = float(humTierraMax)
+    humTierraMin = float(humTierraMin)
     if humTierraMin > humTierraMax:
         return "La humedad de la tierra mínima debe ser menor a la humedad de la tierra máxima."
 
     if humTierraIdeal != "":
+        humTierraIdeal = float(humTierraIdeal)
         if (humTierraIdeal > humTierraMin) and (humTierraIdeal < humTierraMax):
             print("Humedad Tierra Ideal Valida")
         else:
@@ -461,10 +556,14 @@ def grabarData(request,idModulo):
     else:
         humTierraIdeal = None
 
+
+    humAmbMin = float(humAmbMin)
+    humAmbMax = float(humAmbMax)
     if humAmbMin > humAmbMax:
         return "La humedad del ambiente mínima debe ser menor a la humedad del ambiente máxima."
 
     if humAmbIdeal != "":
+        humAmbIdeal = float(humAmbIdeal)
         if (humAmbIdeal > humAmbMin) and (humAmbIdeal < humAmbMax):
             print("Humedad Ambiente Ideal Valida")
         else:
@@ -472,10 +571,14 @@ def grabarData(request,idModulo):
     else:
         humAmbIdeal = None
 
+
+    co2Min = float(co2Min)
+    co2Max = float(co2Max)
     if co2Min > co2Max:
         return "La concentración de CO2 mínima debe ser menor a la concentración de CO2 máxima."
 
     if co2Ideal != "":
+        co2Ideal = float(co2Ideal)
         if (co2Ideal > co2Min) and (co2Ideal < co2Max):
             print("CO2 Ideal Valida")
         else:
@@ -484,10 +587,13 @@ def grabarData(request,idModulo):
         co2Ideal = None
 
 
+    nivelAguaMin = float(nivelAguaMin)
+    nivelAguaMax = float(nivelAguaMax)
     if nivelAguaMin > nivelAguaMax:
         return "El nivel del agua mínimo debe ser menor al nivel del agua máximo."
 
     if nivelAguaIdeal != "":
+        nivelAguaIdeal = float(nivelAguaIdeal)
         if (nivelAguaIdeal > nivelAguaMin) and (nivelAguaIdeal < nivelAguaMax):
             print("Nivel del Agua Ideal Valida")
         else:
@@ -516,34 +622,196 @@ def grabarData(request,idModulo):
     if moduloObtenidoBd.exists():
         return "Ya existe el codigo de modulo. Ingrese un codigo de modulo distinto"
 
-    modulo,created = Modulosemilla.objects.update_or_create(
-        idmodulo=idModulo, defaults={
-        "nombre":nombre,
-        "idzona":idzona,
-        "codigomodulojson" :codigoModulo,
-        "temperaturaideal":tempIdeal,
-        "temperaturamin" :tempMin,
-        "temperaturamax" :tempMax,
-        "humedadtierraideal": humTierraIdeal,
-        "humedadtierramin": humTierraMin,
-        "humedadtierramax": humTierraMax,
-        "humedadambienteideal": humAmbIdeal,
-        "humedadambientemin": humAmbMin,
-        "humedadambientemax": humAmbMax,
-        "concentracionco2ideal":co2Ideal,
-        "concentracionco2min":co2Min,
-        "concentracionco2max":co2Max,
-        "nivelaguaideal": nivelAguaIdeal,
-        "nivelaguamin": nivelAguaMin,
-        "nivelaguamax": nivelAguaMax,
-        "fechacreacion" :datetime.now(),
-        "filas":filas,
-        "columnas":columnas,
-        "habilitado":True,
-        "idusuarioauditado":idUsuarioActual}
-    )
+    with transaction.atomic():
+        modulo,created = Modulosemilla.objects.update_or_create(
+            idmodulo=idModulo, defaults={
+            "nombre":nombre,
+            "idzona":idzona,
+            "codigomodulojson" :codigoModulo,
+            "temperaturaideal":tempIdeal,
+            "temperaturamin" :tempMin,
+            "temperaturamax" :tempMax,
+            "humedadtierraideal": humTierraIdeal,
+            "humedadtierramin": humTierraMin,
+            "humedadtierramax": humTierraMax,
+            "humedadambienteideal": humAmbIdeal,
+            "humedadambientemin": humAmbMin,
+            "humedadambientemax": humAmbMax,
+            "concentracionco2ideal":co2Ideal,
+            "concentracionco2min":co2Min,
+            "concentracionco2max":co2Max,
+            "nivelaguaideal": nivelAguaIdeal,
+            "nivelaguamin": nivelAguaMin,
+            "nivelaguamax": nivelAguaMax,
+            "fechacreacion" :datetime.now(),
+            "filas":filas,
+            "columnas":columnas,
+            "habilitado":True,
+            "idusuarioauditado":idUsuarioActual}
+        )
 
-    modulo.save()
 
     return None
+    
+def paginar(numeroPagina, totalPaginas):
+    paginacion = ""
+    paginacion += "<button class=\"btn btn-primary\" type=\"button\" disabled>%s</button>" % (numeroPagina)
+    cantidadBloques = 1
+    bloquesIzquierda = 2
+    bloquesDerecha = 2
+    if totalPaginas - numeroPagina < bloquesDerecha:
+        bloquesIzquierda += bloquesDerecha - (totalPaginas - numeroPagina)
+    pagina = numeroPagina - 1
+    while pagina > 0 and cantidadBloques < bloquesIzquierda + 1:
+        paginacion = "<button class=\"btn btn-default\" type=\"button\" onclick=\"location.href='?page=%s';\">%s</button>" % (pagina, pagina) + paginacion
+        pagina -= 1
+        cantidadBloques += 1
+    pagina = numeroPagina + 1
+    while pagina <= totalPaginas  and cantidadBloques < 5:
+        paginacion =  paginacion + "<button class=\"btn btn-default\" type=\"button\" onclick=\"location.href='?page=%s';\">%s</button>" % (pagina, pagina)
+        pagina += 1
+        cantidadBloques +=1
+    if numeroPagina > 1:
+        paginacion = "<button class=\"btn btn-default\" type=\"button\" onclick=\"location.href='?page=%s';\">Anterior</button>" % (numeroPagina - 1) + paginacion
+    else:
+        paginacion = "<button class=\"btn btn-default\" type=\"button\" disabled>Anterior</button>" + paginacion
+    if numeroPagina < totalPaginas:
+        paginacion += "<button class=\"btn btn-default\" type=\"button\" onclick=\"location.href='?page=%s';\">Siguiente</button>" % (numeroPagina + 1)
+    else:
+        paginacion += "<button class=\"btn btn-default\" type=\"button\" disabled>Siguiente</button>"
+    paginacion = "<div class=\"btn-group\" style=\"float: right;\">" + paginacion + "</div>"
+    return paginacion
+
+    #paginacion = ""
+    #if numeroPagina > 1:
+    #    paginacion += '<a href="?page=%s">Anterior</a>' % (numeroPagina - 1)
+    #paginacion += '<span class="current"> Página %s de %s </span>' % (numeroPagina, totalPaginas)
+    #if numeroPagina < totalPaginas:
+    #    paginacion += '<a href="?page=%s">Siguiente</a>' % (numeroPagina + 1)
+    #return paginacion
+
+def fotos(request, idModulo, template='app/modulosemilla/fotos.html'):
+    fotosPorPagina = 20
+    if request.method == 'GET':
+        if not 'idUsuarioActual' in request.session:
+            return redirect('loginIndex')
+        if not 'idInvernadero' in request.session:
+            return redirect('escogerInvernadero')
+        if not tienepermiso(request, "Ver Modulosemilla"):
+            return accesodenegado(request)
+        fotosModulo = Foto.objects.filter(idmodulo=idModulo).order_by('-fecharegistro')
+        pagina = request.GET.get('page', '1')
+        pagina = int(pagina)
+        limite = fotosPorPagina * pagina
+        offset = limite - fotosPorPagina
+        fotosPagina = fotosModulo[offset:limite]
+        totalFotos = fotosModulo.count()
+        totalPaginas = totalFotos // fotosPorPagina
+        if totalFotos % fotosPorPagina != 0:
+            totalPaginas += 1
+        paginacion = paginar(pagina, totalPaginas)
+        context = {
+            'nombreUsuario': request.session.get('nomreUsuario'),
+            'nombreInvernadero': request.session.get('nombreInvernadero'),
+            'fotos': fotosPagina,
+            'paginacion': paginacion,
+            'modulo': Modulosemilla.objects.get(idmodulo = idModulo)
+        }
+        return render(request, template, context)
+
+
+def grabarCronograma(request,idModulo,idCronograma,horaInicio,horaFin):
+    horaInicio = str(horaInicio)
+    horaFin = str(horaFin)
+    temperatura = request.POST.get('temperatura' + horaInicio + horaFin)
+    humedadTierra = request.POST.get('humedadtierra' + horaInicio + horaFin)
+    humedadAmbiente = request.POST.get('humedadambiente' + horaInicio + horaFin)
+    co2 = request.POST.get('co2' + horaInicio + horaFin)
+    valorLuz = request.POST.get('luz' + horaInicio + horaFin)
+    if valorLuz == "Encendido" :
+        luz = True
+    else:
+        luz = False
+
+    nivelAgua = request.POST.get('nivelagua'+horaInicio+horaFin)
+
+    if idCronograma is None:
+        idMax = Cronograma.objects.all().aggregate(Max('idcronograma'))['idcronograma__max']
+        if idMax is None:
+            idCronograma = 1
+        else:
+            idCronograma = idMax + 1
+
+    with transaction.atomic():
+        cronograma,created = Cronograma.objects.update_or_create(
+            idcronograma=idCronograma,idmodulo=idModulo,horainicio=horaInicio,horafin=horaFin, defaults={
+            "temperatura":temperatura,
+            "humedadtierra":humedadTierra,
+            "humedadambiente" :humedadAmbiente,
+            "concentracionco2":co2,
+            "luz" :luz,
+            "nivelagua" :nivelAgua}
+        )
+
+
+    return None
+
+def obtenerCronogramaVacio():
+    listaCronogramas = []
+    for i in range(0,24):
+        cronograma = Cronograma()
+        cronograma.idcronograma = None
+        cronograma.horainicio = i
+        cronograma.horafin = i+1
+        cronograma.temperatura = 0
+        cronograma.humedadambiente = 0
+        cronograma.humedadtierra = 0
+        cronograma.concentracionco2 = 0
+        cronograma.luz = False
+        cronograma.nivelagua = 0
+        listaCronogramas.append(cronograma)
+    return listaCronogramas
+
+def cronograma(request, idModulo):
+    template = 'app/modulosemilla/cronograma.html'
+    listaRegistrosCronograma = Cronograma.objects.filter(idmodulo=idModulo)
+    
+    if listaRegistrosCronograma:
+        listaRegistrosCronograma = listaRegistrosCronograma.order_by('horainicio')
+    else:
+        listaRegistrosCronograma = obtenerCronogramaVacio()
+
+    context = {'listaRegistrosCronograma':listaRegistrosCronograma,'nombreUsuario': request.session.get('nomreUsuario'),
+               'nombreInvernadero': request.session.get('nombreInvernadero')}
+
+    if request.method == 'POST':
+        if "b_aceptar" in request.POST:
+            if not 'idUsuarioActual' in request.session:
+                return redirect('loginIndex')
+            if not 'idInvernadero' in request.session:
+                return redirect('escogerInvernadero')
+            if not tienepermiso(request, "Editar Modulosemilla"):
+                return accesodenegado(request)
+            print(request.POST)
+            for registro in listaRegistrosCronograma:
+                try:
+                    grabarCronograma(request, idModulo,registro.idcronograma, registro.horainicio, registro.horafin)
+                except Exception as e:
+                    print(e)
+            listaRegistrosCronograma = Cronograma.objects.filter(idmodulo=idModulo)
+            if listaRegistrosCronograma:
+                listaRegistrosCronograma = listaRegistrosCronograma.order_by('horainicio')
+                context['listaRegistrosCronograma'] = listaRegistrosCronograma
+
+        if "b_cancelar" in request.POST:
+            return redirect('moduloSemillaDetalle',idModulo = idModulo)
+
+    ##Supongo q aqui es donde se renderiza si request.method == GET, no se, q1 revisalo ctmr
+    if not 'idUsuarioActual' in request.session:
+        return redirect('loginIndex')
+    if not 'idInvernadero' in request.session:
+        return redirect('escogerInvernadero')
+    if not tienepermiso(request, "Ver Modulosemilla"):
+        return accesodenegado(request)
+    return render(request, template, context)
 

@@ -168,8 +168,8 @@ class Planta(models.Model):
     idsemilla = models.IntegerField(blank=True, null=True)
     codigoplantajson = models.IntegerField()
     fechacreacion = models.DateTimeField()
-    humedadmin = models.FloatField(blank=True, null=True)
-    humedadideal = models.FloatField()
+    humedadmin = models.FloatField()
+    humedadideal = models.FloatField(blank=True, null=True)
     humedadmax = models.FloatField()
     idusuarioauditado = models.IntegerField()
     condicionesshidas = models.NullBooleanField()
@@ -200,7 +200,6 @@ class Tipoplanta(models.Model):
     idusuarioauditado = models.IntegerField()
 
 
-
 class Tipozona(models.Model):
     idtipozona = models.IntegerField(primary_key=True)
     nombre = models.CharField(max_length=255)
@@ -226,11 +225,9 @@ class Usuario(models.Model):
     def getnombrecompleto(self):
         return self.nombres + ' ' + self.apellidopaterno
 
-
 class Usuarioxinvernadero(models.Model):
     idinvernadero = models.IntegerField(primary_key=True)
     idusuario = models.IntegerField()
-
 
 
 class Zona(models.Model):
@@ -363,3 +360,4 @@ class DjangoSession(models.Model):
     class Meta:
         managed = False
         db_table = 'django_session'
+

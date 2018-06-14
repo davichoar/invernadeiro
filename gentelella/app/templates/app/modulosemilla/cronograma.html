@@ -1,0 +1,267 @@
+{% extends "app/base_site.html" %}
+
+
+{% block title %} Crear Módulo de Semilla {% endblock title %}
+
+{% block stylesheets %}
+  {{ block.super }}
+  <link href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css" rel="stylesheet" >
+  <link href="/static/vendors/pnotify/dist/pnotify.css" rel="stylesheet">
+  <link href="/static/vendors/pnotify/dist/pnotify.buttons.css" rel="stylesheet">
+  <link href="/static/vendors/pnotify/dist/pnotify.nonblock.css" rel="stylesheet">
+
+{% endblock stylesheets %}
+
+{% block content %}
+
+
+  <div id="modalxd" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-hidden="true" >
+<form class="form-horizontal form-label-left"  method="POST" novalidate>
+    <div class="modal-dialog modal-md">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span>
+          </button>
+          <h4 class="modal-title" id="myModalLabel2">Modificación de parámetros</h4>
+        </div>
+        <div class="modal-body">
+          <p>¿Qué valor desea ingresar?</p>
+        </div>
+        <center>
+            <div class="item form-group">
+          <label class="control-label col-md-3 col-sm-3 col-xs-12" for="temperatura">Temperatura <span class="required"></span>
+          </label>
+          <div class="col-md-2 col-sm-2 col-xs-6">
+            <input required="required" id="temperatura" value="" >
+          </div>
+        </div>
+        </center>
+
+        <div class="item form-group">
+          <label class="control-label col-md-3 col-sm-3 col-xs-12" for="humedadambiente">Humedad del Ambiente <span class="required"></span>
+          </label>
+          <div class="col-md-2 col-sm-2 col-xs-6">
+            <input required="required" id="humedadambiente" value="" >
+          </div>
+        </div>
+
+        <div class="item form-group">
+          <label class="control-label col-md-3 col-sm-3 col-xs-12" for="humedadtierra">Humedad de la Tierra <span class="required"></span>
+          </label>
+          <div class="col-md-2 col-sm-2 col-xs-6">
+            <input required="required" id="humedadtierra" value="" >
+          </div>
+        </div>
+
+        <div class="item form-group">
+          <label class="control-label col-md-3 col-sm-3 col-xs-12" for="co2">Concentración de CO2 <span class="required"></span>
+          </label>
+          <div class="col-md-2 col-sm-2 col-xs-6">
+            <input required="required"  id="co2" value="">
+          </div>
+        </div>
+
+        <div class="item form-group">
+          <label class="control-label col-md-3 col-sm-3 col-xs-12" for="nivelagua">Nivel del Agua <span class="required"></span>
+          </label>
+          <div class="col-md-2 col-sm-2 col-xs-6">
+            <input required="required" id="nivelagua" value="">
+          </div>
+        </div>
+
+       <div class="form-group">
+          <label class="control-label col-md-3 col-sm-3 col-xs-12">Luz <span class="required"></span></label>
+          <div class="col-md-6 col-sm-6 col-xs-12">
+            <label class="radio-inline">
+            <input type="radio" name="luz" id="luzencendida" value="encendido" > Encendido </label>
+            <div class="visible-lg-inline visible-md-inline visible-sm-inline">&emsp;</div>&emsp;
+            <label class="radio-inline">
+            <input type="radio" name="luz" id="luzapagada"> Apagado </label>
+          </div>
+        </div>
+        <div class="modal-footer">
+            {% csrf_token %}
+            <center>
+              <button id="b_aceptar_modal" name="b_aceptar_modal" type="submit" class="btn btn-success" data-dismiss="modal">Aceptar</button>
+              <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+            </center>
+        </div>
+      </div>
+    </div>
+</form>
+  </div>
+
+
+
+ <div class="right_col" role="main">
+    <div class="">
+      <div class="page-title">
+        <div class="title_left">
+          <h3>Módulo de Semilla</h3>
+        </div>
+
+      </div>
+      <div class="clearfix"></div>
+
+ <div class="col-md-12 col-sm-12 col-xs-12">
+          <div class="x_panel">
+            <div class="x_title">
+              <h2>Cronograma</small></h2>
+                <ul class="nav navbar-right panel_toolbox" >
+                  <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                  </li>
+                </ul>
+              <div class="clearfix"></div>
+            </div>
+            <div class="x_content">
+<button id="b_editar" name="b_editar"  type="button" class="btn btn-success" style="float:right">Editar</button>
+              <form class="form-horizontal form-label-left"  method="POST" novalidate>
+                {% csrf_token %}
+              <div class="form-group">
+              <table id="tablacronograma" name="tablacronograma" style="table-layout: fixed;width: 100%;overflow-x: auto;overflow-y: scroll;" class="table table-striped table-bordered bulk_action">
+                <thead>
+                  <tr>
+                    <th><input id ='selectall' type="checkbox"></th>
+                    <th>Hora</th>
+                    <th>Temperatura (°C)</th>
+                    <th>Humedad del Ambiente (%)</th>
+                    <th>Humedad de la Tierra (%)</th>
+                    <th>Concentración de CO2 (%)</th>
+                    <th>Luz</th>
+                    <th>Nivel del Agua(%)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                {% for registro in listaRegistrosCronograma%}
+                  <tr>
+                    <th><input id="checkbox{{forloop.counter}}" type="checkbox"  class="claseCheckbox"></th>
+                    <td>{% if forloop.counter0 > 9 %}{{forloop.counter0}}{% else %}0{{forloop.counter0}}{% endif %}:00 - {{forloop.counter}}:00</td>
+                    <td><input id="temperatura{{forloop.counter}}" style="background-color: transparent;border:transparent;" name="temperatura{{registro.horainicio}}{{registro.horafin}}" value="{{registro.temperatura}}" readonly></td>
+                    <td><input id="humedadambiente{{forloop.counter}}" style="background-color: transparent;border:transparent;" name="humedadambiente{{registro.horainicio}}{{registro.horafin}}" value="{{registro.humedadambiente}}" readonly></td>
+                    <td><input id="humedadtierra{{forloop.counter}}" style="background-color: transparent;border:transparent;" name="humedadtierra{{registro.horainicio}}{{registro.horafin}}" value="{{registro.humedadtierra}}" readonly></td>
+                    <td><input id="co2{{forloop.counter}}" style="background-color: transparent;border:transparent;" name="co2{{registro.horainicio}}{{registro.horafin}}" value="{{registro.concentracionco2}}" readonly></td>
+                    <td><input id="luz{{forloop.counter}}" style="background-color: transparent;border:transparent;" name="luz{{registro.horainicio}}{{registro.horafin}}" value="{% if registro.luz %}Encendido{% else %}Apagado{% endif %}" readonly></td>
+                    <td><input id="nivelagua{{forloop.counter}}" style="background-color: transparent;border:transparent;" name="nivelagua{{registro.horainicio}}{{registro.horafin}}" value="{{registro.nivelagua}}" readonly></td>
+
+                  </tr>
+                {% endfor %}
+                </tbody>
+              </table>
+              </div>
+
+
+                <div class="form-group">
+                  <div class="col-xs-12">
+                    <center>
+                      <button id="b_aceptar" name="b_aceptar" type="submit" class="btn btn-success">Guardar</button>
+                      <button id="b_cancelar" name="b_cancelar" type="submit" class="btn btn-default">Regresar</button>
+                    </center>
+                  </div>
+                </div>
+                </form>
+
+            </div>
+          </div>
+        </div>
+    </div>
+ </div>
+
+
+
+{% endblock content %}
+
+{% block javascripts %}
+  {{ block.super }}
+  <script src="/static/vendors/pnotify/dist/pnotify.js"></script>
+  <script src="/static/vendors/pnotify/dist/pnotify.buttons.js"></script>
+  <script src="/static/vendors/pnotify/dist/pnotify.nonblock.js"></script>
+
+    <script>
+    function activate_modal() {
+
+        var listaSeleccionados = [];
+        var boxes = document.getElementsByClassName('claseCheckbox');
+        var flagPrimerosValores = true;
+        for (var i = 0; i < boxes.length;i++)
+        {
+            box = boxes[i];
+            if( box.checked){
+                console.log('Seleccionado'+i)
+                if(flagPrimerosValores){
+                    id = i+1
+                    document.getElementById("temperatura").value = document.getElementById("temperatura"+id).value
+                    document.getElementById("humedadtierra").value = document.getElementById("humedadtierra"+id).value
+                    document.getElementById("humedadambiente").value = document.getElementById("humedadambiente"+id).value
+                    document.getElementById("co2").value = document.getElementById("co2"+id).value
+                    valorLuz = document.getElementById("luz"+id).value
+                    if(valorLuz === "Encendido"){
+                        document.getElementById("luzencendida").checked = true
+                    }else{
+                        document.getElementById("luzapagada").checked = true
+                    }
+                    document.getElementById("nivelagua").value = document.getElementById("nivelagua"+id).value
+                    flagPrimerosValores = false;
+                }
+
+            }
+        }
+
+      $("#modalxd").modal()
+    }
+
+    document.getElementById("b_editar").addEventListener("click", activate_modal);
+    </script>
+
+  <script>
+
+  function actualizarValores(){
+        var boxes = document.getElementsByClassName('claseCheckbox');
+
+        valorTemperatura = document.getElementById("temperatura").value
+        valorHumedadTierra = document.getElementById("humedadtierra").value
+        valorHumedadAmbiente = document.getElementById("humedadambiente").value
+        valorCo2 = document.getElementById("co2").value
+        if (document.getElementById("luzencendida").checked){
+            valorLuz = "Encendido"
+        }else{
+            valorLuz = "Apagado"
+        }
+        valorNivelAgua = document.getElementById("nivelagua").value
+        console.log(valorTemperatura)
+        for (var i = 0; i < boxes.length;i++)
+        {
+            box = boxes[i];
+            if( box.checked){
+                id = i+1
+                console.log('id'+id)
+                document.getElementById("temperatura"+id).value  = valorTemperatura
+
+
+                document.getElementById("humedadtierra"+id).value = valorHumedadTierra
+                document.getElementById("humedadambiente"+id).value = valorHumedadAmbiente
+                document.getElementById("co2"+id).value = valorCo2
+                document.getElementById("luz"+id).value = valorLuz
+                document.getElementById("nivelagua"+id).value = valorNivelAgua
+
+
+            }
+        }
+
+    }
+
+  document.getElementById("b_aceptar_modal").addEventListener("click", actualizarValores);
+  </script>
+
+  <script>
+    function seleccionarTodos() {
+        value = document.getElementById("selectall").checked
+        for(var i=1; i<25;i++){
+        $( "#"+"checkbox"+i).prop('checked', value);
+        }
+    };
+
+    document.getElementById("selectall").addEventListener("click", seleccionarTodos);
+  </script>
+
+
+{% endblock javascripts %}

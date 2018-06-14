@@ -33,7 +33,7 @@
             </div>
 
 
-            <form class="form-horizontal form-label-left"  method="GET" novalidate>
+            <form id="idFormBuscar" class="form-horizontal form-label-left"  method="GET" novalidate>
                 {% csrf_token %}
 
                 <div class="title_right">
@@ -50,7 +50,7 @@
                       <label class="control-label col-md-3 col-sm-3 col-xs-12">Zona</label>
                       <div class="col-md-6 col-sm-6 col-xs-12">
                         <select id = "comboZona" class="form-control" name="comboZona" >
-                          <option value="-1" {% if -1 == idseleccionado %} selected {% endif %} >- Todas las zonas -</option>
+                          <option value="-1" {% if -1 == idseleccionado %} selected {% endif %} >- Todas -</option>
                           {% for zona in listaZonas %}
                           <option value="{{zona.idzona}}" {% if zona.idzona == idseleccionado %} selected {% endif %}>{{zona.nombre}}</option>
                           {% endfor %}
@@ -158,5 +158,12 @@
                             });
         </script>
     {% endif %}
+
+        <script>
+            $("#comboZona").on('change', function (e) {
+                  document.getElementById("textoBusqueda").value='' ;
+                  document.getElementById("idFormBuscar").submit();
+            });
+        </script>
 
 {% endblock javascripts %}
