@@ -32,7 +32,7 @@ def crear(request,
 
     if request.method == 'GET':
         if not 'idUsuarioActual' in request.session:
-            return redirect('login')
+            return redirect('loginIndex')
         if not 'idInvernadero' in request.session:
             return redirect('escogerInvernadero')
         if not tienepermiso(request, "Crear Planta"):
@@ -46,7 +46,7 @@ def crear(request,
         return render(request, template, context)
     elif request.method == 'POST':
         if not 'idUsuarioActual' in request.session:
-            return redirect('login')
+            return redirect('loginIndex')
         if not 'idInvernadero' in request.session:
             return redirect('escogerInvernadero')
         if not tienepermiso(request, "Crear Planta"):

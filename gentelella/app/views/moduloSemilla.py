@@ -31,7 +31,7 @@ def crear(request,
                    }
     if request.method == 'GET':
         if not 'idUsuarioActual' in request.session:
-            return redirect('login')
+            return redirect('loginIndex')
         if not 'idInvernadero' in request.session:
             return redirect('escogerInvernadero')
         if not tienepermiso(request, "Crear Modulosemilla"):
@@ -40,7 +40,7 @@ def crear(request,
         return render(request, template, context)
     elif request.method == 'POST':
         if not 'idUsuarioActual' in request.session:
-            return redirect('login')
+            return redirect('loginIndex')
         if not 'idInvernadero' in request.session:
             return redirect('escogerInvernadero')
         if not tienepermiso(request, "Crear Modulosemilla"):
@@ -84,7 +84,7 @@ def listar(request,
     listaModulos = []
     if request.method == 'GET':
         if not 'idUsuarioActual' in request.session:
-            return redirect('login')
+            return redirect('loginIndex')
         if not 'idInvernadero' in request.session:
             return redirect('escogerInvernadero')
         if not tienepermiso(request, "Ver Modulosemilla"):
@@ -145,7 +145,7 @@ def listar(request,
             return redirect('moduloSemillaCrear')
     ###Me parece q podriamos borrar toda esta webada de abajo
     if not 'idUsuarioActual' in request.session:
-        return redirect('login')
+        return redirect('loginIndex')
     if not 'idInvernadero' in request.session:
         return redirect('escogerInvernadero')
     if not tienepermiso(request, "Ver Modulosemilla"):
@@ -233,7 +233,7 @@ def detalle(request,idModulo):
 
     if request.method == 'GET':
         if not 'idUsuarioActual' in request.session:
-            return redirect('login')
+            return redirect('loginIndex')
         if not 'idInvernadero' in request.session:
             return redirect('escogerInvernadero')
         if not tienepermiso(request, "Ver Modulosemilla"):
@@ -250,7 +250,7 @@ def detalle(request,idModulo):
 
         if "b_editar" in request.POST:
             if not 'idUsuarioActual' in request.session:
-                return redirect('login')
+                return redirect('loginIndex')
             if not 'idInvernadero' in request.session:
                 return redirect('escogerInvernadero')
             if not tienepermiso(request, "Editar Modulosemilla"):
@@ -260,7 +260,7 @@ def detalle(request,idModulo):
             return render(request, template, context)
         if "b_aceptar" in request.POST:
             if not 'idUsuarioActual' in request.session:
-                return redirect('login')
+                return redirect('loginIndex')
             if not 'idInvernadero' in request.session:
                 return redirect('escogerInvernadero')
             if not tienepermiso(request, "Editar Modulosemilla"):
@@ -308,7 +308,7 @@ def detalle(request,idModulo):
 
         if "b_cancelar" in request.POST :
             if not 'idUsuarioActual' in request.session:
-                return redirect('login')
+                return redirect('loginIndex')
             if not 'idInvernadero' in request.session:
                 return redirect('escogerInvernadero')
             if not tienepermiso(request, "Ver Modulosemilla"):
@@ -319,7 +319,7 @@ def detalle(request,idModulo):
             return render(request, template, context)
         if "b_aceptar_modal" in request.POST:
             if not 'idUsuarioActual' in request.session:
-                return redirect('login')
+                return redirect('loginIndex')
             if not 'idInvernadero' in request.session:
                 return redirect('escogerInvernadero')
             if not tienepermiso(request, "Eliminar Modulosemilla"):
@@ -694,7 +694,7 @@ def fotos(request, idModulo, template='app/modulosemilla/fotos.html'):
     fotosPorPagina = 20
     if request.method == 'GET':
         if not 'idUsuarioActual' in request.session:
-            return redirect('login')
+            return redirect('loginIndex')
         if not 'idInvernadero' in request.session:
             return redirect('escogerInvernadero')
         if not tienepermiso(request, "Ver Modulosemilla"):
@@ -787,7 +787,7 @@ def cronograma(request, idModulo):
     if request.method == 'POST':
         if "b_aceptar" in request.POST:
             if not 'idUsuarioActual' in request.session:
-                return redirect('login')
+                return redirect('loginIndex')
             if not 'idInvernadero' in request.session:
                 return redirect('escogerInvernadero')
             if not tienepermiso(request, "Editar Modulosemilla"):
@@ -808,7 +808,7 @@ def cronograma(request, idModulo):
 
     ##Supongo q aqui es donde se renderiza si request.method == GET, no se, q1 revisalo ctmr
     if not 'idUsuarioActual' in request.session:
-        return redirect('login')
+        return redirect('loginIndex')
     if not 'idInvernadero' in request.session:
         return redirect('escogerInvernadero')
     if not tienepermiso(request, "Ver Modulosemilla"):

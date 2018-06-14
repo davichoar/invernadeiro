@@ -24,7 +24,7 @@ def crear(request,
 
     if request.method == 'GET':
         if not 'idUsuarioActual' in request.session:
-            return redirect('login')
+            return redirect('loginIndex')
         if not 'idInvernadero' in request.session:
             return redirect('escogerInvernadero')
         if not tienepermiso(request, "Crear Panelluz"):
@@ -37,7 +37,7 @@ def crear(request,
         return render(request, template, context)
     elif request.method == 'POST':
         if not 'idUsuarioActual' in request.session:
-            return redirect('login')
+            return redirect('loginIndex')
         if not 'idInvernadero' in request.session:
             return redirect('escogerInvernadero')
         if not tienepermiso(request, "Crear Panelluz"):
@@ -82,7 +82,7 @@ def listar(request,
     listaPaneles = []
     if request.method == 'GET':
         if not 'idUsuarioActual' in request.session:
-            return redirect('login')
+            return redirect('loginIndex')
         if not 'idInvernadero' in request.session:
             return redirect('escogerInvernadero')
         if not tienepermiso(request, "Ver Panelluz"):
@@ -163,7 +163,7 @@ def listar(request,
             return redirect('panelCrear')
     ###Me parece q podriamos borrar toda esta webada de abajo
     if not 'idUsuarioActual' in request.session:
-        return redirect('login')
+        return redirect('loginIndex')
     if not 'idInvernadero' in request.session:
         return redirect('escogerInvernadero')
     if not tienepermiso(request, "Ver Panelluz"):
@@ -208,7 +208,7 @@ def detalle(request,idPanel):
 
     if request.method == 'GET':
         if not 'idUsuarioActual' in request.session:
-            return redirect('login')
+            return redirect('loginIndex')
         if not 'idInvernadero' in request.session:
             return redirect('escogerInvernadero')
         if not tienepermiso(request, "Ver Panelluz"):
@@ -221,7 +221,7 @@ def detalle(request,idPanel):
     elif request.method == 'POST':
         if "b_editar" in request.POST:
             if not 'idUsuarioActual' in request.session:
-                return redirect('login')
+                return redirect('loginIndex')
             if not 'idInvernadero' in request.session:
                 return redirect('escogerInvernadero')
             if not tienepermiso(request, "Editar Panelluz"):
@@ -231,7 +231,7 @@ def detalle(request,idPanel):
             return render(request, template, context)
         if "b_aceptar" in request.POST:
             if not 'idUsuarioActual' in request.session:
-                return redirect('login')
+                return redirect('loginIndex')
             if not 'idInvernadero' in request.session:
                 return redirect('escogerInvernadero')
             if not tienepermiso(request, "Editar Panelluz"):
@@ -268,7 +268,7 @@ def detalle(request,idPanel):
 
         if "b_cancelar" in request.POST :
             if not 'idUsuarioActual' in request.session:
-                return redirect('login')
+                return redirect('loginIndex')
             if not 'idInvernadero' in request.session:
                 return redirect('escogerInvernadero')
             if not tienepermiso(request, "Ver Panelluz"):
@@ -278,7 +278,7 @@ def detalle(request,idPanel):
             return render(request, template, context)
         if "b_aceptar_modal" in request.POST:
             if not 'idUsuarioActual' in request.session:
-                return redirect('login')
+                return redirect('loginIndex')
             if not 'idInvernadero' in request.session:
                 return redirect('escogerInvernadero')
             if not tienepermiso(request, "Eliminar Panelluz"):

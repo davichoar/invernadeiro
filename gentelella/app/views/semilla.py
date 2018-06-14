@@ -30,7 +30,7 @@ def crearFakes(request, idSemilla = -1):
 def crear(request, idModulo, columna, fila, template='app/semilla/crearSemilla.html', extra_context=None):
     if request.method == 'GET':
         if not 'idUsuarioActual' in request.session:
-            return redirect('login')
+            return redirect('loginIndex')
         if not 'idInvernadero' in request.session:
             return redirect('escogerInvernadero')
         if not tienepermiso(request, "Crear Semilla"):
@@ -56,7 +56,7 @@ def crear(request, idModulo, columna, fila, template='app/semilla/crearSemilla.h
         return render(request, template, context)
     elif request.method == 'POST':
         if not 'idUsuarioActual' in request.session:
-            return redirect('login')
+            return redirect('loginIndex')
         if not 'idInvernadero' in request.session:
             return redirect('escogerInvernadero')
         if not tienepermiso(request, "Crear Semilla"):
@@ -130,7 +130,7 @@ def detalle(request, idModulo, idSemilla, template='app/semilla/verEditarSemilla
     semilla = Semilla.objects.get(idsemilla = idSemilla)
     if request.method == 'GET':
         if not 'idUsuarioActual' in request.session:
-            return redirect('login')
+            return redirect('loginIndex')
         if not 'idInvernadero' in request.session:
             return redirect('escogerInvernadero')
         if not tienepermiso(request, "Ver Semilla"):
@@ -154,7 +154,7 @@ def detalle(request, idModulo, idSemilla, template='app/semilla/verEditarSemilla
     if request.method == 'POST':
         if 'b_editar' in request.POST:
             if not 'idUsuarioActual' in request.session:
-                return redirect('login')
+                return redirect('loginIndex')
             if not 'idInvernadero' in request.session:
                 return redirect('escogerInvernadero')
             if not tienepermiso(request, "Editar Semilla"):
@@ -175,7 +175,7 @@ def detalle(request, idModulo, idSemilla, template='app/semilla/verEditarSemilla
             return render(request, template, context)
         if 'b_aceptar_modal' in request.POST:
             if not 'idUsuarioActual' in request.session:
-                return redirect('login')
+                return redirect('loginIndex')
             if not 'idInvernadero' in request.session:
                 return redirect('escogerInvernadero')
             if not tienepermiso(request, "Eliminar Semilla"):
@@ -187,7 +187,7 @@ def detalle(request, idModulo, idSemilla, template='app/semilla/verEditarSemilla
                 print(e)
             return redirect('moduloSemillaDetalle', idModulo)
         if not 'idUsuarioActual' in request.session:
-            return redirect('login')
+            return redirect('loginIndex')
         if not 'idInvernadero' in request.session:
             return redirect('escogerInvernadero')
         if not tienepermiso(request, "Editar Semilla"):

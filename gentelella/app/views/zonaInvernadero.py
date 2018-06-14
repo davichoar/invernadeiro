@@ -12,7 +12,7 @@ def crear(request,
           extra_context=None):
     if request.method == 'GET':
         if not 'idUsuarioActual' in request.session:
-            return redirect('login')
+            return redirect('loginIndex')
         if not 'idInvernadero' in request.session:
             return redirect('escogerInvernadero')
         if not tienepermiso(request, "Crear Zona"):
@@ -26,7 +26,7 @@ def crear(request,
         return render(request, template, context)
     elif request.method == 'POST':
         if not 'idUsuarioActual' in request.session:
-            return redirect('login')
+            return redirect('loginIndex')
         if not 'idInvernadero' in request.session:
             return redirect('escogerInvernadero')
         if not tienepermiso(request, "Crear Zona"):
@@ -73,7 +73,7 @@ def listar(request,
     listaZonas = []
     if request.method == 'GET':
         if not 'idUsuarioActual' in request.session:
-            return redirect('login')
+            return redirect('loginIndex')
         if not 'idInvernadero' in request.session:
             return redirect('escogerInvernadero')
         if not tienepermiso(request, "Ver Zona"):
@@ -117,7 +117,7 @@ def listar(request,
             return redirect('zonaInvernaderoCrear')
     ###Me parece q podriamos borrar toda esta webada de abajo
     if not 'idUsuarioActual' in request.session:
-        return redirect('login')
+        return redirect('loginIndex')
     if not 'idInvernadero' in request.session:
         return redirect('escogerInvernadero')
     if not tienepermiso(request, "Ver Zona"):
@@ -166,7 +166,7 @@ def detalle(request,idZona):
 
     if request.method == 'GET':
         if not 'idUsuarioActual' in request.session:
-            return redirect('login')
+            return redirect('loginIndex')
         if not 'idInvernadero' in request.session:
             return redirect('escogerInvernadero')
         if not tienepermiso(request, "Ver Zona"):
@@ -185,7 +185,7 @@ def detalle(request,idZona):
     elif request.method == 'POST':
         if "b_editar" in request.POST:
             if not 'idUsuarioActual' in request.session:
-                return redirect('login')
+                return redirect('loginIndex')
             if not 'idInvernadero' in request.session:
                 return redirect('escogerInvernadero')
             if not tienepermiso(request, "Editar Zona"):
@@ -195,7 +195,7 @@ def detalle(request,idZona):
             return render(request, template, context)
         if "b_aceptar" in request.POST:
             if not 'idUsuarioActual' in request.session:
-                return redirect('login')
+                return redirect('loginIndex')
             if not 'idInvernadero' in request.session:
                 return redirect('escogerInvernadero')
             if not tienepermiso(request, "Editar Zona"):
@@ -240,7 +240,7 @@ def detalle(request,idZona):
 
         if "b_cancelar" in request.POST :
             if not 'idUsuarioActual' in request.session:
-                return redirect('login')
+                return redirect('loginIndex')
             if not 'idInvernadero' in request.session:
                 return redirect('escogerInvernadero')
             if not tienepermiso(request, "Ver Zona"):
@@ -250,7 +250,7 @@ def detalle(request,idZona):
             return render(request, template, context)
         if "b_aceptar_modal" in request.POST:
             if not 'idUsuarioActual' in request.session:
-                return redirect('login')
+                return redirect('loginIndex')
             if not 'idInvernadero' in request.session:
                 return redirect('escogerInvernadero')
             if not tienepermiso(request, "Eliminar Zona"):

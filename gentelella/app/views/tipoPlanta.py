@@ -11,7 +11,7 @@ import os
 def listar(request, template='app/tipoPlanta/listaTipoPlanta.html'):
     if request.method == 'GET':
         if not 'idUsuarioActual' in request.session:
-            return redirect('login')
+            return redirect('loginIndex')
         if not 'idInvernadero' in request.session:
             return redirect('escogerInvernadero')
         if not tienepermiso(request, "Ver Tipoplanta"):
@@ -34,7 +34,7 @@ def listar(request, template='app/tipoPlanta/listaTipoPlanta.html'):
 def crear(request, template='app/tipoPlanta/crearTipoPlanta.html'):
     if request.method == 'GET':
         if not 'idUsuarioActual' in request.session:
-            return redirect('login')
+            return redirect('loginIndex')
         if not 'idInvernadero' in request.session:
             return redirect('escogerInvernadero')
         if not tienepermiso(request, "Crear Tipoplanta"):
@@ -46,7 +46,7 @@ def crear(request, template='app/tipoPlanta/crearTipoPlanta.html'):
         return render(request, template, context)
     if request.method == 'POST':
         if not 'idUsuarioActual' in request.session:
-            return redirect('login')
+            return redirect('loginIndex')
         if not 'idInvernadero' in request.session:
             return redirect('escogerInvernadero')
         if not tienepermiso(request, "Crear Tipoplanta"):
@@ -111,7 +111,7 @@ def detalle(request, idTipoPlanta, template = 'app/tipoPlanta/verEditarTipoPlant
     tipoPlanta = Tipoplanta.objects.get(idtipoplanta = idTipoPlanta)
     if request.method == 'GET':
         if not 'idUsuarioActual' in request.session:
-            return redirect('login')
+            return redirect('loginIndex')
         if not 'idInvernadero' in request.session:
             return redirect('escogerInvernadero')
         if not tienepermiso(request, "Ver Tipoplanta"):
@@ -134,7 +134,7 @@ def detalle(request, idTipoPlanta, template = 'app/tipoPlanta/verEditarTipoPlant
     elif request.method == 'POST':
         if 'b_editar' in request.POST:
             if not 'idUsuarioActual' in request.session:
-                return redirect('login')
+                return redirect('loginIndex')
             if not 'idInvernadero' in request.session:
                 return redirect('escogerInvernadero')
             if not tienepermiso(request, "Editar Tipoplanta"):
@@ -152,7 +152,7 @@ def detalle(request, idTipoPlanta, template = 'app/tipoPlanta/verEditarTipoPlant
             return render(request, template, context)
         if 'b_aceptar_modal' in request.POST:
             if not 'idUsuarioActual' in request.session:
-                return redirect('login')
+                return redirect('loginIndex')
             if not 'idInvernadero' in request.session:
                 return redirect('escogerInvernadero')
             if not tienepermiso(request, "Eliminar Tipoplanta"):
@@ -168,7 +168,7 @@ def detalle(request, idTipoPlanta, template = 'app/tipoPlanta/verEditarTipoPlant
                 print(e)
             return redirect('tipoPlantaListar')
         if not 'idUsuarioActual' in request.session:
-            return redirect('login')
+            return redirect('loginIndex')
         if not 'idInvernadero' in request.session:
             return redirect('escogerInvernadero')
         if not tienepermiso(request, "Editar Tipoplanta"):
