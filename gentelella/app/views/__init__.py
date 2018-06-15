@@ -13,3 +13,4 @@ from .semilla import *
 from .tipoPlanta import *
 from .panelluz import *
 from .auditoria import *
+from .cronograma import *
