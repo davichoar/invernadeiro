@@ -126,6 +126,13 @@ urlpatterns = [
             views.historia.prueba,
             name='historia'),
 
+
+### Cronograma
+
+    url('^cronograma/$',
+            views.cronograma.obtener,
+            name='Cronograma'),
+
 ### GENTELELLA
 
     url(r'^.*\.html', views.views.gentella_html, name='gentella'),
