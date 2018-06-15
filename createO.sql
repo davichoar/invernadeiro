@@ -64,9 +64,12 @@ INSERT INTO public.app_historiainvernadero(
 	
 INSERT INTO public.app_zona(
 	idzona, idtipozona, idinvernadero, codigozonajson, nombre, area, temperaturaideal, temperaturamin, temperaturamax, fechacreacion, habilitado, phmin, phmax, idusuarioauditado, concentracionco2ideal, concentracionco2max, concentracionco2min)
-	VALUES (1, 1, 1, 1, 'Zona de Plantas 1', 34, 25, 20,30,'2018-05-28 00:00:00',true,5,8,1, 20, 30, 10);
-	
-	
+	VALUES (1, 1, 1, 2, 'Zona de Semillas 1', 34, 25, 20,30,'2018-05-28 00:00:00',true,5,8,1, 20, 30, 10);
+
+INSERT INTO public.app_modulosemilla(
+	idmodulo, idzona, nombre, codigomodulojson, temperaturaideal, temperaturamin, temperaturamax, humedadtierraideal, humedadtierramin, humedadtierramax, humedadambienteideal, humedadambientemin, humedadambientemax, concentracionco2ideal, concentracionco2min, concentracionco2max, nivelaguaideal, nivelaguamin, nivelaguamax, filas, columnas, fechacreacion, habilitado, idusuarioauditado)
+	VALUES (1, 1, 'Módulo 1', 1, 25, 20, 30, 15, 10, 20, 20, 15, 25, 10, 5, 15, 0.2, 0.1, 0.3, 9, 6, '2018-05-28 00:00:00', true, 1);
+    
 INSERT INTO public.app_historiazona(
 	idhistoriazona, idzona, temperatura, ph, concentracionco2, fecharegistro)
 	VALUES (1, 1, 24, 22, 27,'2018-05-29 00:00:00');

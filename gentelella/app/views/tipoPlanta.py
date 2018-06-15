@@ -73,13 +73,6 @@ def crear(request, template='app/tipoPlanta/crearTipoPlanta.html'):
             hayFoto = False
         try:
             with transaction.atomic():
-                nuevoTipoPlanta = Tipoplanta.objects.create(
-                    idtipoplanta = nuevoid,
-                    nombrecomun = str(request.POST.get('nombreComun')),
-                    nombrecientifico = str(request.POST.get('nombreCientifico')),
-                    idusuarioauditado = request.session['idUsuarioActual'],
-                    habilitado = True
-                )
                 if hayFoto:
                     nuevaFoto = Foto.objects.create(
                         idfoto = nuevoidfoto,
@@ -90,8 +83,22 @@ def crear(request, template='app/tipoPlanta/crearTipoPlanta.html'):
                         nombrefoto = nombreArch + extension,
                         fecharegistro = datetime.now() #maybe a corregir.
                     )
-                    nuevoTipoPlanta.idfoto = nuevoidfoto
-                    nuevoTipoPlanta.save()
+                    nuevoTipoPlanta = Tipoplanta.objects.create(
+                        idtipoplanta = nuevoid,
+                        nombrecomun = str(request.POST.get('nombreComun')),
+                        nombrecientifico = str(request.POST.get('nombreCientifico')),
+                        idusuarioauditado = request.session['idUsuarioActual'],
+                        idfoto = nuevoidfoto,
+                        habilitado = True
+                    )
+                else:
+                    nuevoTipoPlanta = Tipoplanta.objects.create(
+                        idtipoplanta = nuevoid,
+                        nombrecomun = str(request.POST.get('nombreComun')),
+                        nombrecientifico = str(request.POST.get('nombreCientifico')),
+                        idusuarioauditado = request.session['idUsuarioActual'],
+                        habilitado = True
+                    )
         except Exception as e:
             tipoPlantaFake = Tipoplanta()
             tipoPlantaFake.nombrecomun = str(request.POST.get('nombreComun'))
@@ -194,11 +201,6 @@ def detalle(request, idTipoPlanta, template = 'app/tipoPlanta/verEditarTipoPlant
             subioFoto = False
         try:
             with transaction.atomic():
-                Tipoplanta.objects.filter(idtipoplanta = idTipoPlanta).update(
-                    nombrecomun = str(request.POST.get('nombreComun')),
-                    nombrecientifico = str(request.POST.get('nombreCientifico')),
-                    idusuarioauditado = request.session['idUsuarioActual']
-                )
                 if subioFoto:
                     if yaTieneFoto:
                         nuevaFoto = Foto.objects.filter(idfoto = tipoPlanta.idfoto).update(
@@ -208,6 +210,7 @@ def detalle(request, idTipoPlanta, template = 'app/tipoPlanta/verEditarTipoPlant
                             nombrefoto = nombreArch + extension,
                             fecharegistro = datetime.now() #maybe a corregir.
                         )
+                        nuevoidfoto = tipoPlanta.idfoto
                     else:
                         nuevaFoto = Foto.objects.create(
                             idfoto = nuevoidfoto,
@@ -217,9 +220,19 @@ def detalle(request, idTipoPlanta, template = 'app/tipoPlanta/verEditarTipoPlant
                             extension = extension,
                             nombrefoto = nombreArch + extension,
                             fecharegistro = datetime.now() #maybe a corregir.
-                        )
-                        tipoPlanta.idfoto = nuevoidfoto
-                        tipoPlanta.save()
+                        )                    
+                    Tipoplanta.objects.filter(idtipoplanta = idTipoPlanta).update(
+                        nombrecomun = str(request.POST.get('nombreComun')),
+                        nombrecientifico = str(request.POST.get('nombreCientifico')),
+                        idusuarioauditado = request.session['idUsuarioActual'],
+                        idfoto = nuevoidfoto
+                    )
+                else:
+                    Tipoplanta.objects.filter(idtipoplanta = idTipoPlanta).update(
+                        nombrecomun = str(request.POST.get('nombreComun')),
+                        nombrecientifico = str(request.POST.get('nombreCientifico')),
+                        idusuarioauditado = request.session['idUsuarioActual']
+                    )
         except Exception as e:
             print(e)
         request.session['mensajeTipoPlantaEditar'] = True

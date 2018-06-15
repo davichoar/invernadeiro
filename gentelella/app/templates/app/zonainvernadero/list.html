@@ -97,6 +97,8 @@
               <div class="x_panel">
                 <div class="x_content">
                   <h2>Condiciones del Invernadero<small></small></h2>
+                    {% if historia != None %}
+                        {% if nivelAguaok != None %}
                         <div class="col-sm-6 col-xs-12">
                             <h2>Nivel del tanque de agua</h2>
                             <div class="x_title"></div>
@@ -110,6 +112,8 @@
                             <center><h2>Litros</h2></center>
 
                         </div>
+                        {% endif %}
+                        {% if nivelEnergiaok != None %}
                         <div class="col-sm-6 col-xs-12">
                             <h2>Nivel de energía</h2>
                             <div class="x_title"></div>
@@ -122,6 +126,10 @@
 
 
                         </div>
+                        {% endif %}
+                        {% else %}
+                        <center><h2>No hay información que mostrar.</h2></center>
+                        {% endif %}
                 </div>
               </div>
 
