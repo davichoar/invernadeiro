@@ -11,7 +11,6 @@ class Auditoria(models.Model):
     dataantigua = models.TextField()
     datanueva = models.TextField()
 
-
 class Cronograma(models.Model):
     idcronograma = models.IntegerField(primary_key=True)
     idmodulo = models.IntegerField()
@@ -33,6 +32,7 @@ class Foto(models.Model):
     extension = models.CharField(max_length=255)
     nombrefoto = models.CharField(max_length=255)
     fecharegistro = models.DateTimeField()
+
 
 
 class Historiainvernadero(models.Model):
@@ -107,6 +107,9 @@ class Invernadero(models.Model):
     nivelenergiaideal = models.FloatField(blank=True, null=True)
     nivelenergiamin = models.FloatField()
     nivelenergiamax = models.FloatField()
+    phaguaideal = models.FloatField(blank=True, null=True)
+    phaguamin = models.FloatField(blank=True, null=True)
+    phaguamax = models.FloatField(blank=True, null=True)
     latitud = models.FloatField(blank=True, null=True)
     longitud = models.FloatField(blank=True, null=True)
     condicionesshidas = models.NullBooleanField()
