@@ -312,17 +312,11 @@ DECLARE
 	nivelE FLOAT;
 BEGIN
 	SELECT nivelenergia, niveltanqueagua
-	INTO STRICT  nivelA, nivelE
+	INTO STRICT  nivelE, nivelA
 	FROM app_historiainvernadero
 	WHERE idinvernadero = NEW.idinvernadero
 	ORDER BY fecharegistro DESC
 	LIMIT 1;
-
-	EXCEPTION
-        WHEN NO_DATA_FOUND THEN
-            RAISE EXCEPTION 'No hay historias aún';
-        WHEN TOO_MANY_ROWS THEN
-            RAISE EXCEPTION 'Error weird';
 
 	IF nivelA < NEW.niveltanqueaguamin OR 
 	nivelA > NEW.niveltanqueaguamax OR 
@@ -335,6 +329,12 @@ BEGIN
 	END IF;
 
 RETURN NEW;
+
+EXCEPTION
+        WHEN NO_DATA_FOUND THEN
+            RAISE EXCEPTION 'No hay historias aún';
+        WHEN TOO_MANY_ROWS THEN
+            RAISE EXCEPTION 'Error weird';
 END
 $$
 LANGUAGE plpgsql;
@@ -342,7 +342,7 @@ LANGUAGE plpgsql;
 DROP TRIGGER IF EXISTS update_conds_invernadero ON app_invernadero;
 
 CREATE TRIGGER update_conds_invernadero
-AFTER UPDATE ON app_invernadero
+BEFORE UPDATE ON app_invernadero
 FOR EACH ROW
 EXECUTE PROCEDURE update_condiciones_invernadero();
 
@@ -383,12 +383,6 @@ BEGIN
 	ORDER BY fecharegistro DESC
 	LIMIT 1;
 
-	EXCEPTION
-        WHEN NO_DATA_FOUND THEN
-            RAISE EXCEPTION 'No hay historias aún';
-        WHEN TOO_MANY_ROWS THEN
-            RAISE EXCEPTION 'Error weird';
-
 
 	IF temp < NEW.temperaturamin OR 
 	temp > NEW.temperaturamax OR 
@@ -403,6 +397,11 @@ BEGIN
 	END IF;
 
 RETURN NEW;
+EXCEPTION
+        WHEN NO_DATA_FOUND THEN
+            RAISE EXCEPTION 'No hay historias aún';
+        WHEN TOO_MANY_ROWS THEN
+            RAISE EXCEPTION 'Error weird';
 END
 $$
 LANGUAGE plpgsql;
@@ -410,7 +409,7 @@ LANGUAGE plpgsql;
 DROP TRIGGER IF EXISTS update_conds_zona ON app_zona;
 
 CREATE TRIGGER update_conds_zona
-AFTER UPDATE ON app_zona
+BEFORE UPDATE ON app_zona
 FOR EACH ROW
 EXECUTE PROCEDURE update_condiciones_zona();
 
@@ -434,11 +433,6 @@ BEGIN
 	ORDER BY fecharegistro DESC
 	LIMIT 1;
 
-	EXCEPTION
-        WHEN NO_DATA_FOUND THEN
-            RAISE EXCEPTION 'No hay historias aún';
-        WHEN TOO_MANY_ROWS THEN
-            RAISE EXCEPTION 'Error weird';
 
 	IF temp < NEW.temperaturamin OR 
 	temp > NEW.temperaturamax OR 
@@ -458,6 +452,12 @@ BEGIN
 	END IF;
 
 RETURN NEW;
+
+	EXCEPTION
+        WHEN NO_DATA_FOUND THEN
+            RAISE EXCEPTION 'No hay historias aún';
+        WHEN TOO_MANY_ROWS THEN
+            RAISE EXCEPTION 'Error weird';
 END
 $$
 LANGUAGE plpgsql;
@@ -465,7 +465,7 @@ LANGUAGE plpgsql;
 DROP TRIGGER IF EXISTS update_conds_modulo ON app_modulosemilla;
 
 CREATE TRIGGER update_conds_modulo
-AFTER UPDATE ON app_modulosemilla
+BEFORE UPDATE ON app_modulosemilla
 FOR EACH ROW
 EXECUTE PROCEDURE update_condiciones_modulo();
 
@@ -487,12 +487,7 @@ BEGIN
 	ORDER BY fecharegistro DESC
 	LIMIT 1;
 
-	EXCEPTION
-        WHEN NO_DATA_FOUND THEN
-            RAISE EXCEPTION 'No hay historias aún';
-        WHEN TOO_MANY_ROWS THEN
-            RAISE EXCEPTION 'Error weird';
-
+	
 	IF hum < NEW.humedadmin OR 
 	hum > NEW.humedadmax 	
 
@@ -503,6 +498,13 @@ BEGIN
 	END IF;
 
 RETURN NEW;
+
+EXCEPTION
+        WHEN NO_DATA_FOUND THEN
+            RAISE EXCEPTION 'No hay historias aún';
+        WHEN TOO_MANY_ROWS THEN
+            RAISE EXCEPTION 'Error weird';
+
 END
 $$
 LANGUAGE plpgsql;
@@ -510,7 +512,7 @@ LANGUAGE plpgsql;
 DROP TRIGGER IF EXISTS update_conds_planta ON app_planta;
 
 CREATE TRIGGER update_conds_planta
-AFTER UPDATE ON app_planta
+BEFORE UPDATE ON app_planta
 FOR EACH ROW
 EXECUTE PROCEDURE update_condiciones_planta();
 
