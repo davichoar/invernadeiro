@@ -87,13 +87,12 @@ def listar(request,
         try:
             invernadero = Invernadero.objects.get(idinvernadero=idInvernadero)
             ultimaHistoria = Historiainvernadero.objects.filter(idinvernadero=idInvernadero).order_by('-fecharegistro')[0]
+            nivelAguaok = validarRangoCondiciones(ultimaHistoria.niveltanqueagua,invernadero.niveltanqueaguamin,invernadero.niveltanqueaguamax)
+            nivelEnergiaok = validarRangoCondiciones(ultimaHistoria.nivelenergia,invernadero.nivelenergiamin,invernadero.nivelenergiamax)
         except:
-            ultimaHistoria = Historiainvernadero()
-            ultimaHistoria.nivelenergia = 0
-            ultimaHistoria.niveltanqueagua = 0
-
-        nivelAguaok = validarRangoCondiciones(ultimaHistoria.niveltanqueagua,invernadero.niveltanqueaguamin,invernadero.niveltanqueaguamax)
-        nivelEnergiaok = validarRangoCondiciones(ultimaHistoria.nivelenergia,invernadero.nivelenergiamin,invernadero.nivelenergiamax)
+            ultimaHistoria = None
+            nivelAguaok = None
+            nivelEnergiaok = None
 
         if "b_buscar" in request.GET:
             valorBusqueda = request.GET.get('textoBusqueda')

@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from app.models import Tipoplanta, Semilla, Historiasemilla, Modulosemilla
+from app.models import Tipoplanta, Semilla, Historiasemilla, Modulosemilla, Zona
 from django.db.models import Max
 from datetime import datetime
 from django.db import transaction
@@ -16,6 +16,16 @@ def casillaOcupada(idmodulo, posx, posy, semilla = None):
             return True
     return False
 
+def getListaModulos(request):
+    idInvernadero = request.session['idInvernadero']
+    zonasInvernadero = Zona.objects.filter(idinvernadero = idInvernadero, habilitado=True)
+    listaModulos = []
+    for zona in zonasInvernadero:
+        modulosZona = Modulosemilla.objects.filter(idzona = zona.idzona, habilitado=True)
+        for modulo in modulosZona:
+            listaModulos.append(modulo)
+    return listaModulos
+    
 def crearFakes(request, idSemilla = -1):
     semillaFake = Semilla()
     semillaFake.idsemilla = idSemilla
@@ -42,7 +52,7 @@ def crear(request, idModulo, columna, fila, template='app/semilla/crearSemilla.h
         historiaFake = Historiasemilla()
         historiaFake.posx = columna
         historiaFake.posy = fila
-        listaModulos = Modulosemilla.objects.filter(habilitado=True)
+        listaModulos = getListaModulos(request)
         context = {
             'nombreUsuario': request.session.get('nomreUsuario'),
             'nombreInvernadero': request.session.get('nombreInvernadero'),
@@ -68,7 +78,7 @@ def crear(request, idModulo, columna, fila, template='app/semilla/crearSemilla.h
             nuevoid += 1
         if (casillaOcupada(request.POST.get('modulo'), request.POST.get('posx'), request.POST.get('posy'))):
             listaTipoplanta = Tipoplanta.objects.filter(habilitado = True)
-            listaModulos = Modulosemilla.objects.filter(habilitado=True)
+            listaModulos = getListaModulos(request)
             semillaFake, historiaFake = crearFakes(request)
             print(semillaFake.idmodulo)
             context = {
@@ -109,7 +119,7 @@ def crear(request, idModulo, columna, fila, template='app/semilla/crearSemilla.h
         except Exception as e:
             print(e)
             listaTipoplanta = Tipoplanta.objects.filter(habilitado = True)
-            listaModulos = Modulosemilla.objects.filter(habilitado=True)
+            listaModulos = getListaModulos(request)
             semillaFake, historiaFake = crearFakes(request)
             context = {
                 'nombreUsuario': request.session.get('nomreUsuario'),
@@ -137,7 +147,7 @@ def detalle(request, idModulo, idSemilla, template='app/semilla/verEditarSemilla
             return accesodenegado(request)
         mostrarModalEditar = request.session.pop('mensajeSemillaEditar', False)
         listaTipoplanta = Tipoplanta.objects.filter(habilitado = True)
-        listaModulos = Modulosemilla.objects.filter(habilitado=True)
+        listaModulos = getListaModulos(request)
         context = {
             'nombreUsuario': request.session.get('nomreUsuario'),
             'nombreInvernadero': request.session.get('nombreInvernadero'),
@@ -160,7 +170,7 @@ def detalle(request, idModulo, idSemilla, template='app/semilla/verEditarSemilla
             if not tienepermiso(request, "Editar Semilla"):
                 return accesodenegado(request)
             listaTipoplanta = Tipoplanta.objects.filter(habilitado = True)
-            listaModulos = Modulosemilla.objects.filter(habilitado=True)
+            listaModulos = getListaModulos(request)
             context = {
                 'nombreUsuario': request.session.get('nomreUsuario'),
                 'nombreInvernadero': request.session.get('nombreInvernadero'),
@@ -194,7 +204,7 @@ def detalle(request, idModulo, idSemilla, template='app/semilla/verEditarSemilla
             return accesodenegado(request)
         if (casillaOcupada(request.POST.get('modulo'), request.POST.get('posx'), request.POST.get('posy'), semilla)):
             listaTipoplanta = Tipoplanta.objects.filter(habilitado = True)
-            listaModulos = Modulosemilla.objects.filter(habilitado=True)
+            listaModulos = getListaModulos(request)
             semillaFake, historiaFake = crearFakes(request, semilla.idsemilla)
             print(semillaFake.idmodulo)
             context = {
@@ -235,7 +245,7 @@ def detalle(request, idModulo, idSemilla, template='app/semilla/verEditarSemilla
         except Exception as e:
             print(e)
             listaTipoplanta = Tipoplanta.objects.filter(habilitado = True)
-            listaModulos = Modulosemilla.objects.filter(habilitado=True)
+            listaModulos = getListaModulos(request)
             semillaFake, historiaFake = crearFakes(request, semilla.idsemilla)            
             context = {
                 'nombreUsuario': request.session.get('nomreUsuario'),

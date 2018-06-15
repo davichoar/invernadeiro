@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from datetime import datetime
 import datetime as dt
 from django.db.models import Max
-from app.models import Invernadero, Usuario
+from app.models import Invernadero, Usuario, Zona, Usuarioxinvernadero, Historiainvernadero
 from django.db import transaction
 from app.permissions import *
 
@@ -21,6 +21,9 @@ def crearFake(request, idinvernadero = -1):
     invernaderoFake.nivelenergiamax = request.POST.get('energiaMax')
     invernaderoFake.latitud = request.POST.get('latitud')
     invernaderoFake.longitud = request.POST.get('longitud')
+    invernaderoFake.phaguaideal = request.POST.get('phaguaideal')
+    invernaderoFake.phaguamin = request.POST.get('phaguamin')
+    invernaderoFake.phaguamax = request.POST.get('phaguamax')
     return invernaderoFake
 
 def listar(request, template='app/invernadero/listaInvernaderos.html', extra_context=None):
@@ -41,7 +44,7 @@ def listar(request, template='app/invernadero/listaInvernaderos.html', extra_con
         else:
             listaInvernaderos = Invernadero.objects.filter(habilitado=True)
         if listaInvernaderos is not None:
-            listaInvernaderos.order_by('idinvernadero')
+            listaInvernaderos = listaInvernaderos.order_by('idinvernadero')
         context = { 
             'listaInvernaderos': listaInvernaderos,
             'nombreUsuario': request.session.get('nomreUsuario'),
@@ -101,6 +104,9 @@ def crear(request, template='app/invernadero/crearInvernadero.html', extra_conte
         energiaIdeal = request.POST.get('energiaIdeal')
         if (energiaIdeal == ''):
             energiaIdeal = None
+        phaguaIdeal = request.POST.get('energiaIdeal')
+        if (phaguaIdeal == ''):
+            phaguaIdeal = None
         latitud = request.POST.get('latitud')
         if (latitud == ''):
             latitud = None
@@ -123,6 +129,9 @@ def crear(request, template='app/invernadero/crearInvernadero.html', extra_conte
                 latitud = latitud,
                 longitud = longitud,
                 fechacreacion = datetime.now(),
+                phaguaideal = phaguaIdeal,
+                phaguamin = request.POST.get('phaguamin'),
+                phaguamax = request.POST.get('phaguamax'),
                 idusuarioauditado = request.session['idUsuarioActual'],
                 habilitado = True
             )
@@ -142,6 +151,17 @@ def crear(request, template='app/invernadero/crearInvernadero.html', extra_conte
         return redirect('invernaderoLista')
         
         
+def validarRangoCondiciones(actual,min,max):
+    if actual is None:
+        return None
+    actual = float(actual)
+    min = float(min)
+    max = float(max)
+    if (actual > min) and (actual < max):
+        return True
+    else:
+        return False
+        
 def detalle(request, idInv):
     template = 'app/invernadero/verEditarInvernadero.html'
     inv = Invernadero.objects.get(idinvernadero = idInv)
@@ -153,8 +173,21 @@ def detalle(request, idInv):
             return redirect('escogerInvernadero')
         if not tienepermiso(request, "Ver Invernadero"):
             return accesodenegado(request)
+        historiaInv = Historiainvernadero.objects.filter(idinvernadero=idInv).order_by('-fecharegistro')
+        if len(historiaInv) > 0:
+            historiaInv = historiaInv[0]
+            aguaok = validarRangoCondiciones(historiaInv.niveltanqueagua,inv.niveltanqueaguamin,inv.niveltanqueaguamax)
+            energiaok = validarRangoCondiciones(historiaInv.nivelenergia,inv.nivelenergiamin,inv.nivelenergiamax)
+            phaguaok = validarRangoCondiciones(historiaInv.phagua,inv.phaguamin,inv.phaguamax)
+        else:
+            historiaInv = None
+            aguaok = None
+            energiaok = None
+            phaguaok = None
         mostrarModalEditar = request.session.pop('mensajeInvernaderoEditar', False)
         mostrarModalEliminarFallo = request.session.pop('mensajeInvernaderoEliminarFallo', False)
+        mostrarModalEliminarFallo2 = request.session.pop('mensajeInvernaderoEliminarFallo2', False)
+        mostrarModalEliminarFallo3 = request.session.pop('mensajeInvernaderoEliminarFallo3', False)
         context = {
             'listaUsuarios': listaUsuarios,
             'nombreUsuario': request.session.get('nomreUsuario'), 
@@ -162,7 +195,13 @@ def detalle(request, idInv):
             'inv': inv,
             'editable': False, 
             'mostrarModalEditar': mostrarModalEditar,
-            'mostrarModalEliminarFallo': mostrarModalEliminarFallo
+            'mostrarModalEliminarFallo': mostrarModalEliminarFallo,
+            'mostrarModalEliminarFallo2': mostrarModalEliminarFallo2,
+            'mostrarModalEliminarFallo3': mostrarModalEliminarFallo3,
+            'historiaInv': historiaInv,
+            'aguaok': aguaok,
+            'energiaok': energiaok,
+            'phaguaok': phaguaok
         }
         return render(request, template, context)
     if request.method == 'POST':
@@ -190,6 +229,12 @@ def detalle(request, idInv):
                 return accesodenegado(request)
             if (int(request.session.get('idInvernadero')) == int(idInv)):
                 request.session['mensajeInvernaderoEliminarFallo'] = True
+                return redirect('invernaderoDetalle', idInv)
+            if (len(Zona.objects.filter(idinvernadero = idInv, habilitado = True)) > 0):
+                request.session['mensajeInvernaderoEliminarFallo2'] = True
+                return redirect('invernaderoDetalle', idInv)
+            if (len(Usuarioxinvernadero.objects.filter(idinvernadero = idInv)) > 0):
+                request.session['mensajeInvernaderoEliminarFallo3'] = True
                 return redirect('invernaderoDetalle', idInv)
             try:
                 Invernadero.objects.filter(idinvernadero = idInv).update(habilitado=False, idusuarioauditado=request.session['idUsuarioActual'])
@@ -224,6 +269,9 @@ def detalle(request, idInv):
         energiaIdeal = request.POST.get('energiaIdeal')
         if (energiaIdeal == ''):
             energiaIdeal = None
+        phaguaIdeal = request.POST.get('energiaIdeal')
+        if (phaguaIdeal == ''):
+            phaguaIdeal = None
         latitud = request.POST.get('latitud')
         if (latitud == ''):
             latitud = None
@@ -244,6 +292,9 @@ def detalle(request, idInv):
                 nivelenergiamax = request.POST.get('energiaMax'),
                 latitud = latitud,
                 longitud = longitud,
+                phaguaideal = phaguaIdeal,
+                phaguamin = request.POST.get('phaguamin'),
+                phaguamax = request.POST.get('phaguamax'),
                 idusuarioauditado = request.session['idUsuarioActual']
             )
         except Exception as e:

@@ -126,6 +126,15 @@ urlpatterns = [
             views.historia.prueba,
             name='historia'),
 
+### AUDITORIA
+
+    url('^auditoria/$',
+        views.auditoria.veraudit,
+        name='verAuditoria'),
+    url('^auditoria/(?P<idAuditoria>.*)$',
+        views.auditoria.detalleaudit,
+        name='detalleAuditoria'),
+
 
 ### Cronograma
 
