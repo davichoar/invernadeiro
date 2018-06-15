@@ -111,6 +111,7 @@ INSERT INTO public.app_permiso (idpermiso, nombrepermiso, habilitado) VALUES (30
 INSERT INTO public.app_permiso (idpermiso, nombrepermiso, habilitado) VALUES (31, 'Editar Tipoplanta', true);
 INSERT INTO public.app_permiso (idpermiso, nombrepermiso, habilitado) VALUES (32, 'Eliminar Tipoplanta', true);
 INSERT INTO public.app_permiso (idpermiso, nombrepermiso, habilitado) VALUES (33, 'Ver Estadistica', true);
+INSERT INTO public.app_permiso (idpermiso, nombrepermiso, habilitado) VALUES (37, 'Ver Auditoria', true);
 
 INSERT INTO public.app_permisoxrol(idrol, idpermiso) VALUES (-1, 1);
 INSERT INTO public.app_permisoxrol(idrol, idpermiso) VALUES (-1, 2);
@@ -145,6 +146,7 @@ INSERT INTO public.app_permisoxrol(idrol, idpermiso) VALUES (-1, 30);
 INSERT INTO public.app_permisoxrol(idrol, idpermiso) VALUES (-1, 31);
 INSERT INTO public.app_permisoxrol(idrol, idpermiso) VALUES (-1, 32);
 INSERT INTO public.app_permisoxrol(idrol, idpermiso) VALUES (-1, 33);
+INSERT INTO public.app_permisoxrol(idrol, idpermiso) VALUES (-1, 37);
 
 INSERT INTO public.app_permisoxrol(idrol, idpermiso) VALUES (1, 1);
 INSERT INTO public.app_permisoxrol(idrol, idpermiso) VALUES (1, 2);
@@ -179,6 +181,7 @@ INSERT INTO public.app_permisoxrol(idrol, idpermiso) VALUES (1, 30);
 INSERT INTO public.app_permisoxrol(idrol, idpermiso) VALUES (1, 31);
 INSERT INTO public.app_permisoxrol(idrol, idpermiso) VALUES (1, 32);
 INSERT INTO public.app_permisoxrol(idrol, idpermiso) VALUES (1, 33);
+INSERT INTO public.app_permisoxrol(idrol, idpermiso) VALUES (1, 37);
 
 INSERT INTO public.app_permisoxrol(idrol, idpermiso) VALUES (3, 1);
 INSERT INTO public.app_permisoxrol(idrol, idpermiso) VALUES (3, 9);

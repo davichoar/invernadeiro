@@ -41,7 +41,7 @@ def listar(request, template='app/invernadero/listaInvernaderos.html', extra_con
         else:
             listaInvernaderos = Invernadero.objects.filter(habilitado=True)
         if listaInvernaderos is not None:
-            listaInvernaderos.order_by('idinvernadero')
+            listaInvernaderos = listaInvernaderos.order_by('idinvernadero')
         context = { 
             'listaInvernaderos': listaInvernaderos,
             'nombreUsuario': request.session.get('nomreUsuario'),

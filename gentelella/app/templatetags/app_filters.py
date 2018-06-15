@@ -23,3 +23,7 @@ def getFoto(value, arg):
         if (foto[0] == arg):
             return foto[1]
     return '../images/zona3.png'
+
+@register.filter(name='nombrecompleto')
+def nombrecompleto(value):
+    return value.getnombrecompleto()
