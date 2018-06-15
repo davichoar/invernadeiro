@@ -301,3 +301,217 @@ CREATE  TRIGGER mail_invernadero
 AFTER INSERT ON app_historiainvernadero
 FOR EACH ROW
 EXECUTE PROCEDURE mail_historia_invernadero();
+
+
+---en actualizacion de limites de invernadero
+
+CREATE OR REPLACE FUNCTION update_condiciones_invernadero() RETURNS trigger AS
+$$
+DECLARE
+	nivelA FLOAT;
+	nivelE FLOAT;
+BEGIN
+	SELECT nivelenergia, niveltanqueagua
+	INTO STRICT  nivelA, nivelE
+	FROM app_historiainvernadero
+	WHERE idinvernadero = NEW.idinvernadero
+	ORDER BY fecharegistro DESC
+	LIMIT 1;
+
+	EXCEPTION
+        WHEN NO_DATA_FOUND THEN
+            RAISE EXCEPTION 'No hay historias aún';
+        WHEN TOO_MANY_ROWS THEN
+            RAISE EXCEPTION 'Error weird';
+
+	IF nivelA < NEW.niveltanqueaguamin OR 
+	nivelA > NEW.niveltanqueaguamax OR 
+	nivelE < NEW.nivelenergiamin OR
+	nivelE > NEW.nivelenergiamax
+	THEN
+	    NEW.condicionesshidas := false;
+	ELSE
+		NEW.condicionesshidas := true;
+	END IF;
+
+RETURN NEW;
+END
+$$
+LANGUAGE plpgsql;
+
+DROP TRIGGER IF EXISTS update_conds_invernadero ON app_invernadero;
+
+CREATE TRIGGER update_conds_invernadero
+AFTER UPDATE ON app_invernadero
+FOR EACH ROW
+EXECUTE PROCEDURE update_condiciones_invernadero();
+
+
+
+--- actualizacion en tabla de zonas
+
+CREATE OR REPLACE FUNCTION update_condiciones_zona() RETURNS trigger AS
+$$
+DECLARE
+	temp FLOAT;
+	ph_ FLOAT;
+	co2 FLOAT;
+BEGIN
+	SELECT temperatura
+	INTO STRICT temp
+	FROM app_historiazona
+	WHERE idzona = NEW.idzona AND
+	temperatura is not NULL
+	ORDER BY fecharegistro DESC
+	LIMIT 1;
+
+
+    SELECT ph
+	INTO STRICT ph_
+	FROM app_historiazona
+	WHERE idzona = NEW.idzona AND
+	ph is not NULL
+	ORDER BY fecharegistro DESC
+	LIMIT 1;
+
+
+    SELECT concentracionCO2
+	INTO STRICT co2
+	FROM app_historiazona
+	WHERE idzona = NEW.idzona AND
+	concentracionco2 is not NULL
+	ORDER BY fecharegistro DESC
+	LIMIT 1;
+
+	EXCEPTION
+        WHEN NO_DATA_FOUND THEN
+            RAISE EXCEPTION 'No hay historias aún';
+        WHEN TOO_MANY_ROWS THEN
+            RAISE EXCEPTION 'Error weird';
+
+
+	IF temp < NEW.temperaturamin OR 
+	temp > NEW.temperaturamax OR 
+	ph_ < NEW.phmin OR
+	ph_ > NEW.phmax OR
+	co2 < NEW.concentracionco2min OR
+	co2 > NEW.concentracionco2max
+	THEN
+	    NEW.condicionesshidas := false;
+	ELSE
+		NEW.condicionesshidas := true;
+	END IF;
+
+RETURN NEW;
+END
+$$
+LANGUAGE plpgsql;
+
+DROP TRIGGER IF EXISTS update_conds_zona ON app_zona;
+
+CREATE TRIGGER update_conds_zona
+AFTER UPDATE ON app_zona
+FOR EACH ROW
+EXECUTE PROCEDURE update_condiciones_zona();
+
+
+---actualizacion en tabla de modulos de semillas
+
+CREATE OR REPLACE FUNCTION update_condiciones_modulo() RETURNS trigger AS
+$$
+DECLARE
+	temp FLOAT;
+	htierra FLOAT;
+	hambiente FLOAT;
+	nivelA FLOAT;
+	co2 FLOAT;
+	
+BEGIN
+	SELECT temperatura, humedadtierra,humedadambiente, nivelagua, concentracionco2
+	INTO STRICT temp, htierra, hambiente, nivelA, co2
+	FROM app_historiamodulo
+	WHERE idmodulo = NEW.idmodulo
+	ORDER BY fecharegistro DESC
+	LIMIT 1;
+
+	EXCEPTION
+        WHEN NO_DATA_FOUND THEN
+            RAISE EXCEPTION 'No hay historias aún';
+        WHEN TOO_MANY_ROWS THEN
+            RAISE EXCEPTION 'Error weird';
+
+	IF temp < NEW.temperaturamin OR 
+	temp > NEW.temperaturamax OR 
+	htierra < NEW.humedadtierramin OR
+	htierra > NEW.humedadtierramax OR
+	hambiente < NEW.humedadambientemin OR
+	hambiente > NEW.humedadambientemax OR
+	co2 < NEW.concentracionco2min OR
+	co2 > NEW.concentracionco2max OR
+	nivelA < NEW.nivelaguamin OR
+	nivelA > NEW.nivelaguamax
+
+	THEN
+	    NEW.condicionesshidas := false;
+	ELSE
+		NEW.condicionesshidas := true;
+	END IF;
+
+RETURN NEW;
+END
+$$
+LANGUAGE plpgsql;
+
+DROP TRIGGER IF EXISTS update_conds_modulo ON app_modulosemilla;
+
+CREATE TRIGGER update_conds_modulo
+AFTER UPDATE ON app_modulosemilla
+FOR EACH ROW
+EXECUTE PROCEDURE update_condiciones_modulo();
+
+
+
+
+---actualizacion en tabla de planta
+
+CREATE OR REPLACE FUNCTION update_condiciones_planta() RETURNS trigger AS
+$$
+DECLARE
+	hum FLOAT;
+
+BEGIN
+	SELECT humedad
+	INTO STRICT hum
+	FROM app_historiaplanta
+	WHERE idplanta = NEW.idplanta
+	ORDER BY fecharegistro DESC
+	LIMIT 1;
+
+	EXCEPTION
+        WHEN NO_DATA_FOUND THEN
+            RAISE EXCEPTION 'No hay historias aún';
+        WHEN TOO_MANY_ROWS THEN
+            RAISE EXCEPTION 'Error weird';
+
+	IF hum < NEW.humedadmin OR 
+	hum > NEW.humedadmax 	
+
+	THEN
+	    NEW.condicionesshidas := false;
+	ELSE
+		NEW.condicionesshidas := true;
+	END IF;
+
+RETURN NEW;
+END
+$$
+LANGUAGE plpgsql;
+
+DROP TRIGGER IF EXISTS update_conds_planta ON app_planta;
+
+CREATE TRIGGER update_conds_planta
+AFTER UPDATE ON app_planta
+FOR EACH ROW
+EXECUTE PROCEDURE update_condiciones_planta();
+
+
