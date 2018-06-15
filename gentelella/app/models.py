@@ -38,8 +38,9 @@ class Foto(models.Model):
 class Historiainvernadero(models.Model):
     idhistoriainvernadero = models.IntegerField(primary_key=True)
     idinvernadero = models.IntegerField()
-    nivelenergia = models.FloatField()
-    niveltanqueagua = models.FloatField(blank=True, null=True)
+    nivelenergia = models.FloatField(blank=True, null=True)
+    niveltanqueagua = models.FloatField()
+    phagua = models.FloatField(blank=True, null=True)
     comentario = models.CharField(max_length=255, blank=True, null=True)
     fecharegistro = models.DateTimeField()
 
@@ -86,9 +87,10 @@ class Historiasemilla(models.Model):
 class Historiazona(models.Model):
     idhistoriazona = models.IntegerField(primary_key=True)
     idzona = models.IntegerField()
-    temperatura = models.FloatField()
-    ph = models.FloatField()
-    concentracionco2 = models.FloatField()
+    temperatura = models.FloatField(blank=True, null=True)
+    ph = models.FloatField(blank=True, null=True)
+    concentracionco2 = models.FloatField(blank=True, null=True)
+    humedad = models.FloatField(blank=True, null=True)
     fecharegistro = models.DateTimeField()
 
 
@@ -105,8 +107,8 @@ class Invernadero(models.Model):
     nivelenergiaideal = models.FloatField(blank=True, null=True)
     nivelenergiamin = models.FloatField()
     nivelenergiamax = models.FloatField()
-    latitud = models.FloatField()
-    longitud = models.FloatField()
+    latitud = models.FloatField(blank=True, null=True)
+    longitud = models.FloatField(blank=True, null=True)
     condicionesshidas = models.NullBooleanField()
     idusuarioauditado = models.IntegerField()
     habilitado = models.BooleanField()
@@ -238,18 +240,22 @@ class Zona(models.Model):
     nombre = models.CharField(max_length=255)
     area = models.FloatField(blank=True, null=True)
     temperaturaideal = models.FloatField(blank=True, null=True)
-    temperaturamin = models.FloatField()
-    temperaturamax = models.FloatField()
+    temperaturamin = models.FloatField(blank=True, null=True)
+    temperaturamax = models.FloatField(blank=True, null=True)
     phideal = models.FloatField(blank=True, null=True)
-    phmin = models.FloatField()
-    phmax = models.FloatField()
+    phmin = models.FloatField(blank=True, null=True)
+    phmax = models.FloatField(blank=True, null=True)
     concentracionco2ideal = models.FloatField(blank=True, null=True)
-    concentracionco2min = models.FloatField()
-    concentracionco2max = models.FloatField()
+    concentracionco2min = models.FloatField(blank=True, null=True)
+    concentracionco2max = models.FloatField(blank=True, null=True)
+    humedadideal = models.FloatField(blank=True, null=True)
+    humedadmin = models.FloatField(blank=True, null=True)
+    humedadmax = models.FloatField(blank=True, null=True)
     fechacreacion = models.DateTimeField()
     habilitado = models.BooleanField()
     idusuarioauditado = models.IntegerField()
     condicionesshidas = models.NullBooleanField()
+
 
 
 class AuthGroup(models.Model):
