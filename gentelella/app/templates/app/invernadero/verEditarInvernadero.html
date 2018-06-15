@@ -79,7 +79,16 @@
                   <div class="col-md-2 col-sm-2 col-xs-6">
                     <input required="required" id="phActual" value="{{historiaInv.niveltanqueagua}}"  {% if aguaok %} style="border-color: green; background-color: white;" {% else %} style="border-color: red; background-color: white;" {% endif %} data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12"   disabled >
                   </div>
+                </div>                
+              {% if historiaInv.phagua %}
+                <div class="item form-group">
+                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="tempIdeal">pH del Agua<span class="required"></span>
+                  </label>
+                  <div class="col-md-2 col-sm-2 col-xs-6">
+                    <input required="required" id="phaguaActual" value="{{historiaInv.phagua}}"  {% if phaguaok %} style="border-color: green; background-color: white;" {% else %} style="border-color: red; background-color: white;" {% endif %} data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12"  disabled >
+                  </div>
                 </div>
+                {% endif %}
               </form>
           </div>
         </div>
@@ -186,6 +195,27 @@
                   </label>
                   <div class="col-md-2 col-sm-2 col-xs-6">
                     <input  type="number" id="energiaMax" name="energiaMax" value="{{inv.nivelenergiamax}}" class="form-control col-md-7 col-xs-12" {% if not editable %} disabled {% endif %}>
+                  </div>
+                </div>
+                <div class="item form-group">
+                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="phaguaideal">Nivel Ideal de pH del Agua 
+                  </label>
+                  <div class="col-md-2 col-sm-2 col-xs-6">
+                    <input  type="number" id="phaguaideal" name="phaguaideal" value="{{inv.phaguaideal}}" class="form-control col-md-7 col-xs-12" {% if not editable %} disabled {% endif %}>
+                  </div>
+                </div>
+                <div class="item form-group">
+                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="phaguamin">Nivel Mínimo de pH del Agua 
+                  </label>
+                  <div class="col-md-2 col-sm-2 col-xs-6">
+                    <input  type="number" id="phaguamin" name="phaguamin" value="{{inv.phaguamin}}" class="form-control col-md-7 col-xs-12" {% if not editable %} disabled {% endif %}>
+                  </div>
+                </div>
+                <div class="item form-group">
+                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="phaguamax">Nivel Máximo de pH del Agua 
+                  </label>
+                  <div class="col-md-2 col-sm-2 col-xs-6">
+                    <input  type="number" id="phaguamax" name="phaguamax" value="{{inv.phaguamax}}" class="form-control col-md-7 col-xs-12" {% if not editable %} disabled {% endif %}>
                   </div>
                 </div>
                 <div class="item form-group">
@@ -324,6 +354,22 @@
             }
         } else if (!(energiaMin <= energiaIdeal && energiaIdeal <= energiaMax)) {
             mostrarModal('Los valores para el mínimo, ideal y máximo del nivel de energía no son válidos.');
+            return;        
+        }
+        phaguaMin = document.getElementById("phaguamin").value;
+        phaguaMax = document.getElementById("phaguamax").value;
+        phaguaIdeal = document.getElementById("phaguaideal").value;
+        if (phaguaMin == '' || phaguaMax == '') {
+            mostrarModal('Debe ingresar los valores para el mínimo y el máximo del nivel de pH del agua.');
+            return;
+        }
+        if (phaguaIdeal == '') {
+            if (!(phaguaMin <= phaguaMax)) {
+                mostrarModal('Los valores para el mínimo, ideal y máximo del nivel de pH del agua no son válidos.');
+                return;        
+            }
+        } else if (!(phaguaMin <= phaguaIdeal && phaguaIdeal <= phaguaMax)) {
+            mostrarModal('Los valores para el mínimo, ideal y máximo del nivel de pH del agua no son válidos.');
             return;        
         }
        document.getElementById("nuevoInvernadero").submit();

@@ -21,6 +21,9 @@ def crearFake(request, idinvernadero = -1):
     invernaderoFake.nivelenergiamax = request.POST.get('energiaMax')
     invernaderoFake.latitud = request.POST.get('latitud')
     invernaderoFake.longitud = request.POST.get('longitud')
+    invernaderoFake.phaguaideal = request.POST.get('phaguaideal')
+    invernaderoFake.phaguamin = request.POST.get('phaguamin')
+    invernaderoFake.phaguamax = request.POST.get('phaguamax')
     return invernaderoFake
 
 def listar(request, template='app/invernadero/listaInvernaderos.html', extra_context=None):
@@ -101,6 +104,9 @@ def crear(request, template='app/invernadero/crearInvernadero.html', extra_conte
         energiaIdeal = request.POST.get('energiaIdeal')
         if (energiaIdeal == ''):
             energiaIdeal = None
+        phaguaIdeal = request.POST.get('energiaIdeal')
+        if (phaguaIdeal == ''):
+            phaguaIdeal = None
         latitud = request.POST.get('latitud')
         if (latitud == ''):
             latitud = None
@@ -123,6 +129,9 @@ def crear(request, template='app/invernadero/crearInvernadero.html', extra_conte
                 latitud = latitud,
                 longitud = longitud,
                 fechacreacion = datetime.now(),
+                phaguaideal = phaguaIdeal,
+                phaguamin = request.POST.get('phaguamin'),
+                phaguamax = request.POST.get('phaguamax'),
                 idusuarioauditado = request.session['idUsuarioActual'],
                 habilitado = True
             )
@@ -143,6 +152,8 @@ def crear(request, template='app/invernadero/crearInvernadero.html', extra_conte
         
         
 def validarRangoCondiciones(actual,min,max):
+    if actual is None:
+        return None
     actual = float(actual)
     min = float(min)
     max = float(max)
@@ -167,10 +178,12 @@ def detalle(request, idInv):
             historiaInv = historiaInv[0]
             aguaok = validarRangoCondiciones(historiaInv.niveltanqueagua,inv.niveltanqueaguamin,inv.niveltanqueaguamax)
             energiaok = validarRangoCondiciones(historiaInv.nivelenergia,inv.nivelenergiamin,inv.nivelenergiamax)
+            phaguaok = validarRangoCondiciones(historiaInv.phagua,inv.phaguamin,inv.phaguamax)
         else:
             historiaInv = None
             aguaok = None
             energiaok = None
+            phaguaok = None
         mostrarModalEditar = request.session.pop('mensajeInvernaderoEditar', False)
         mostrarModalEliminarFallo = request.session.pop('mensajeInvernaderoEliminarFallo', False)
         mostrarModalEliminarFallo2 = request.session.pop('mensajeInvernaderoEliminarFallo2', False)
@@ -187,7 +200,8 @@ def detalle(request, idInv):
             'mostrarModalEliminarFallo3': mostrarModalEliminarFallo3,
             'historiaInv': historiaInv,
             'aguaok': aguaok,
-            'energiaok': energiaok
+            'energiaok': energiaok,
+            'phaguaok': phaguaok
         }
         return render(request, template, context)
     if request.method == 'POST':
@@ -255,6 +269,9 @@ def detalle(request, idInv):
         energiaIdeal = request.POST.get('energiaIdeal')
         if (energiaIdeal == ''):
             energiaIdeal = None
+        phaguaIdeal = request.POST.get('energiaIdeal')
+        if (phaguaIdeal == ''):
+            phaguaIdeal = None
         latitud = request.POST.get('latitud')
         if (latitud == ''):
             latitud = None
@@ -275,6 +292,9 @@ def detalle(request, idInv):
                 nivelenergiamax = request.POST.get('energiaMax'),
                 latitud = latitud,
                 longitud = longitud,
+                phaguaideal = phaguaIdeal,
+                phaguamin = request.POST.get('phaguamin'),
+                phaguamax = request.POST.get('phaguamax'),
                 idusuarioauditado = request.session['idUsuarioActual']
             )
         except Exception as e:
