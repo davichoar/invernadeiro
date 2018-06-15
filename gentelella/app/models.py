@@ -38,7 +38,7 @@ class Foto(models.Model):
 class Historiainvernadero(models.Model):
     idhistoriainvernadero = models.IntegerField(primary_key=True)
     idinvernadero = models.IntegerField()
-    nivelenergia = models.FloatField(blank=True, null=True)
+    nivelenergia = models.FloatField()
     niveltanqueagua = models.FloatField(blank=True, null=True)
     comentario = models.CharField(max_length=255, blank=True, null=True)
     fecharegistro = models.DateTimeField()
@@ -86,9 +86,9 @@ class Historiasemilla(models.Model):
 class Historiazona(models.Model):
     idhistoriazona = models.IntegerField(primary_key=True)
     idzona = models.IntegerField()
-    temperatura = models.FloatField(blank=True, null=True)
-    ph = models.FloatField(blank=True, null=True)
-    concentracionco2 = models.FloatField(blank=True, null=True)
+    temperatura = models.FloatField()
+    ph = models.FloatField()
+    concentracionco2 = models.FloatField()
     fecharegistro = models.DateTimeField()
 
 
@@ -105,8 +105,8 @@ class Invernadero(models.Model):
     nivelenergiaideal = models.FloatField(blank=True, null=True)
     nivelenergiamin = models.FloatField()
     nivelenergiamax = models.FloatField()
-    latitud = models.FloatField(blank=True, null=True)
-    longitud = models.FloatField(blank=True, null=True)
+    latitud = models.FloatField()
+    longitud = models.FloatField()
     condicionesshidas = models.NullBooleanField()
     idusuarioauditado = models.IntegerField()
     habilitado = models.BooleanField()
@@ -221,9 +221,9 @@ class Usuario(models.Model):
     idusuarioauditado = models.IntegerField()
     habilitado = models.BooleanField()
 
-
     def getnombrecompleto(self):
         return self.nombres + ' ' + self.apellidopaterno
+
 
 class Usuarioxinvernadero(models.Model):
     idinvernadero = models.IntegerField(primary_key=True)
@@ -360,4 +360,3 @@ class DjangoSession(models.Model):
     class Meta:
         managed = False
         db_table = 'django_session'
-
