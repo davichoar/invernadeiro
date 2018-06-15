@@ -299,7 +299,6 @@ def eliminarPanel(request,idPanel):
     panel,created = Panelluz.objects.update_or_create(
         idpanel=idPanel, defaults={"habilitado":False,"idusuarioauditado":idUsuarioActual})
     print(created)
-    panel.save()
     return
 
 

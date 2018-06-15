@@ -7,6 +7,7 @@ from app.permissions import *
 
 CANTIDAD_CADENA_MAXIMA = 250
 CODIGO_GENERAL_COMBO = -1
+ID_TIPO_ZONAS_PLANTAS = 2
 def crear(request,
           template='app/zonainvernadero/create.html',
           extra_context=None):
@@ -37,7 +38,7 @@ def crear(request,
 
             mensajeError = None
             try:
-               mensajeError = grabarData(request,None)
+                mensajeError = grabarData(request,None)
             except Exception as e:
                 mensajeError = "No se puede crear la zona en este momento"
                 print(e)
@@ -125,6 +126,11 @@ def listar(request,
     return render(request, template, context)
 
 def validarRangoCondiciones(actual,min,max):
+    if min == None:
+        return True
+    if max == None:
+        return True
+
     actual = float(actual)
     min = float(min)
     max = float(max)
@@ -144,24 +150,66 @@ def detalle(request,idZona):
     zonaConModulo = hayModulosAsociadasZona(idZona)
     zonaConPanel = hayPanelesAsociadasZona(idZona)
     try:
-        historiaZona = Historiazona.objects.filter(idzona=idZona).order_by('-fecharegistro')[0]
+        historiaZonaTemperatura = Historiazona.objects.filter(idzona=idZona,temperatura__isnull=False).order_by('-fecharegistro')[0]
     except Exception as e:
-        historiaZona = None
+        print("No hay historia zona para el parametro de temperatura")
+        historiaZonaTemperatura = None
+        print(e)
+    try:
+        historiaZonaPh = Historiazona.objects.filter(idzona=idZona, ph__isnull=False).order_by('-fecharegistro')[0]
+    except Exception as e:
+        print("No hay historia zona para el parametro de ph")
+        historiaZonaPh = None
         print(e)
 
-    if historiaZona:
-        temperaturaok = validarRangoCondiciones(historiaZona.temperatura, zona.temperaturamin, zona.temperaturamax)
-        phok = validarRangoCondiciones(historiaZona.ph, zona.phmin, zona.phmax)
-        co2ok = validarRangoCondiciones(historiaZona.concentracionco2, zona.concentracionco2min,zona.concentracionco2max)
+    try:
+        historiaZonaCo2 = Historiazona.objects.filter(idzona=idZona, concentracionco2__isnull=False).order_by('-fecharegistro')[0]
+    except Exception as e:
+        print("No hay historia zona para el parametro de co2")
+        historiaZonaCo2 = None
+        print(e)
+
+    try:
+        historiaZonaHumedad = Historiazona.objects.filter(idzona=idZona, humedad__isnull=False).order_by('-fecharegistro')[0]
+    except Exception as e:
+        print("No hay historia zona para el parametro de humedad")
+        historiaZonaHumedad = None
+        print(e)
+
+
+    hayHistoria = False
+    contadorHistoria = 0
+    if historiaZonaTemperatura:
+        temperaturaok = validarRangoCondiciones(historiaZonaTemperatura.temperatura, zona.temperaturamin, zona.temperaturamax)
+        contadorHistoria += 1
     else:
         temperaturaok = None
+
+    if historiaZonaPh:
+        phok = validarRangoCondiciones(historiaZonaPh.ph, zona.phmin, zona.phmax)
+        contadorHistoria += 1
+    else:
         phok = None
+
+    if historiaZonaCo2:
+        co2ok = validarRangoCondiciones(historiaZonaCo2.concentracionco2, zona.concentracionco2min,zona.concentracionco2max)
+        contadorHistoria += 1
+    else:
         co2ok = None
 
-    context = {"zonaConPlanta":zonaConPlanta,"zonaConModulo":zonaConModulo,"zonaConPanel":zonaConPanel,"historiaZona": historiaZona, "listaTipoZonas": listaTipoZonas, "zona": zona,
+    if historiaZonaHumedad:
+        humedadok = validarRangoCondiciones(historiaZonaHumedad.humedad, zona.humedadmin, zona.humedadmax)
+        contadorHistoria += 1
+    else:
+        humedadok = None
+
+    if contadorHistoria > 0:
+        hayHistoria = True
+
+    context = {"zonaConPlanta":zonaConPlanta,"zonaConModulo":zonaConModulo,"zonaConPanel":zonaConPanel,"historiaZonaTemperatura": historiaZonaTemperatura,"historiaZonaPh":historiaZonaPh, "historiaZonaCo2":historiaZonaCo2, "historiaZonaHumedad":historiaZonaHumedad ,"listaTipoZonas": listaTipoZonas, "zona": zona,
                'nombreUsuario': request.session.get('nomreUsuario'),
                'nombreInvernadero': request.session.get('nombreInvernadero'), "editable": False,
-               "temperaturaok": temperaturaok, "phok": phok, "co2ok": co2ok}
+               "temperaturaok": temperaturaok, "phok": phok, "co2ok": co2ok, "humedadok":humedadok,"hayHistoria":hayHistoria}
 
     if request.method == 'GET':
         if not 'idUsuarioActual' in request.session:
@@ -220,20 +268,48 @@ def detalle(request,idZona):
                 context['mensajeError'] = mensajeError
                 return render(request, template, context)
             else:
-                if historiaZona:
-                    temperaturaok = validarRangoCondiciones(historiaZona.temperatura, zona.temperaturamin,zona.temperaturamax)
-                    phok = validarRangoCondiciones(historiaZona.ph, zona.phmin, zona.phmax)
-                    co2ok = validarRangoCondiciones(historiaZona.concentracionco2, zona.concentracionco2min,zona.concentracionco2max)
+                hayHistoria = True
+                contadorHistoria = 0
+                if historiaZonaTemperatura:
+                    temperaturaok = validarRangoCondiciones(historiaZonaTemperatura.temperatura, zona.temperaturamin,zona.temperaturamax)
+                    contadorHistoria += 1
                 else:
                     temperaturaok = None
+                    hayHistoria = False
+
+                if historiaZonaPh:
+                    phok = validarRangoCondiciones(historiaZonaPh.ph, zona.phmin, zona.phmax)
+                    contadorHistoria += 1
+                else:
                     phok = None
+                    hayHistoria = False
+
+                if historiaZonaCo2:
+                    co2ok = validarRangoCondiciones(historiaZonaCo2.concentracionco2, zona.concentracionco2min,zona.concentracionco2max)
+                    contadorHistoria += 1
+                else:
                     co2ok = None
+
+                if historiaZonaHumedad:
+                    humedadok = validarRangoCondiciones(historiaZonaHumedad.humedad, zona.humedadmin, zona.humedadmax)
+                    contadorHistoria += 1
+                else:
+                    humedadok = None
+
+                if contadorHistoria == 4:
+                    hayHistoria = True
 
                 context['editable'] = False
                 context['mostrarModalEditar'] = True
+                context['historiaZonaTemperatura'] = historiaZonaTemperatura
+                context['historiaZonaPh'] = historiaZonaPh
+                context['historiaZonaCo2'] = historiaZonaCo2
+                context['historiaZonaHumedad'] = historiaZonaHumedad
                 context['temperaturaok'] = temperaturaok
                 context['phok'] = phok
                 context['co2ok'] = co2ok
+                context['humedadok'] = humedadok
+                context['hayHistoria'] = hayHistoria
 
                 return render(request, template, context)
 
@@ -322,7 +398,6 @@ def eliminarZona(request,idZona):
     zona,created = Zona.objects.update_or_create(
         idzona=idZona, defaults={"habilitado":False,"idusuarioauditado":idUsuarioActual})
     print(created)
-    zona.save()
     return
 
 
@@ -345,6 +420,10 @@ def obtenerZonaRequest(request):
     co2Min = request.POST.get('co2Min')
     co2Max = request.POST.get('co2Max')
 
+    humedadIdeal = request.POST.get('humedadIdeal')
+    humedadMin = request.POST.get('humedadMin')
+    humedadMax = request.POST.get('humedadMax')
+
     zonaDataLlenada.nombre = nombreObtenido
     zonaDataLlenada.codigozonajson = codigoZonaObtenido
     if tipoZonaEscogido != None:
@@ -359,6 +438,9 @@ def obtenerZonaRequest(request):
     zonaDataLlenada.concentracionco2ideal = co2Ideal
     zonaDataLlenada.concentracionco2min = co2Min
     zonaDataLlenada.concentracionco2max = co2Max
+    zonaDataLlenada.humedadideal = humedadIdeal
+    zonaDataLlenada.humedadmin = humedadMin
+    zonaDataLlenada.humedadmax = humedadMax
 
     return zonaDataLlenada
 
@@ -369,16 +451,55 @@ def grabarData(request,idZona):
     codigoZonaObtenido = request.POST.get('codigoZona')
     tipoZonaEscogido = request.POST.get("tipoZona")
     area = request.POST.get('area')
-    tempIdeal = request.POST.get('tempIdeal')
-    tempMin = request.POST.get('tempMin')
-    tempMax = request.POST.get('tempMax')
-    phIdeal =  request.POST.get('phIdeal')
-    phMin = request.POST.get('phMin')
-    phMax = request.POST.get('phMax')
-    co2Ideal = request.POST.get('co2Ideal')
-    co2Min = request.POST.get('co2Min')
-    co2Max = request.POST.get('co2Max')
 
+
+    tempIdeal = request.POST.get('tempIdeal')
+    if tempIdeal == "":
+        tempIdeal = None
+
+    tempMin = request.POST.get('tempMin')
+    if tempMin == "":
+        tempMin = None
+
+    tempMax = request.POST.get('tempMax')
+    if tempMax == "":
+        tempMax = None
+
+    phIdeal =  request.POST.get('phIdeal')
+    if phIdeal == "":
+        phIdeal = None
+
+    phMin = request.POST.get('phMin')
+    if phMin == "":
+        phMin = None
+
+    phMax = request.POST.get('phMax')
+    if phMax == "":
+        phMax = None
+
+    co2Ideal = request.POST.get('co2Ideal')
+    if co2Ideal == "":
+        co2Ideal = None
+
+    co2Min = request.POST.get('co2Min')
+    if co2Min == "":
+        co2Min = None
+
+    co2Max = request.POST.get('co2Max')
+    if co2Max == "":
+        co2Max = None
+
+    humedadIdeal = request.POST.get('humedadIdeal')
+    if humedadIdeal == "":
+        humedadIdeal = None
+
+    humedadMin = request.POST.get('humedadMin')
+    if humedadMin == "":
+        humedadMin = None
+
+    humedadMax = request.POST.get('humedadMax')
+    if humedadMax == "":
+        humedadMax = None
 
     if nombreObtenido:
         nombre = str(nombreObtenido)
@@ -412,46 +533,53 @@ def grabarData(request,idZona):
     if area == "":
         return "Falta ingresar el área de la zona."
 
-    #
-    # if tempIdeal == "":
-    #     return "Falta ingresar la temperatura ideal para la zona."
 
+    if tipoZona == ID_TIPO_ZONAS_PLANTAS:
 
-    if tempMin == "":
-        return "Falta ingresar la temperatura mínima para la zona."
+        #
+        # if tempIdeal == "":
+        #     return "Falta ingresar la temperatura ideal para la zona."
 
+        if tempMin == None:
+            return "Falta ingresar la temperatura mínima para la zona."
 
-    if tempMax == "":
-        return "Falta ingresar la temperatura máxima para la zona."
+        if tempMax == None:
+            return "Falta ingresar la temperatura máxima para la zona."
 
-    #
-    # if phIdeal == "":
-    #     return "Falta ingresar el PH ideal"
+        #
+        # if phIdeal == "":
+        #     return "Falta ingresar el PH ideal"
 
-    if phMin == "":
-        return "Falta ingresar el PH mínimo"
+        if phMin == None:
+            return "Falta ingresar el PH mínimo"
 
-    if phMax == "":
-        return "Falta ingresar el PH máximo"
-    #
-    # if co2Ideal == "":
-    #     return "Falta ingresar la concentración de CO2 ideal para la zona."
+        if phMax == None:
+            return "Falta ingresar el PH máximo"
+        #
+        # if co2Ideal == "":
+        #     return "Falta ingresar la concentración de CO2 ideal para la zona."
 
+        if co2Min == None:
+            return "Falta ingresar la concentración de CO2 mínima para la zona."
 
-    if co2Min == "":
-        return "Falta ingresar la concentración de CO2 mínima para la zona."
+        if co2Max == None:
+            return "Falta ingresar la concentración de CO2 máxima para la zona."
 
+        if humedadMin == None:
+            return "Falta ingresar la humedad mínima para la zona."
 
-    if co2Max == "":
-        return "Falta ingresar la concentración de CO2 máxima para la zona."
+        if humedadMax == None:
+            return "Falta ingresar la humedad máxima para la zona."
 
+    if tempMin is not None and tempMax is not None:
+        tempMin = float(tempMin)
+        tempMax = float(tempMax)
+        if tempMin > tempMax:
+            return "La temperatura mínima debe ser menor a la temperatura máxima."
 
-    tempMin = float(tempMin)
-    tempMax = float(tempMax)
-    if tempMin > tempMax:
-        return "La temperatura mínima debe ser menor a la temperatura máxima."
-
-    if tempIdeal != "":
+    if tempIdeal is not None:
+        if tempMin is None or tempMax is None:
+            return "Para ingresar una temperatura ideal debe ingresar un valor mínimo y máximo"
         tempIdeal = float(tempIdeal)
         if (tempIdeal > tempMin) and (tempIdeal < tempMax):
             print("Temperatura Ideal Valida")
@@ -460,13 +588,15 @@ def grabarData(request,idZona):
     else:
         tempIdeal = None
 
+    if phMin is not None and phMax is not None:
+        phMin = float(phMin)
+        phMax = float(phMax)
+        if phMin > phMax:
+            return "El pH mínimo debe ser menor al pH máximo."
 
-    phMin = float(phMin)
-    phMax = float(phMax)
-    if phMin > phMax:
-        return "El pH mínimo debe ser menor al pH máximo."
-
-    if phIdeal != "":
+    if phIdeal is not None:
+        if phMin is None or phMax is None:
+            return "Para ingresar una ph ideal debe ingresar un valor mínimo y máximo"
         phIdeal = float(phIdeal)
         if (phIdeal > phMin) and (phIdeal < phMax):
             print("pH Valido")
@@ -475,13 +605,16 @@ def grabarData(request,idZona):
     else:
         phIdeal = None
 
-    co2Min = float(co2Min)
-    co2Max = float(co2Max)
-    if co2Min > co2Max:
-        return "La concentración de CO2 mínima debe ser mayor a la concentración de CO2 máxima."
+    if co2Min is not None and co2Max is not None:
+        co2Min = float(co2Min)
+        co2Max = float(co2Max)
+        if co2Min > co2Max:
+            return "La concentración de CO2 mínima debe ser mayor a la concentración de CO2 máxima."
 
 
-    if co2Ideal != "":
+    if co2Ideal is not None:
+        if co2Min is None or co2Max is None:
+            return "Para ingresar una concentración de CO2 ideal debe ingresar un valor mínimo y máximo"
         co2Ideal = float(co2Ideal)
         if (co2Ideal > co2Min) and (co2Ideal < co2Max):
             print("CO2 Valido")
@@ -489,6 +622,23 @@ def grabarData(request,idZona):
             return "El CO2 ideal debe ser un valor entre el mínimo y el máximo."
     else:
         co2Ideal = None
+
+    if humedadMin is not None and humedadMax is not None:
+        humedadMin = float(humedadMin)
+        humedadMax = float(humedadMax)
+        if humedadMin > humedadMax:
+            return "La humedad mínima debe ser mayor a la humedad máxima."
+
+    if humedadIdeal is not None:
+        if humedadMin is None or humedadMax is None:
+            return "Para ingresar una humedad ideal debe ingresar un valor mínimo y máximo"
+        humedadIdeal = float(humedadIdeal)
+        if (humedadIdeal > humedadMin) and (humedadIdeal < humedadMax):
+            print("Humedad Válida")
+        else:
+            return "La humedad ideal debe ser un valor entre el mínimo y el máximo."
+    else:
+        humedadIdeal = None
 
 
 
@@ -503,18 +653,18 @@ def grabarData(request,idZona):
         return "Ocurrió un error al tratar de crear la zona. Intente de nuevo en un momento."
     idUsuarioActual = int(idUsuarioObtenido)
 
-    print('Nombre: ' + str(nombre))
-    print('Codigo Zona: ' + str(codigoZona))
-    print('Tipo Zona:' + str(tipoZona))
-    print('area: ' + str(area))
-    print('tempIdeal: ' + str(tempIdeal))
-    print('tempMin: ' + str(tempMin))
-    print('tempMax: ' + str(tempMax))
-    print('co2Ideal: ' + str(co2Ideal))
-    print('co2Min: ' + str(co2Min))
-    print('co2Max: ' + str(co2Max))
-    print('Id Invernadero: ' + str(idInvernadero))
-    print('Id Usuario Actual: ' + str(idUsuarioActual))
+    # print('Nombre: ' + str(nombre))
+    # print('Codigo Zona: ' + str(codigoZona))
+    # print('Tipo Zona:' + str(tipoZona))
+    # print('area: ' + str(area))
+    # print('tempIdeal: ' + str(tempIdeal))
+    # print('tempMin: ' + str(tempMin))
+    # print('tempMax: ' + str(tempMax))
+    # print('co2Ideal: ' + str(co2Ideal))
+    # print('co2Min: ' + str(co2Min))
+    # print('co2Max: ' + str(co2Max))
+    # print('Id Invernadero: ' + str(idInvernadero))
+    # print('Id Usuario Actual: ' + str(idUsuarioActual))
 
     zonaObtenidaBd = None
     if idZona is None:
@@ -547,9 +697,12 @@ def grabarData(request,idZona):
             "concentracionco2ideal":co2Ideal,
             "concentracionco2min":co2Min,
             "concentracionco2max":co2Max,
+            "humedadideal":humedadIdeal,
+            "humedadmin":humedadMin,
+            "humedadmax":humedadMax,
             "fechacreacion" :datetime.now(),
             "habilitado":True,
-            "idusuarioauditado":idUsuarioActual}
+            "idusuarioauditado": idUsuarioActual}
         )
 
 
