@@ -346,7 +346,6 @@ def eliminarModulo(request,idModulo):
     modulo,created = Modulosemilla.objects.update_or_create(
         idmodulo=idModulo, defaults={"habilitado":False,"idusuarioauditado":idUsuarioActual})
     print(created)
-    modulo.save()
     return
 
 

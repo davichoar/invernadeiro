@@ -344,7 +344,6 @@ def eliminarPlanta(request,idPlanta):
     planta,created = Planta.objects.update_or_create(
         idplanta=idPlanta, defaults={"habilitado":False,"idusuarioauditado":idUsuarioActual})
     print(created)
-    planta.save()
     return
 
 

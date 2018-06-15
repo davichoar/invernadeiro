@@ -11,7 +11,6 @@ class Auditoria(models.Model):
     dataantigua = models.TextField()
     datanueva = models.TextField()
 
-
 class Cronograma(models.Model):
     idcronograma = models.IntegerField(primary_key=True)
     idmodulo = models.IntegerField()
@@ -35,11 +34,13 @@ class Foto(models.Model):
     fecharegistro = models.DateTimeField()
 
 
+
 class Historiainvernadero(models.Model):
     idhistoriainvernadero = models.IntegerField(primary_key=True)
     idinvernadero = models.IntegerField()
     nivelenergia = models.FloatField(blank=True, null=True)
-    niveltanqueagua = models.FloatField(blank=True, null=True)
+    niveltanqueagua = models.FloatField()
+    phagua = models.FloatField(blank=True, null=True)
     comentario = models.CharField(max_length=255, blank=True, null=True)
     fecharegistro = models.DateTimeField()
 
@@ -89,6 +90,7 @@ class Historiazona(models.Model):
     temperatura = models.FloatField(blank=True, null=True)
     ph = models.FloatField(blank=True, null=True)
     concentracionco2 = models.FloatField(blank=True, null=True)
+    humedad = models.FloatField(blank=True, null=True)
     fecharegistro = models.DateTimeField()
 
 
@@ -105,6 +107,9 @@ class Invernadero(models.Model):
     nivelenergiaideal = models.FloatField(blank=True, null=True)
     nivelenergiamin = models.FloatField()
     nivelenergiamax = models.FloatField()
+    phaguaideal = models.FloatField(blank=True, null=True)
+    phaguamin = models.FloatField(blank=True, null=True)
+    phaguamax = models.FloatField(blank=True, null=True)
     latitud = models.FloatField(blank=True, null=True)
     longitud = models.FloatField(blank=True, null=True)
     condicionesshidas = models.NullBooleanField()
@@ -221,9 +226,9 @@ class Usuario(models.Model):
     idusuarioauditado = models.IntegerField()
     habilitado = models.BooleanField()
 
-
     def getnombrecompleto(self):
         return self.nombres + ' ' + self.apellidopaterno
+
 
 class Usuarioxinvernadero(models.Model):
     idinvernadero = models.IntegerField(primary_key=True)
@@ -238,18 +243,22 @@ class Zona(models.Model):
     nombre = models.CharField(max_length=255)
     area = models.FloatField(blank=True, null=True)
     temperaturaideal = models.FloatField(blank=True, null=True)
-    temperaturamin = models.FloatField()
-    temperaturamax = models.FloatField()
+    temperaturamin = models.FloatField(blank=True, null=True)
+    temperaturamax = models.FloatField(blank=True, null=True)
     phideal = models.FloatField(blank=True, null=True)
-    phmin = models.FloatField()
-    phmax = models.FloatField()
+    phmin = models.FloatField(blank=True, null=True)
+    phmax = models.FloatField(blank=True, null=True)
     concentracionco2ideal = models.FloatField(blank=True, null=True)
-    concentracionco2min = models.FloatField()
-    concentracionco2max = models.FloatField()
+    concentracionco2min = models.FloatField(blank=True, null=True)
+    concentracionco2max = models.FloatField(blank=True, null=True)
+    humedadideal = models.FloatField(blank=True, null=True)
+    humedadmin = models.FloatField(blank=True, null=True)
+    humedadmax = models.FloatField(blank=True, null=True)
     fechacreacion = models.DateTimeField()
     habilitado = models.BooleanField()
     idusuarioauditado = models.IntegerField()
     condicionesshidas = models.NullBooleanField()
+
 
 
 class AuthGroup(models.Model):
@@ -360,4 +369,3 @@ class DjangoSession(models.Model):
     class Meta:
         managed = False
         db_table = 'django_session'
-

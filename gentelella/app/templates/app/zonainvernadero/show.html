@@ -50,11 +50,11 @@
       <div class="clearfix"></div>
 
       {% if not editable %}
-        {% if historiaZona  %}
+        {% if hayHistoria  %}
         <div class="x_panel">
 
           <div class="x_title">
-            <h2>Condiciones Actuales (Registradas el {{historiaZona.fecharegistro|date:"d/m/Y H:m:s"}})<small></small></h2>
+            <h2>Condiciones Actuales <small></small></h2>
                 <ul class="nav navbar-right panel_toolbox" >
                   <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
                   </li>
@@ -65,33 +65,89 @@
 
           <div class="x_content">
               <form class="form-horizontal form-label-left">
+                {% if historiaZonaTemperatura %}
                 <div class="item form-group">
                   <label class="control-label col-md-3 col-sm-3 col-xs-12" for="tempIdeal">Temperatura Actual<span class="required"></span>
                   </label>
                   <div class="col-md-2 col-sm-2 col-xs-6">
-                    <input required="required" id="temperaturaActual" value="{{historiaZona.temperatura}}"  {% if temperaturaok %} style="border-color: green; background-color: white;" {% else %} style="border-color: red; background-color: white;" {% endif %} data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12"  disabled >
+                    <input required="required" id="temperaturaActual" value="{{historiaZonaTemperatura.temperatura}}"  {% if temperaturaok %} style="border-color: green; background-color: white;" {% else %} style="border-color: red; background-color: white;" {% endif %} data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12"  disabled >
+                  </div>
+                  <div class="col-md-6 col-sm-6 col-xs-6">
+                    <label>
+                      Registrado el {{historiaZonaTemperatura.fecharegistro|date:"d/m/Y H:m:s"}}
+                    </label>
                   </div>
                 </div>
+                {% endif %}
 
-                <div class="item form-group">
-                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="tempIdeal">PH Actual<span class="required"></span>
-                  </label>
-                  <div class="col-md-2 col-sm-2 col-xs-6">
-                    <input required="required" id="phActual" value="{{historiaZona.ph}}"  {% if phok %} style="border-color: green; background-color: white;" {% else %} style="border-color: red; background-color: white;" {% endif %} data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12"   disabled >
+                {% if historiaZonaPh %}
+                  <div class="item form-group">
+                    <label class="control-label col-md-3 col-sm-3 col-xs-12" for="tempIdeal">PH Actual<span class="required"></span>
+                    </label>
+                    <div class="col-md-2 col-sm-2 col-xs-6">
+                      <input required="required" id="phActual" value="{{historiaZonaPh.ph}}"  {% if phok %} style="border-color: green; background-color: white;" {% else %} style="border-color: red; background-color: white;" {% endif %} data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12"   disabled >
+                    </div>
+                    <div class="col-md-6 col-sm-6 col-xs-6">
+                      <label>
+                        Registrado el {{historiaZonaPh.fecharegistro|date:"d/m/Y H:m:s"}}
+                      </label>
+                    </div>
                   </div>
-                </div>
+                {% endif %}
+
+
+                {% if historiaZonaCo2 %}
 
                 <div class="item form-group">
                   <label class="control-label col-md-3 col-sm-3 col-xs-12" for="tempIdeal">Concentración de CO2 Actual<span class="required"></span>
                   </label>
                   <div class="col-md-2 col-sm-2 col-xs-6">
-                    <input required="required" value="{{historiaZona.concentracionco2}}" {% if co2ok %} style="border-color: green; background-color: white;" {% else %} style="border-color: red; background-color: white;" {% endif %} data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12"  disabled >
+                    <input required="required" value="{{historiaZonaCo2.concentracionco2}}" {% if co2ok %} style="border-color: green; background-color: white;" {% else %} style="border-color: red; background-color: white;" {% endif %} data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12"  disabled >
+                  </div>
+                  <div class="col-md-6 col-sm-6 col-xs-6">
+                    <label>
+                      Registrado el {{historiaZonaCo2.fecharegistro|date:"d/m/Y H:m:s"}}
+                    </label>
                   </div>
                 </div>
+                {% endif %}
+
+
+              {% if historiaZonaHumedad %}
+
+                <div class="item form-group">
+                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="tempIdeal">Humedad Actual<span class="required"></span>
+                  </label>
+                  <div class="col-md-2 col-sm-2 col-xs-6">
+                    <input required="required" value="{{historiaZonaCo2.concentracionco2}}" {% if humedadok %} style="border-color: green; background-color: white;" {% else %} style="border-color: red; background-color: white;" {% endif %} data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12"  disabled >
+                  </div>
+                  <div class="col-md-6 col-sm-6 col-xs-6">
+                    <label>
+                      Registrado el {{historiaZonaHumedad.fecharegistro|date:"d/m/Y H:m:s"}}
+                    </label>
+                  </div>
+                </div>
+              {% endif %}
+
+
               </form>
           </div>
         </div>
+        {% else %}
+          <div class="x_panel">
 
+          <div class="x_title">
+            <h2>Condiciones Actuales<small></small></h2>
+                <ul class="nav navbar-right panel_toolbox" >
+                  <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                  </li>
+                </ul>
+            <div class="clearfix"></div>
+          </div>
+          <div class="x_content">
+            <center><h2>No hay información que mostrar.</h2></center>
+          </div>
+          </div>
         {% endif %}
       {% if zonaConPanel %}
         <div class="x_panel">
@@ -244,6 +300,30 @@
                     <input type="number" id="co2Max" name="co2Max" required="required" value="{{zona.concentracionco2max}}" data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12" {% if not editable %} disabled {% endif %}>
                   </div>
                 </div>
+
+
+                <div class="item form-group">
+                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="co2Ideal">Humedad Ideal (%)<span class="required"></span>
+                  </label>
+                  <div class="col-md-2 col-sm-2 col-xs-6">
+                    <input type="number" id="humedadIdeal" name="humedadIdeal" value="{{zona.humedadideal}}" required="required" data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12" {% if not editable %} disabled {% endif %}>
+                  </div>
+                </div>
+                <div class="item form-group">
+                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="co2Min">Humedad Mínima (%)<span class="required">*</span>
+                  </label>
+                  <div class="col-md-2 col-sm-2 col-xs-6">
+                    <input type="number" id="humedadMin" name="humedadMin" required="required" value="{{zona.humedadmin}}" data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12" {% if not editable %} disabled {% endif %}>
+                  </div>
+                </div>
+                <div class="item form-group">
+                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="co2Max">Humedad Máxima (%)<span class="required">*</span>
+                  </label>
+                  <div class="col-md-2 col-sm-2 col-xs-6">
+                    <input type="number" id="humedadMax" name="humedadMax" required="required" value="{{zona.humedadmax}}" data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12" {% if not editable %} disabled {% endif %}>
+                  </div>
+                </div>
+
 
 
                 <div class="ln_solid"></div>

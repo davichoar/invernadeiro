@@ -67,7 +67,7 @@
               <form class="form-horizontal form-label-left">
 
                 <div class="item form-group">
-                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="tempIdeal">Humedad Actual<span class="required"></span>
+                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="humedadActual">Humedad Actual<span class="required"></span>
                   </label>
                   <div class="col-md-2 col-sm-2 col-xs-6">
                     <input required="required" id="humedadActual" value="{{historiaPlanta.humedad}}"  {% if humedadok %} style="border-color: green; background-color: white;" {% else %} style="border-color: red; background-color: white;" {% endif %} data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12"   disabled >
@@ -76,6 +76,20 @@
 
 
               </form>
+          </div>
+        </div>
+        {% else %}
+        <div class="x_panel">
+          <div class="x_title">
+            <h2>Condiciones Actuales<small></small></h2>
+                <ul class="nav navbar-right panel_toolbox" >
+                  <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                  </li>
+                </ul>
+            <div class="clearfix"></div>
+          </div>
+          <div class="x_content">
+              <center><h2>No hay información que mostrar.</h2></center>
           </div>
         </div>
         {% endif %}
