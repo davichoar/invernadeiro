@@ -145,6 +145,7 @@ urlpatterns = [
 ## ESTADISTICAS
 
     url(r'^estadisticas/$', views.estadisticas.stats_all, name='estadisticas'),
+    url(r'^estadisticas/detalle/$', views.estadisticas.expanded_stats, name='estadisticas-detalle'),
 
 ## API PARA CONTENIDO DINAMICO
     url(r'^api/', include(api.apipatterns))

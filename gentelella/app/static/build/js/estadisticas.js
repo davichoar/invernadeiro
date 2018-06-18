@@ -3,14 +3,23 @@ var currentZone
 var zoneTempLineChart, zonePHLineChart, zoneCO2LineChart,moduleTempLineChart, moduleGroundHumidityLineChart,
  moduleEnvHumidityLineChart, moduleWaterBarChart,moduleCO2BarChart,plantEnvHumidityLineChart
 
+var type_selected_obj
+var id_selected_obj
+
 $(document).ready(function (){
   let id_selected_zone = $('#zona').val()
+  type_selected_obj = 'zona'
+  id_selected_obj = id_selected_zone
   setCharts()
   checkStatsZone(id_selected_zone)
 })
 
 function changeZone(){
   let id_selected_zone = $('#zona').val()
+  type_selected_obj = 'zona'
+  id_selected_obj = id_selected_zone
+  $('#moduleCharts').hide()
+  $('#plantCharts').hide()
   checkStatsZone(id_selected_zone)
 }
 
@@ -20,18 +29,22 @@ function changeModule(){
     changeZone()
   } else {
     $('#zoneCharts').hide()
+    $('#plantCharts').hide()
+    type_selected_obj = 'modulo'
+    id_selected_obj = id_selected_module
     checkStatsModule(id_selected_module)
   }
 }
 
 function changePlant(){
-  console.log(1)
   let id_selected_plant = $('#comboPlant').val()
   if (id_selected_plant == 'all'){
     changeZone()
   } else {
-    console.log(2)
     $('#zoneCharts').hide()
+    $('#moduleCharts').hide()
+    type_selected_obj = 'planta'
+    id_selected_obj = id_selected_plant
     checkStatsPlants(id_selected_plant)
   }
 }

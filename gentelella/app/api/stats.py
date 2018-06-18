@@ -18,7 +18,7 @@ def _getSeedsModulesStats(id_zone):
         module['luz'] = []
 
         for item in stats_arr:
-            module['fecharegistro'].append(item['fecharegistro'])
+            module['fecharegistro'].append(item['fecharegistro'].strftime('%d/%m %H:%M'))
             module['temperatura'].append(item['temperatura'])
             module['humedadtierra'].append(item['humedadtierra'])
             module['humedadambiente'].append(item['humedadambiente'])
@@ -42,7 +42,7 @@ def _getPlantsStats(id_zone):
         plant['humedad'] = []
 
         for item in stats_arr:            
-            plant['fecharegistro'].append(item['fecharegistro'])
+            plant['fecharegistro'].append(item['fecharegistro'].strftime('%d/%m %H:%M'))
             plant['humedad'].append(item['humedad'])
     
     return plants_arr
@@ -65,7 +65,7 @@ def zone_stats(request):
     stats_arr = list(stats)
 
     for item in stats_arr:
-        zone_dict['fecharegistro'].append(item['fecharegistro'])
+        zone_dict['fecharegistro'].append(item['fecharegistro'].strftime('%d/%m %H:%M'))
         zone_dict['temperatura'].append(item['temperatura'])
         zone_dict['ph'].append(item['ph'])
         zone_dict['concentracionco2'].append(item['concentracionco2'])
