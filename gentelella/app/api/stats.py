@@ -2,7 +2,7 @@ from app.models import Zona, Historiazona, Planta, Historiaplanta, Modulosemilla
 from django.http import JsonResponse
 
 def _getSeedsModulesStats(id_zone):
-    modules = Modulosemilla.objects.all().filter(idzona=id_zone).values()
+    modules = Modulosemilla.objects.filter(idzona=id_zone, habilitado = True).values()
     modules_arr = list(modules)
 
     for module in modules_arr:
@@ -29,7 +29,7 @@ def _getSeedsModulesStats(id_zone):
     return modules_arr
 
 def _getPlantsStats(id_zone):
-    plants = Planta.objects.all().filter(idzona=id_zone).values()
+    plants = Planta.objects.filter(idzona=id_zone, habilitado = True).values()
     plants_arr = list(plants)
 
     for plant in plants_arr:
