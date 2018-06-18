@@ -61,12 +61,13 @@ if mailFlag:
 		 
 		body = msgBody
 		msg.attach(MIMEText(body, "plain"))
-		 
-		server = smtplib.SMTP("smtp.gmail.com", 587)
-		server.starttls()
-		server.login(fromaddr, "invernadeiro2018")
-		text = msg.as_string()
-		try:
+		
+		try: 
+			server = smtplib.SMTP("smtp.gmail.com", 587)
+			server.starttls()
+			server.login(fromaddr, "invernadeiro2018")
+			text = msg.as_string()
+			
 			server.sendmail(fromaddr, toaddr, text)
 		except Exception as e:
 			print(e)
@@ -136,12 +137,13 @@ if mailFlag:
 		 
 		body = msgBody
 		msg.attach(MIMEText(body, "plain"))
-		 
-		server = smtplib.SMTP("smtp.gmail.com", 587)
-		server.starttls()
-		server.login(fromaddr, "invernadeiro2018")
-		text = msg.as_string()
-		try:
+		
+		try: 
+			server = smtplib.SMTP("smtp.gmail.com", 587)
+			server.starttls()
+			server.login(fromaddr, "invernadeiro2018")
+			text = msg.as_string()
+			
 			server.sendmail(fromaddr, toaddr, text)
 		except Exception as e:
 			print(e)
@@ -206,11 +208,12 @@ if mailFlag:
 		body = msgBody
 		msg.attach(MIMEText(body, "plain"))
 		 
-		server = smtplib.SMTP("smtp.gmail.com", 587)
-		server.starttls()
-		server.login(fromaddr, "invernadeiro2018")
-		text = msg.as_string()
-		try:
+		try: 
+			server = smtplib.SMTP("smtp.gmail.com", 587)
+			server.starttls()
+			server.login(fromaddr, "invernadeiro2018")
+			text = msg.as_string()
+		
 			server.sendmail(fromaddr, toaddr, text)
 			break
 		except Exception as e:
@@ -279,11 +282,12 @@ if mailFlag:
 		body = msgBody
 		msg.attach(MIMEText(body, "plain"))
 		 
-		server = smtplib.SMTP("smtp.gmail.com", 587)
-		server.starttls()
-		server.login(fromaddr, "invernadeiro2018")
-		text = msg.as_string()
 		try:
+			server = smtplib.SMTP("smtp.gmail.com", 587)
+			server.starttls()
+			server.login(fromaddr, "invernadeiro2018")
+			text = msg.as_string()
+			
 			server.sendmail(fromaddr, toaddr, text)
 			break
 		except Exception as e:
