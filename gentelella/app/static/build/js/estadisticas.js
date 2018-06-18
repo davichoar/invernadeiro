@@ -228,7 +228,7 @@ function updateChildSelects(id_zone){
       $('#comboPlant')
         .append($('<option>', {
           value: plant['idplanta'],
-          text: plant['nombrecomun']
+          text: plant['nombrecomun'] + " #" + plant['codigoplantajson']
         }))
     }
   }
