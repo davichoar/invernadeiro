@@ -30,7 +30,7 @@
                   <h4>Consumo de Energía</h4>
                   <div class="form-group">
                     <label for="sel1">Periodo:</label>
-                    <select class="form-control" id="sel1" onchange="updateLineChart()">
+                    <select class="form-control col-xs-6" id="sel1" onchange="updateLineChart()">
                       <option value=5>Ultimas 5 mediciones</option>
                       <option value=10>Ultimas 10 mediciones</option>
                     </select>
@@ -102,7 +102,9 @@
                   <canvas id='zoneTempLineChart'></canvas>
                 </div>
                 <div class="col-xl-8 col-lg-10 col-md-12 col-sm-12 col-xs-12">
-                  <button type="button" class="btn btn-primary" value="temp" onclick="checkDetailedStats(this.value)">Ver todos los registros</a></button>
+                  <center>
+                  <button type="button" class="btn btn-primary" value="temp" onclick="checkDetailedStats(this.value)">Ver todos los registros</button>
+                </center>
                 </div>
                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
                   <hr>
@@ -112,7 +114,9 @@
                   <canvas id='zonePHLineChart'></canvas>
                 </div>
                 <div class="col-xl-8 col-lg-10 col-md-12 col-sm-12 col-xs-12">
+                <center>
                   <button type="button" class="btn btn-primary" value="ph" onclick="checkDetailedStats(this.value)">Ver todos los registros</button>
+                </center>
                 </div>
                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
                   <hr>
@@ -122,7 +126,9 @@
                   <canvas id='zoneCO2LineChart'></canvas>
                 </div>
                 <div class="col-xl-8 col-lg-10 col-md-12 col-sm-12 col-xs-12">
+                  <center>
                   <button type="button" class="btn btn-primary" value="co2" onclick="checkDetailedStats(this.value)">Ver todos los registros</button>
+                  </center>
                 </div>
                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
                   <hr>
@@ -134,7 +140,9 @@
                   <canvas id='moduleTempLineChart'></canvas>
                 </div>
                 <div class="col-xl-8 col-lg-10 col-md-12 col-sm-12 col-xs-12">
+                  <center>
                   <button type="button" class="btn btn-primary" value="temp" onclick="checkDetailedStats(this.value)">Ver todos los registros</button>
+                </center>
                 </div>
                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
                   <hr>
@@ -144,7 +152,9 @@
                   <canvas id='moduleGroundHumidityLineChart'></canvas>
                 </div>
                 <div class="col-xl-8 col-lg-10 col-md-12 col-sm-12 col-xs-12">
+                  <center>
                   <button type="button" class="btn btn-primary" value="hum_tie" onclick="checkDetailedStats(this.value)">Ver todos los registros</button>
+                  </center>
                 </div>
                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
                   <hr>
@@ -154,7 +164,9 @@
                   <canvas id='moduleEnvHumidityLineChart'></canvas>
                 </div>
                 <div class="col-xl-8 col-lg-10 col-md-12 col-sm-12 col-xs-12">
+                  <center>
                   <button type="button" class="btn btn-primary" value="hum_amb" onclick="checkDetailedStats(this.value)">Ver todos los registros</button>
+                  </center>
                 </div>
                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
                   <hr>
@@ -164,7 +176,9 @@
                   <canvas id='moduleWaterBarChart'></canvas>
                 </div>
                 <div class="col-xl-8 col-lg-10 col-md-12 col-sm-12 col-xs-12">
+                  <center>
                   <button type="button" class="btn btn-primary" value="agua" onclick="checkDetailedStats(this.value)">Ver todos los registros</button>
+                </center>
                 </div>
                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
                   <hr>
@@ -174,7 +188,9 @@
                   <canvas id='moduleCO2BarChart'></canvas>
                 </div>
                 <div class="col-xl-8 col-lg-10 col-md-12 col-sm-12 col-xs-12">
+                  <center>
                   <button type="button" class="btn btn-primary" value="co2" onclick="checkDetailedStats(this.value)">Ver todos los registros</button>
+                </center>
                 </div>
                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
                   <hr>
@@ -186,7 +202,9 @@
                   <canvas id='plantEnvHumidityLineChart'></canvas>
                 </div>
                 <div class="col-xl-8 col-lg-10 col-md-12 col-sm-12 col-xs-12">
+                  <center>
                   <button type="button" class="btn btn-primary" value="hum_amb" onclick="checkDetailedStats(this.value)">Ver todos los registros</button>
+                  </center>
                 </div>
                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
                   <hr>
@@ -206,18 +224,33 @@
   <script src="/static/vendors/Chart.js/dist/Chart.min.js"></script>
   <script src="/static/build/js/estadisticas.js"></script>
   <script type="text/javascript">
-
+    var None = null //Hermoso xd
     var labels = {{labels|safe}}
+    var fechasstr = {{fechasstr|safe}}
     var energy_data = {{energy|safe}}
     var water_data = {{water|safe}}
-
     var energyLineChart
     var waterBarChart
+    var limiteMax = 10
+    var limiteMin = 5
+    
+    var fechas = []
+    for (let j = 0; j < fechasstr.length; j++) {
+        let parts = fechasstr[j].split('/');
+        fechas.push(new Date(parts[0], parts[1]-1, parts[2], parts[3], parts[4], parts[5]))
+    }
+    
+    if (labels.length < 10) {
+        limiteMax = labels.length
+        if (labels.length < 5) {
+            limiteMin = labels.length
+        }
+    }
 
     var more_stats_url = "{% url 'estadisticas-detalle' %}"
 
     var energy_data_chart = {
-      labels: labels.slice(5,10),
+      labels: labels.slice(limiteMax - limiteMin, limiteMax),
       datasets: [
         {
           label: "Consumo de energía",
@@ -229,19 +262,19 @@
           pointHoverBorderColor: "rgba(220,220,220,1)",
           pointBorderWidth: 1,
           lineTension: 0,
-          data: energy_data.slice(5,10)
+          data: energy_data.slice(limiteMax - limiteMin, limiteMax)
         }
       ]
     }
 
     var water_data_chart = {
-      labels: labels.slice(5,10),
+      labels: labels.slice(limiteMax - limiteMin, limiteMax),
       datasets: [
         {
           label: "Nivel del tanque de agua",
           backgroundColor: "rgba(115, 135, 156, 0.8)",
           pointBorderWidth: 1,
-          data: water_data.slice(5,10)
+          data: water_data.slice(limiteMax - limiteMin, limiteMax)
         }
       ]
     }
@@ -258,7 +291,8 @@
                 beginAtZero: true
               }
             }]
-          }
+          },
+          animation: false
         }
       });
     }
@@ -275,22 +309,27 @@
                 beginAtZero: true
               }
             }]
-          }
+          },
+          animation: false
         }
       });
     }
 
     function updateLineChart(){
-      let data_range = $('#sel1').val() 
-      energyLineChart.data.labels = labels.slice(10 - data_range, 10)
-      energyLineChart.data.datasets[0].data = energy_data.slice(10 - data_range, 10)
+      let data_range = $('#sel1').val()
+      if (data_range == 5) data_range = limiteMin
+      else if (data_range == 10) data_range = limiteMax
+      energyLineChart.data.labels = labels.slice(limiteMax - data_range, limiteMax)
+      energyLineChart.data.datasets[0].data = energy_data.slice(limiteMax - data_range, limiteMax)
       energyLineChart.update()
     }
 
     function updateBarChart(){
       let data_range = $('#sel2').val()
-      waterBarChart.data.labels = labels.slice(10 - data_range, 10)
-      waterBarChart.data.datasets[0].data = water_data.slice(10 - data_range, 10)
+      if (data_range == 5) data_range = limiteMin
+      else if (data_range == 10) data_range = limiteMax
+      waterBarChart.data.labels = labels.slice(limiteMax - data_range, limiteMax)
+      waterBarChart.data.datasets[0].data = water_data.slice(limiteMax - data_range, limiteMax)
       waterBarChart.update()
     }
 
