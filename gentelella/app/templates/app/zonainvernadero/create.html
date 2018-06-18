@@ -138,6 +138,30 @@
                 </div>
 
 
+
+                <div class="item form-group">
+                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="co2Ideal">Humedad Ideal (%)<span class="required"></span>
+                  </label>
+                  <div class="col-md-2 col-sm-2 col-xs-6">
+                    <input type="number" id="humedadIdeal" name="humedadIdeal" value="{{zona.humedadideal}}" required="required" data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12" >
+                  </div>
+                </div>
+                <div class="item form-group">
+                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="co2Min">Humedad Mínima (%)<span class="required">*</span>
+                  </label>
+                  <div class="col-md-2 col-sm-2 col-xs-6">
+                    <input type="number" id="humedadMin" name="humedadMin" required="required" value="{{zona.humedadmin}}" data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12" >
+                  </div>
+                </div>
+                <div class="item form-group">
+                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="co2Max">Humedad Máxima (%)<span class="required">*</span>
+                  </label>
+                  <div class="col-md-2 col-sm-2 col-xs-6">
+                    <input type="number" id="humedadMax" name="humedadMax" required="required" value="{{zona.humedadmax}}" data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12" >
+                  </div>
+                </div>
+
+
                 <div class="ln_solid"></div>
                 <div class="form-group">
                   <div class="col-xs-12">

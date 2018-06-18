@@ -90,15 +90,15 @@
                 </div>
 
                 <div class="item form-group">
-                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="tempIdeal">Concentración de CO2 Actual<span class="required"></span>
+                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="co2Actual">Concentración de CO2 Actual<span class="required"></span>
                   </label>
                   <div class="col-md-2 col-sm-2 col-xs-6">
-                    <input required="required" value="{{historiaModulo.concentracionco2}}" {% if co2ok %} style="border-color: green; background-color: white;" {% else %} style="border-color: red; background-color: white;" {% endif %} data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12"  disabled >
+                    <input required="required" id="co2Actual" value="{{historiaModulo.concentracionco2}}" {% if co2ok %} style="border-color: green; background-color: white;" {% else %} style="border-color: red; background-color: white;" {% endif %} data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12"  disabled >
                   </div>
                 </div>
 
                 <div class="item form-group">
-                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="tempIdeal">Nivel del Agua Actual<span class="required"></span>
+                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="nivelAguaActual">Nivel del Agua Actual<span class="required"></span>
                   </label>
                   <div class="col-md-2 col-sm-2 col-xs-6">
                     <input required="required" id="nivelAguaActual" value="{{historiaModulo.nivelagua}}"  {% if nivelAguaok %} style="border-color: green; background-color: white;" {% else %} style="border-color: red; background-color: white;" {% endif %} data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12"   disabled >
@@ -106,18 +106,28 @@
                 </div>
 
                 <div class="item form-group">
-                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="tempIdeal">Luz del módulo<span class="required"></span>
+                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="luzActual">Luz del módulo<span class="required"></span>
                   </label>
                   <div class="col-md-2 col-sm-2 col-xs-6">
-                      <div class="radio">
-                        <label>
-                          <input type="radio" class="flat" name="iCheck" {% if historiaModulo.luz %} checked {% endif%} > {% if historiaModulo.luz %} Encendida {% else %} Apagada {% endif %}
-                        </label>
-                      </div>
+                    <input  type="text" required="required" id="luzActual"  style="border: none;box-shadow:none; background-color: white;" value="{% if historiaModulo.luz %} Encendida {% else %} Apagada {% endif %}"  class="form-control col-md-7 col-xs-12" disabled>
                   </div>
                 </div>
-
               </form>
+          </div>
+        </div>
+        {% else %}
+        <div class="x_panel">
+
+          <div class="x_title">
+            <h2>Condiciones Actuales<small></small></h2>
+                <ul class="nav navbar-right panel_toolbox" >
+                  <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                  </li>
+                </ul>
+            <div class="clearfix"></div>
+          </div>
+          <div class="x_content">
+            <center><h2>No hay información que mostrar.</h2></center>
           </div>
         </div>
         {% endif %}

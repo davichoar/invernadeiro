@@ -126,6 +126,22 @@ urlpatterns = [
             views.historia.prueba,
             name='historia'),
 
+### AUDITORIA
+
+    url('^auditoria/$',
+        views.auditoria.veraudit,
+        name='verAuditoria'),
+    url('^auditoria/(?P<idAuditoria>.*)$',
+        views.auditoria.detalleaudit,
+        name='detalleAuditoria'),
+
+
+### Cronograma
+
+    url('^cronograma/$',
+            views.cronograma.obtener,
+            name='Cronograma'),
+
 ### GENTELELLA
 
     url(r'^.*\.html', views.views.gentella_html, name='gentella'),
