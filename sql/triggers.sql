@@ -344,9 +344,11 @@ RETURN NEW;
 
 EXCEPTION
         WHEN NO_DATA_FOUND THEN
-            RAISE EXCEPTION 'No hay historias aún';
+           -- RAISE EXCEPTION 'No hay historias aún'
+		RETURN NEW;
         WHEN TOO_MANY_ROWS THEN
-            RAISE EXCEPTION 'Error weird';
+           -- RAISE EXCEPTION 'Error weird';
+		RETURN NEW;
 END
 $$
 LANGUAGE plpgsql;
@@ -411,9 +413,11 @@ BEGIN
 RETURN NEW;
 EXCEPTION
         WHEN NO_DATA_FOUND THEN
-            RAISE EXCEPTION 'No hay historias aún';
+            --RAISE EXCEPTION 'No hay historias aún'
+		RETURN NEW;
         WHEN TOO_MANY_ROWS THEN
-            RAISE EXCEPTION 'Error weird';
+            --RAISE EXCEPTION 'Error weird';
+		RETURN NEW;
 END
 $$
 LANGUAGE plpgsql;
@@ -467,9 +471,11 @@ RETURN NEW;
 
 	EXCEPTION
         WHEN NO_DATA_FOUND THEN
-            RAISE EXCEPTION 'No hay historias aún';
+            --RAISE EXCEPTION 'No hay historias aún';
+		RETURN NEW;
         WHEN TOO_MANY_ROWS THEN
-            RAISE EXCEPTION 'Error weird';
+            --RAISE EXCEPTION 'Error weird';
+		RETURN NEW;
 END
 $$
 LANGUAGE plpgsql;
@@ -513,10 +519,11 @@ RETURN NEW;
 
 EXCEPTION
         WHEN NO_DATA_FOUND THEN
-            RAISE EXCEPTION 'No hay historias aún';
+            --RAISE EXCEPTION 'No hay historias aún';
+		RETURN NEW;
         WHEN TOO_MANY_ROWS THEN
-            RAISE EXCEPTION 'Error weird';
-
+            --RAISE EXCEPTION 'Error weird';
+		RETURN NEW;
 END
 $$
 LANGUAGE plpgsql;
