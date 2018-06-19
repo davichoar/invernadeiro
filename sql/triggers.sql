@@ -42,14 +42,16 @@ if nivelAgua > vals[0]["nivelaguamax"] or nivelAgua < vals[0]["nivelaguamin"]:
 
 msgBody += "\nValores recuperados el "+str(fechaRegistro)+"\n"
 
-prep_q = plpy.prepare("SELECT DISTINCT u.correo, i.nombre as nombrei, z.nombre as nombrez, ms.nombre as nombrem from app_usuario u INNER JOIN app_usuarioxinvernadero ui on u.idusuario = ui.idusuario INNER JOIN app_invernadero i on ui.idinvernadero = i.idinvernadero INNER JOIN app_zona z on i.idinvernadero = z.idinvernadero INNER JOIN app_modulosemilla ms on z.idzona = ms.idzona WHERE ms.idmodulo = $1  AND u.idrol = 1", ["int"])
-infoMails= plpy.execute(prep_q, [idModulo])
 
-fromaddr = "alertas.invernaderos.pucp@gmail.com"
 
 if mailFlag:
 	prep_q = plpy.prepare("UPDATE app_modulosemilla SET condicionesshidas = false WHERE idmodulo = $1  AND (condicionesshidas <> false OR condicionesshidas is null)", ["int"])
 	plpy.execute(prep_q, [idModulo])
+
+	prep_q = plpy.prepare("SELECT DISTINCT u.correo, i.nombre as nombrei, z.nombre as nombrez, ms.nombre as nombrem from app_usuario u INNER JOIN app_usuarioxinvernadero ui on u.idusuario = ui.idusuario INNER JOIN app_invernadero i on ui.idinvernadero = i.idinvernadero INNER JOIN app_zona z on i.idinvernadero = z.idinvernadero INNER JOIN app_modulosemilla ms on z.idzona = ms.idzona WHERE ms.idmodulo = $1  AND u.idrol = 1", ["int"])
+	infoMails= plpy.execute(prep_q, [idModulo])
+
+	fromaddr = "alertas.invernaderos.pucp@gmail.com"
 
 	for dest in infoMails:
 		
@@ -119,14 +121,16 @@ if concentracionCO2 > vals[0]["concentracionco2max"] or concentracionCO2 < vals[
 
 msgBody += "\nValores recuperados el: "+str(fechaRegistro)+"\n"
 
-prep_q = plpy.prepare("SELECT DISTINCT u.correo, i.nombre as nombrei, z.nombre as nombrez from app_usuario u INNER JOIN app_usuarioxinvernadero ui on u.idusuario = ui.idusuario INNER JOIN app_invernadero i on ui.idinvernadero = i.idinvernadero INNER JOIN app_zona z on i.idinvernadero = z.idinvernadero WHERE z.idzona = $1  AND u.idrol = 1", ["int"])
-infoMails= plpy.execute(prep_q, [idZona])
 
-fromaddr = "alertas.invernaderos.pucp@gmail.com"
 
 if mailFlag:
 	prep_q = plpy.prepare("UPDATE app_zona SET condicionesshidas = false WHERE idzona = $1  AND (condicionesshidas <> false or condicionesshidas is null)", ["int"])
 	plpy.execute(prep_q, [idZona])
+
+	prep_q = plpy.prepare("SELECT DISTINCT u.correo, i.nombre as nombrei, z.nombre as nombrez from app_usuario u INNER JOIN app_usuarioxinvernadero ui on u.idusuario = ui.idusuario INNER JOIN app_invernadero i on ui.idinvernadero = i.idinvernadero INNER JOIN app_zona z on i.idinvernadero = z.idinvernadero WHERE z.idzona = $1  AND u.idrol = 1", ["int"])
+	infoMails= plpy.execute(prep_q, [idZona])
+
+	fromaddr = "alertas.invernaderos.pucp@gmail.com"
 
 	for dest in infoMails:
 		msg = MIMEMultipart()
@@ -189,14 +193,16 @@ if humedad > vals[0]["humedadmax"] or humedad < vals[0]["humedadmin"]:
 
 msgBody += "\nValores recuperados el: "+str(fechaRegistro)+"\n"
 
-prep_q = plpy.prepare("SELECT DISTINCT u.correo, i.nombre as nombrei, z.nombre as nombrez, tp.nombrecomun from app_usuario u INNER JOIN app_usuarioxinvernadero ui on u.idusuario = ui.idusuario INNER JOIN app_invernadero i on ui.idinvernadero = i.idinvernadero INNER JOIN app_zona z on i.idinvernadero = z.idinvernadero INNER JOIN app_planta p on z.idzona = p.idzona INNER JOIN app_tipoplanta tp on p.idtipoplanta = tp.idtipoplanta WHERE p.idplanta = $1 AND u.idrol = 1" , ["int"])
-infoMails= plpy.execute(prep_q, [idPlanta])
 
-fromaddr = "alertas.invernaderos.pucp@gmail.com"
 
 if mailFlag:
 	prep_q = plpy.prepare("UPDATE app_planta SET condicionesshidas = false WHERE idplanta = $1  AND (condicionesshidas <> false or condicionesshidas is null)", ["int"])
 	plpy.execute(prep_q, [idPlanta])
+
+	prep_q = plpy.prepare("SELECT DISTINCT u.correo, i.nombre as nombrei, z.nombre as nombrez, tp.nombrecomun from app_usuario u INNER JOIN app_usuarioxinvernadero ui on u.idusuario = ui.idusuario INNER JOIN app_invernadero i on ui.idinvernadero = i.idinvernadero INNER JOIN app_zona z on i.idinvernadero = z.idinvernadero INNER JOIN app_planta p on z.idzona = p.idzona INNER JOIN app_tipoplanta tp on p.idtipoplanta = tp.idtipoplanta WHERE p.idplanta = $1 AND u.idrol = 1" , ["int"])
+	infoMails= plpy.execute(prep_q, [idPlanta])
+
+	fromaddr = "alertas.invernaderos.pucp@gmail.com"
 
 	for dest in infoMails:
 		msg = MIMEMultipart()
@@ -263,14 +269,16 @@ if nivelTanqueAgua > vals[0]["niveltanqueaguamax"] or nivelTanqueAgua < vals[0][
 
 msgBody += "\nValores recuperados el: "+str(fechaRegistro)+"\n"
 
-prep_q = plpy.prepare("SELECT DISTINCT u.correo, i.nombre as nombrei from app_usuario u INNER JOIN app_usuarioxinvernadero ui on u.idusuario = ui.idusuario INNER JOIN app_invernadero i on ui.idinvernadero = i.idinvernadero WHERE i.idinvernadero = $1 AND u.idrol = 1" , ["int"])
-infoMails= plpy.execute(prep_q, [idInvernadero])
-
-fromaddr = "alertas.invernaderos.pucp@gmail.com"
 
 if mailFlag:
 	prep_q = plpy.prepare("UPDATE app_invernadero SET condicionesshidas = false WHERE idinvernadero = $1  AND (condicionesshidas <> false OR condicionesshidas is null)", ["int"])
 	plpy.execute(prep_q, [idInvernadero])
+
+	prep_q = plpy.prepare("SELECT DISTINCT u.correo, i.nombre as nombrei from app_usuario u INNER JOIN app_usuarioxinvernadero ui on u.idusuario = ui.idusuario INNER JOIN app_invernadero i on ui.idinvernadero = i.idinvernadero WHERE i.idinvernadero = $1 AND u.idrol = 1" , ["int"])
+	infoMails= plpy.execute(prep_q, [idInvernadero])
+
+	fromaddr = "alertas.invernaderos.pucp@gmail.com"
+
 
 	for dest in infoMails:
 		msg = MIMEMultipart()
@@ -521,3 +529,206 @@ FOR EACH ROW
 EXECUTE PROCEDURE update_condiciones_planta();
 
 
+CREATE OR REPLACE FUNCTION mail_historia_modulo_init() RETURNS trigger AS '
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+
+idModulo = TD["new"]["idmodulo"]
+
+prep_q = plpy.prepare("SELECT COUNT(*) as cont from app_historiamodulo WHERE idmodulo = $1", ["int"])
+vals= plpy.execute(prep_q, [idModulo])
+
+
+if vals[0]["cont"] < 1:
+
+	prep_q = plpy.prepare("SELECT DISTINCT u.correo, i.nombre as nombrei, z.nombre as nombrez, ms.nombre as nombrem from app_usuario u INNER JOIN app_usuarioxinvernadero ui on u.idusuario = ui.idusuario INNER JOIN app_invernadero i on ui.idinvernadero = i.idinvernadero INNER JOIN app_zona z on i.idinvernadero = z.idinvernadero INNER JOIN app_modulosemilla ms on z.idzona = ms.idzona WHERE ms.idmodulo = $1  AND u.idrol = 1", ["int"])
+	infoMails= plpy.execute(prep_q, [idModulo])
+
+	fromaddr = "alertas.invernaderos.pucp@gmail.com"
+
+	for dest in infoMails:
+		
+		msg = MIMEMultipart()
+		msg["From"] = fromaddr
+		toaddr = dest["correo"]
+		msg["To"] = toaddr
+		msg["Subject"] = "[ALERTA] Nueva recepción de datos en " + dest["nombrei"] + ", Zona: "+ dest["nombrez"]
+		 
+		body = "Se ha establecido la conexión con el módulo de semillas: " + dest["nombrem"]
+		msg.attach(MIMEText(body, "plain"))
+		
+		try: 
+			server = smtplib.SMTP("smtp.gmail.com", 587)
+			server.starttls()
+			server.login(fromaddr, "invernadeiro2018")
+			text = msg.as_string()
+			
+			server.sendmail(fromaddr, toaddr, text)
+		except Exception as e:
+			print(e)
+		server.quit()
+
+' 
+LANGUAGE plpythonu;
+
+DROP TRIGGER IF EXISTS mail_modulo_init ON app_historiamodulo;
+
+CREATE TRIGGER mail_modulo_init
+BEFORE INSERT ON app_historiamodulo
+FOR EACH ROW
+EXECUTE PROCEDURE mail_historia_modulo_init();
+
+
+CREATE OR REPLACE FUNCTION mail_historia_zona_init() RETURNS trigger AS '
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+
+idZona = TD["new"]["idzona"]
+
+prep_q = plpy.prepare("SELECT COUNT(*) as cont from app_historiazona WHERE idmodulo = $1", ["int"])
+vals= plpy.execute(prep_q, [idZona])
+
+
+if vals[0]["cont"] < 1:
+
+	prep_q = plpy.prepare("SELECT DISTINCT u.correo, i.nombre as nombrei, z.nombre as nombrez from app_usuario u INNER JOIN app_usuarioxinvernadero ui on u.idusuario = ui.idusuario INNER JOIN app_invernadero i on ui.idinvernadero = i.idinvernadero INNER JOIN app_zona z on i.idinvernadero = z.idinvernadero WHERE z.idzona = $1  AND u.idrol = 1", ["int"])
+	infoMails= plpy.execute(prep_q, [idZona])
+
+	fromaddr = "alertas.invernaderos.pucp@gmail.com"
+
+	for dest in infoMails:
+		
+		msg = MIMEMultipart()
+		msg["From"] = fromaddr
+		toaddr = dest["correo"]
+		msg["To"] = toaddr
+		msg["Subject"] = "[ALERTA] Nueva recepción de datos en " + dest["nombrei"]
+		 
+		body = "Se ha establecido la conexión con la zona: " + dest["nombrez"]
+		msg.attach(MIMEText(body, "plain"))
+		
+		try: 
+			server = smtplib.SMTP("smtp.gmail.com", 587)
+			server.starttls()
+			server.login(fromaddr, "invernadeiro2018")
+			text = msg.as_string()
+			
+			server.sendmail(fromaddr, toaddr, text)
+		except Exception as e:
+			print(e)
+		server.quit()
+
+' 
+LANGUAGE plpythonu;
+
+DROP TRIGGER IF EXISTS mail_zona_init ON app_historiazona;
+
+CREATE TRIGGER mail_zona_init
+BEFORE INSERT ON app_historiazona
+FOR EACH ROW
+EXECUTE PROCEDURE mail_historia_zona_init();
+
+
+
+CREATE OR REPLACE FUNCTION mail_historia_planta_init() RETURNS trigger AS '
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+
+idPlanta = TD["new"]["idplanta"]
+
+prep_q = plpy.prepare("SELECT COUNT(*) as cont from app_historiaplanta WHERE idplanta = $1", ["int"])
+vals= plpy.execute(prep_q, [idPlanta])
+
+
+if vals[0]["cont"] < 1:
+
+	prep_q = plpy.prepare("SELECT DISTINCT u.correo, i.nombre as nombrei, z.nombre as nombrez, tp.nombrecomun from app_usuario u INNER JOIN app_usuarioxinvernadero ui on u.idusuario = ui.idusuario INNER JOIN app_invernadero i on ui.idinvernadero = i.idinvernadero INNER JOIN app_zona z on i.idinvernadero = z.idinvernadero INNER JOIN app_planta p on z.idzona = p.idzona INNER JOIN app_tipoplanta tp on p.idtipoplanta = tp.idtipoplanta WHERE p.idplanta = $1 AND u.idrol = 1" , ["int"])
+	infoMails= plpy.execute(prep_q, [idPlanta])
+
+	fromaddr = "alertas.invernaderos.pucp@gmail.com"
+
+	for dest in infoMails:
+		
+		msg = MIMEMultipart()
+		msg["From"] = fromaddr
+		toaddr = dest["correo"]
+		msg["To"] = toaddr
+		msg["Subject"] = "[ALERTA] Nueva recepción de datos en " + dest["nombrei"] + ", Zona: "+ dest["nombrez"]
+		 
+		body = "Se ha establecido la conexión con la planta: " + dest["nombrecomun"]
+		msg.attach(MIMEText(body, "plain"))
+		
+		try: 
+			server = smtplib.SMTP("smtp.gmail.com", 587)
+			server.starttls()
+			server.login(fromaddr, "invernadeiro2018")
+			text = msg.as_string()
+			
+			server.sendmail(fromaddr, toaddr, text)
+		except Exception as e:
+			print(e)
+		server.quit()
+
+' 
+LANGUAGE plpythonu;
+
+DROP TRIGGER IF EXISTS mail_planta_init ON app_historiaplanta;
+
+CREATE TRIGGER mail_planta_init
+BEFORE INSERT ON app_historiaplanta
+FOR EACH ROW
+EXECUTE PROCEDURE mail_historia_planta_init();
+
+
+
+CREATE OR REPLACE FUNCTION mail_historia_invernadero_init() RETURNS trigger AS '
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+
+idInvernadero = TD["new"]["idinvernadero"]
+
+prep_q = plpy.prepare("SELECT COUNT(*) as cont from app_historiainvernadero WHERE idinvernadero = $1", ["int"])
+vals= plpy.execute(prep_q, [idInvernadero])
+
+
+if vals[0]["cont"] < 1:
+
+	prep_q = plpy.prepare("SELECT DISTINCT u.correo, i.nombre as nombrei from app_usuario u INNER JOIN app_usuarioxinvernadero ui on u.idusuario = ui.idusuario INNER JOIN app_invernadero i on ui.idinvernadero = i.idinvernadero WHERE i.idinvernadero = $1 AND u.idrol = 1" , ["int"])
+
+	fromaddr = "alertas.invernaderos.pucp@gmail.com"
+
+	for dest in infoMails:
+		
+		msg = MIMEMultipart()
+		msg["From"] = fromaddr
+		toaddr = dest["correo"]
+		msg["To"] = toaddr
+		msg["Subject"] = "[ALERTA] Nueva recepción de datos"
+		 
+		body = "Se ha establecido la conexión con el invernadero: " + dest["nombrei"]
+		msg.attach(MIMEText(body, "plain"))
+		
+		try: 
+			server = smtplib.SMTP("smtp.gmail.com", 587)
+			server.starttls()
+			server.login(fromaddr, "invernadeiro2018")
+			text = msg.as_string()
+			
+			server.sendmail(fromaddr, toaddr, text)
+		except Exception as e:
+			print(e)
+		server.quit()
+
+' 
+LANGUAGE plpythonu;
+
+DROP TRIGGER IF EXISTS mail_invernadero_init ON app_historiainvernadero;
+
+CREATE TRIGGER mail_invernadero_init
+BEFORE INSERT ON app_historiainvernadero
+FOR EACH ROW
+EXECUTE PROCEDURE mail_historia_invernadero_init();
