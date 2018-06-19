@@ -30,7 +30,7 @@ def crearFakes(request, idSemilla = -1):
     semillaFake = Semilla()
     semillaFake.idsemilla = idSemilla
     semillaFake.idmodulo = request.POST.get('modulo')
-    semillaFake.idtipoplanta = request.POST.get('tipoPlanta')
+    semillaFake.idtipoplanta = int(request.POST.get('tipoPlanta'))
     historiaFake = Historiasemilla()
     historiaFake.idsemilla = idSemilla
     historiaFake.posx = request.POST.get('posx')
@@ -217,6 +217,7 @@ def detalle(request, idModulo, idSemilla, template='app/semilla/verEditarSemilla
                 'modulo': Modulosemilla.objects.get(idmodulo=request.POST.get('modulo')),
                 'mensajeError': 'El lugar donde está intentando colocar la semilla ya está en uso.',
                 'idModuloOrig': idModulo,
+                'editable': True
             }
             return render(request, template, context)
         try:
@@ -255,8 +256,9 @@ def detalle(request, idModulo, idSemilla, template='app/semilla/verEditarSemilla
                 'listaModulos': listaModulos,
                 'historia': historiaFake,
                 'modulo': Modulosemilla.objects.get(idmodulo=request.POST.get('modulo')),
-                'mensajeError': 'El lugar donde está intentando colocar la semilla ya está en uso.',
+                'mensajeError': 'Error en la edición de semilla.',
                 'idModuloOrig': idModulo,
+                'editable': True
             }
             return render(request, template, context)
         request.session['mensajeSemillaEditar'] = True

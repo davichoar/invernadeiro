@@ -213,6 +213,14 @@ INSERT INTO public.app_zona(
 INSERT INTO public.app_zona(
 	idzona, idtipozona, idinvernadero, codigozonajson, nombre, area, temperaturaideal, temperaturamin, temperaturamax, fechacreacion, habilitado, phmin, phmax, idusuarioauditado, concentracionco2ideal, concentracionco2max, concentracionco2min)
 	VALUES (2, 2, 2, 501, 'Zona de Plantas 1', 34, 25, 20,30,'2018-05-29 00:00:00',true,5,8,1, 20, 30, 10);
+	
+INSERT INTO public.app_zona(
+	idzona, idtipozona, idinvernadero, codigozonajson, nombre, area, temperaturaideal, temperaturamin, temperaturamax, fechacreacion, habilitado, phmin, phmax, idusuarioauditado, concentracionco2ideal, concentracionco2max, concentracionco2min)
+	VALUES (3, 2, 2, 502, 'Zona de Plantas 2', 34, 25, 20,30,'2018-05-29 00:00:00',true,5,8,1, 20, 30, 10);
+	
+INSERT INTO public.app_zona(
+	idzona, idtipozona, idinvernadero, codigozonajson, nombre, area, temperaturaideal, temperaturamin, temperaturamax, fechacreacion, habilitado, phmin, phmax, idusuarioauditado, concentracionco2ideal, concentracionco2max, concentracionco2min)
+	VALUES (4, 2, 2, 503, 'Zona de Plantas 3', 34, 25, 20,30,'2018-05-29 00:00:00',true,5,8,1, 20, 30, 10);
 
 -- Panelluz
 
@@ -225,6 +233,22 @@ INSERT INTO public.app_panelluz(
 INSERT INTO public.app_modulosemilla(
 	idmodulo, idzona, nombre, codigomodulojson, temperaturaideal, temperaturamin, temperaturamax, humedadtierraideal, humedadtierramin, humedadtierramax, humedadambienteideal, humedadambientemin, humedadambientemax, concentracionco2ideal, concentracionco2min, concentracionco2max, nivelaguaideal, nivelaguamin, nivelaguamax, filas, columnas, fechacreacion, habilitado, idusuarioauditado)
 	VALUES (1, 1, 'Módulo 1', 500, 25, 20, 30, 15, 10, 20, 20, 15, 25, 10, 5, 15, 0.2, 0.1, 0.3, 9, 6, '2018-05-28 00:00:00', true, 1);
+    
+INSERT INTO public.app_modulosemilla(
+	idmodulo, idzona, nombre, codigomodulojson, temperaturaideal, temperaturamin, temperaturamax, humedadtierraideal, humedadtierramin, humedadtierramax, humedadambienteideal, humedadambientemin, humedadambientemax, concentracionco2ideal, concentracionco2min, concentracionco2max, nivelaguaideal, nivelaguamin, nivelaguamax, filas, columnas, fechacreacion, habilitado, idusuarioauditado)
+	VALUES (2, 1, 'Módulo 1', 501, 25, 20, 30, 15, 10, 20, 20, 15, 25, 10, 5, 15, 0.2, 0.1, 0.3, 9, 6, '2018-05-28 00:00:00', true, 1);
+    
+INSERT INTO public.app_modulosemilla(
+	idmodulo, idzona, nombre, codigomodulojson, temperaturaideal, temperaturamin, temperaturamax, humedadtierraideal, humedadtierramin, humedadtierramax, humedadambienteideal, humedadambientemin, humedadambientemax, concentracionco2ideal, concentracionco2min, concentracionco2max, nivelaguaideal, nivelaguamin, nivelaguamax, filas, columnas, fechacreacion, habilitado, idusuarioauditado)
+	VALUES (3, 1, 'Módulo 1', 502, 25, 20, 30, 15, 10, 20, 20, 15, 25, 10, 5, 15, 0.2, 0.1, 0.3, 9, 6, '2018-05-28 00:00:00', true, 1);
+    
+INSERT INTO public.app_modulosemilla(
+	idmodulo, idzona, nombre, codigomodulojson, temperaturaideal, temperaturamin, temperaturamax, humedadtierraideal, humedadtierramin, humedadtierramax, humedadambienteideal, humedadambientemin, humedadambientemax, concentracionco2ideal, concentracionco2min, concentracionco2max, nivelaguaideal, nivelaguamin, nivelaguamax, filas, columnas, fechacreacion, habilitado, idusuarioauditado)
+	VALUES (4, 1, 'Módulo 1', 503, 25, 20, 30, 15, 10, 20, 20, 15, 25, 10, 5, 15, 0.2, 0.1, 0.3, 9, 6, '2018-05-28 00:00:00', true, 1);
+    
+INSERT INTO public.app_modulosemilla(
+	idmodulo, idzona, nombre, codigomodulojson, temperaturaideal, temperaturamin, temperaturamax, humedadtierraideal, humedadtierramin, humedadtierramax, humedadambienteideal, humedadambientemin, humedadambientemax, concentracionco2ideal, concentracionco2min, concentracionco2max, nivelaguaideal, nivelaguamin, nivelaguamax, filas, columnas, fechacreacion, habilitado, idusuarioauditado)
+	VALUES (5, 1, 'Módulo 1', 504, 25, 20, 30, 15, 10, 20, 20, 15, 25, 10, 5, 15, 0.2, 0.1, 0.3, 9, 6, '2018-05-28 00:00:00', true, 1);
 
 -- Tipoplanta
 
@@ -266,6 +290,18 @@ INSERT INTO public.app_planta(
 	idplanta, idtipoplanta, idzona, idsemilla, codigoplantajson, fechacreacion, humedadmin, humedadideal, humedadmax, idusuarioauditado, condicionesshidas, habilitado)
 	VALUES (1, 1, 2, null, 500, '2018-05-28 00:00:00', 25, 30, 40, 1, null, true);
 
+INSERT INTO public.app_planta(
+	idplanta, idtipoplanta, idzona, idsemilla, codigoplantajson, fechacreacion, humedadmin, humedadideal, humedadmax, idusuarioauditado, condicionesshidas, habilitado)
+	VALUES (2, 1, 2, null, 501, '2018-05-28 00:00:00', 25, 30, 40, 1, null, true);
+
+INSERT INTO public.app_planta(
+	idplanta, idtipoplanta, idzona, idsemilla, codigoplantajson, fechacreacion, humedadmin, humedadideal, humedadmax, idusuarioauditado, condicionesshidas, habilitado)
+	VALUES (3, 1, 2, null, 502, '2018-05-28 00:00:00', 25, 30, 40, 1, null, true);
+
+INSERT INTO public.app_planta(
+	idplanta, idtipoplanta, idzona, idsemilla, codigoplantajson, fechacreacion, humedadmin, humedadideal, humedadmax, idusuarioauditado, condicionesshidas, habilitado)
+	VALUES (4, 1, 2, null, 503, '2018-05-28 00:00:00', 25, 30, 40, 1, null, true);
+
 -- Lol
 
 --INSERT INTO public.app_historiazona(
@@ -275,12 +311,3 @@ INSERT INTO public.app_planta(
 --INSERT INTO public.app_historiazona(
 --	  idhistoriazona, idzona, temperatura, ph, concentracionco2, fecharegistro)
 --	  VALUES (2, 1, 25, 23, 28,'2018-05-30 00:00:00');
-
-
---INSERT INTO public.app_historiainvernadero(
---	  idhistoriainvernadero, idinvernadero, nivelenergia, niveltanqueagua, comentario, fecharegistro)
---	  VALUES (1, 1, 40.4, 30.2, '- Vacío -','2018-05-23 00:00:00' );
-	
---INSERT INTO public.app_historiainvernadero(
---    idhistoriainvernadero, idinvernadero, nivelenergia, niveltanqueagua, comentario, fecharegistro)
---    VALUES (2, 1, 20.4, 23.2, '- Vacío -','2018-04-23 00:00:00' );
