@@ -106,7 +106,7 @@
 				 <center>
                    {% if editable %}
                         <button id="send" name="b_aceptar" type="button" class="btn btn-success" onclick="validar()">Aceptar</button>
-                        <a href="/semilla/{{ semilla.idsemilla }}"><button id="cancel" name="b_cancelar" type="button" class="btn btn-default">Cancelar</button></a>   
+                        <a href="/semilla/{{idModuloOrig}}/{{ semilla.idsemilla }}"><button id="cancel" name="b_cancelar" type="button" class="btn btn-default">Cancelar</button></a>   
                    {% else %}
                         <button id="edit" name="b_editar" type="submit" class="btn btn-success">Editar</button>
                         <a href="/modulosemilla/{{idModuloOrig}}"><button id="cancel" name="b_cancelar" type="button" class="btn btn-default">Regresar</button></a>                   
