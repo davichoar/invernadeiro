@@ -604,7 +604,7 @@ if vals[0]["cont"] < 1:
 		msg["From"] = fromaddr
 		toaddr = dest["correo"]
 		msg["To"] = toaddr
-		msg["Subject"] = "[ALERTA] Nueva recepción de datos en " + dest["nombrei"]"
+		msg["Subject"] = "[ALERTA] Nueva recepción de datos en " + dest["nombrei"]
 		 
 		body = "Se ha establecido la conexión con la zona: " + dest["nombrez"]
 		msg.attach(MIMEText(body, "plain"))

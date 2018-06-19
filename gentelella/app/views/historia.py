@@ -23,6 +23,18 @@ def selectID(actual_id):
     else:
         return actual_id
 
+def try_float(value):
+    try:
+        float(value)
+    except ValueError:
+        print ("No es un float")
+
+def try_int(value):
+    try:
+        int(value)
+    except ValueError:
+        print ("No es un int")
+
 @csrf_exempt
 def prueba(request, template=None, extra_context=None):
     global rutaFinal
@@ -68,14 +80,31 @@ def prueba(request, template=None, extra_context=None):
         	
             for jsonModulo in jsonATomar['listaModulos']:
                 nuevoid = selectID(Historiamodulo.objects.all().aggregate(Max('idhistoriamodulo'))['idhistoriamodulo__max']) + 1
+                
+                if 'temperatura' not in jsonModulo:
+                    jsonModulo['temperatura'] = None
+
+                if 'humedadTierra' not in jsonModulo:
+                    jsonModulo['humedadTierra'] = None
+
+                if 'humedadAmbiente' not in jsonModulo:
+                    jsonModulo['humedadAmbiente'] = None
+
+                if 'nivelAgua' not in jsonModulo:
+                    jsonModulo['nivelAgua'] = None
+
+                if 'concentracionCO2' not in jsonModulo:
+                    jsonModulo['concentracionCO2'] = None
+
+
                 nuevaHModulo = Historiamodulo.objects.create(
                     idhistoriamodulo = nuevoid,
-                    idmodulo = int(jsonModulo['codigoModulo']),
-                    temperatura = float(jsonModulo['temperatura']),
-                    humedadtierra = float(jsonModulo['humedadTierra']),
-                    humedadambiente = float(jsonModulo['humedadAmbiente']),
-                    nivelagua= float(jsonModulo['nivelAgua']),
-                    concentracionco2= float(jsonModulo['concentracionCO2']),
+                    idmodulo = try_int(jsonModulo['codigoModulo']),
+                    temperatura = try_float(jsonModulo['temperatura']),
+                    humedadtierra = try_float(jsonModulo['humedadTierra']),
+                    humedadambiente = try_float(jsonModulo['humedadAmbiente']),
+                    nivelagua= try_float(jsonModulo['nivelAgua']),
+                    concentracionco2= try_float(jsonModulo['concentracionCO2']),
                     luz= jsonModulo['luz'], ##no me convence lol
                     fecharegistro = datetime.now(), #maybe a corregir.
                     comentario = 'meme'
@@ -84,17 +113,32 @@ def prueba(request, template=None, extra_context=None):
 
         elif jsonATomar['tipoJson'] == 2:
             nuevoid = selectID(Historiazona.objects.all().aggregate(Max('idhistoriazona'))['idhistoriazona__max']) + 1
+            
+            if 'temperaturaZona' not in jsonATomar:
+                    jsonATomar['temperaturaZona'] = None
+
+            if 'phZona' not in jsonATomar:
+                jsonATomar['phZona'] = None
+
+            if 'concentracionCO2' not in jsonATomar:
+                jsonATomar['concentracionCO2'] = None
+
             nuevaHZona = Historiazona.objects.create(
                 idhistoriazona = nuevoid,
                 idzona = int(jsonATomar['codigoZona']),
-                temperatura = float(jsonATomar['temperaturaZona']),
-                ph = float(jsonATomar['phZona']),
-                concentracionco2 = float(jsonATomar['concentracionCO2']),
+                temperatura = try_float(jsonATomar['temperaturaZona']),
+                ph = try_float(jsonATomar['phZona']),
+                concentracionco2 = try_float(jsonATomar['concentracionCO2']),
                 fecharegistro= datetime.now()
             )
             #alerta
             for jsonPlanta in jsonATomar['listaPlantas']:
                 nuevoplantaid = selectID(Historiaplanta.objects.all().aggregate(Max('idhistoriaplanta'))['idhistoriaplanta__max']) + 1
+                
+                if 'humedadPlanta' not in jsonPlanta:
+                    jsonPlanta['humedadPlanta'] = None
+
+
                 nuevaHPlanta = Historiaplanta.objects.create(
                     idhistoriaplanta = nuevoplantaid,
                     idplanta = int(jsonPlanta['codigoPlanta']),
@@ -106,6 +150,10 @@ def prueba(request, template=None, extra_context=None):
                 #alerta
             for jsonPanel in jsonATomar['listaPanelesLuz']:
                 nuevopanelid = selectID(Historiapanel.objects.all().aggregate(Max('idhistoriapanel'))['idhistoriapanel__max']) + 1
+                
+                if 'encendido' not in jsonPlanta:
+                    jsonPlanta['encendido'] = None
+
                 nuevoHPanel = Historiapanel.objects.create(
                     idhistoriapanel = nuevopanelid,
                     idpanel = int(jsonPanel['codigoPanel']),
@@ -117,6 +165,14 @@ def prueba(request, template=None, extra_context=None):
 
         elif jsonATomar['tipoJson'] == 3: #invernadero general
             nuevoid = selectID(Historiainvernadero.objects.all().aggregate(Max('idhistoriainvernadero'))['idhistoriainvernadero__max']) + 1
+            
+            if 'energia' not in jsonATomar:
+                    jsonATomar['energia'] = None
+
+            if 'nivelTanque' not in jsonATomar:
+                jsonATomar['nivelTanque'] = None
+
+
             nuevaHInvernadero = Historiainvernadero.objects.create(
                 idhistoriainvernadero = nuevoid,
                 idinvernadero = int(jsonATomar['codigoInvernadero']),
