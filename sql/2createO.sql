@@ -236,19 +236,19 @@ INSERT INTO public.app_modulosemilla(
     
 INSERT INTO public.app_modulosemilla(
 	idmodulo, idzona, nombre, codigomodulojson, temperaturaideal, temperaturamin, temperaturamax, humedadtierraideal, humedadtierramin, humedadtierramax, humedadambienteideal, humedadambientemin, humedadambientemax, concentracionco2ideal, concentracionco2min, concentracionco2max, nivelaguaideal, nivelaguamin, nivelaguamax, filas, columnas, fechacreacion, habilitado, idusuarioauditado)
-	VALUES (2, 1, 'Módulo 1', 501, 25, 20, 30, 15, 10, 20, 20, 15, 25, 10, 5, 15, 0.2, 0.1, 0.3, 9, 6, '2018-05-28 00:00:00', true, 1);
+	VALUES (2, 1, 'Módulo 2', 501, 25, 20, 30, 15, 10, 20, 20, 15, 25, 10, 5, 15, 0.2, 0.1, 0.3, 9, 6, '2018-05-28 00:00:00', true, 1);
     
 INSERT INTO public.app_modulosemilla(
 	idmodulo, idzona, nombre, codigomodulojson, temperaturaideal, temperaturamin, temperaturamax, humedadtierraideal, humedadtierramin, humedadtierramax, humedadambienteideal, humedadambientemin, humedadambientemax, concentracionco2ideal, concentracionco2min, concentracionco2max, nivelaguaideal, nivelaguamin, nivelaguamax, filas, columnas, fechacreacion, habilitado, idusuarioauditado)
-	VALUES (3, 1, 'Módulo 1', 502, 25, 20, 30, 15, 10, 20, 20, 15, 25, 10, 5, 15, 0.2, 0.1, 0.3, 9, 6, '2018-05-28 00:00:00', true, 1);
+	VALUES (3, 1, 'Módulo 3', 502, 25, 20, 30, 15, 10, 20, 20, 15, 25, 10, 5, 15, 0.2, 0.1, 0.3, 9, 6, '2018-05-28 00:00:00', true, 1);
     
 INSERT INTO public.app_modulosemilla(
 	idmodulo, idzona, nombre, codigomodulojson, temperaturaideal, temperaturamin, temperaturamax, humedadtierraideal, humedadtierramin, humedadtierramax, humedadambienteideal, humedadambientemin, humedadambientemax, concentracionco2ideal, concentracionco2min, concentracionco2max, nivelaguaideal, nivelaguamin, nivelaguamax, filas, columnas, fechacreacion, habilitado, idusuarioauditado)
-	VALUES (4, 1, 'Módulo 1', 503, 25, 20, 30, 15, 10, 20, 20, 15, 25, 10, 5, 15, 0.2, 0.1, 0.3, 9, 6, '2018-05-28 00:00:00', true, 1);
+	VALUES (4, 1, 'Módulo 4', 503, 25, 20, 30, 15, 10, 20, 20, 15, 25, 10, 5, 15, 0.2, 0.1, 0.3, 9, 6, '2018-05-28 00:00:00', true, 1);
     
 INSERT INTO public.app_modulosemilla(
 	idmodulo, idzona, nombre, codigomodulojson, temperaturaideal, temperaturamin, temperaturamax, humedadtierraideal, humedadtierramin, humedadtierramax, humedadambienteideal, humedadambientemin, humedadambientemax, concentracionco2ideal, concentracionco2min, concentracionco2max, nivelaguaideal, nivelaguamin, nivelaguamax, filas, columnas, fechacreacion, habilitado, idusuarioauditado)
-	VALUES (5, 1, 'Módulo 1', 504, 25, 20, 30, 15, 10, 20, 20, 15, 25, 10, 5, 15, 0.2, 0.1, 0.3, 9, 6, '2018-05-28 00:00:00', true, 1);
+	VALUES (5, 1, 'Módulo 5', 504, 25, 20, 30, 15, 10, 20, 20, 15, 25, 10, 5, 15, 0.2, 0.1, 0.3, 9, 6, '2018-05-28 00:00:00', true, 1);
 
 -- Tipoplanta
 
