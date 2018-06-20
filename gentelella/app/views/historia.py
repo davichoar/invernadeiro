@@ -1,5 +1,6 @@
 from app.models import Historiainvernadero, Historiamodulo, Historiapanel, Historiaplanta
 from app.models import Historiazona, Foto
+from app.models import Zona, Invernadero, Panelluz, Planta, Modulosemilla
 from datetime import datetime
 from django.db.models import Max
 from django.http import HttpResponse
@@ -97,9 +98,12 @@ def prueba(request, template=None, extra_context=None):
                     jsonModulo['concentracionCO2'] = None
 
 
+                #looking for the lost id
+                idAtomarLista= Modulosemilla.objects.filter(codigomodulojson=int(jsonModulo['codigoModulo']))
+
                 nuevaHModulo = Historiamodulo.objects.create(
                     idhistoriamodulo = nuevoid,
-                    idmodulo = try_int(jsonModulo['codigoModulo']),
+                    idmodulo = idAtomarLista[0].idmodulo,
                     temperatura = try_float(jsonModulo['temperatura']),
                     humedadtierra = try_float(jsonModulo['humedadTierra']),
                     humedadambiente = try_float(jsonModulo['humedadAmbiente']),
@@ -123,9 +127,12 @@ def prueba(request, template=None, extra_context=None):
             if 'concentracionCO2' not in jsonATomar:
                 jsonATomar['concentracionCO2'] = None
 
+            #looking for the lost id
+            idAtomarLista= Zona.objects.filter(codigozonajson=int(jsonATomar['codigoZona']))
+
             nuevaHZona = Historiazona.objects.create(
                 idhistoriazona = nuevoid,
-                idzona = int(jsonATomar['codigoZona']),
+                idzona = idAtomarLista[0].idzona,
                 temperatura = try_float(jsonATomar['temperaturaZona']),
                 ph = try_float(jsonATomar['phZona']),
                 concentracionco2 = try_float(jsonATomar['concentracionCO2']),
@@ -139,9 +146,12 @@ def prueba(request, template=None, extra_context=None):
                     jsonPlanta['humedadPlanta'] = None
 
 
+                #looking for the lost id
+                idAtomarLista= Planta.objects.filter(codigoplantajson=int(jsonPlanta['codigoPlanta']))
+
                 nuevaHPlanta = Historiaplanta.objects.create(
                     idhistoriaplanta = nuevoplantaid,
-                    idplanta = int(jsonPlanta['codigoPlanta']),
+                    idplanta = idAtomarLista[0].idplanta,
                     idzona = int(jsonATomar['codigoZona']),
                     humedad = float(jsonPlanta['humedadPlanta']),
                     fecharegistro= datetime.now(), #to change
@@ -152,11 +162,15 @@ def prueba(request, template=None, extra_context=None):
                 nuevopanelid = selectID(Historiapanel.objects.all().aggregate(Max('idhistoriapanel'))['idhistoriapanel__max']) + 1
                 
                 if 'encendido' not in jsonPlanta:
-                    jsonPlanta['encendido'] = None
+                    jsonPanel['encendido'] = None
+
+
+                #looking for the lost id
+                idAtomarLista= Panelluz.objects.filter(codigopaneljson=int(jsonPanel['codigoPanel']))
 
                 nuevoHPanel = Historiapanel.objects.create(
                     idhistoriapanel = nuevopanelid,
-                    idpanel = int(jsonPanel['codigoPanel']),
+                    idpanel = idAtomarLista[0].idpanel,
                     encendido = jsonPanel['encendido'],
                     fecharegistro= datetime.now() #tochange
                 )
@@ -167,15 +181,17 @@ def prueba(request, template=None, extra_context=None):
             nuevoid = selectID(Historiainvernadero.objects.all().aggregate(Max('idhistoriainvernadero'))['idhistoriainvernadero__max']) + 1
             
             if 'energia' not in jsonATomar:
-                    jsonATomar['energia'] = None
+                jsonATomar['energia'] = None
 
             if 'nivelTanque' not in jsonATomar:
                 jsonATomar['nivelTanque'] = None
 
+            #looking for the lost id
+            idAtomarLista= Invernadero.objects.filter(codigoinvernaderojson=int(jsonATomar['codigoInvernadero']))
 
             nuevaHInvernadero = Historiainvernadero.objects.create(
                 idhistoriainvernadero = nuevoid,
-                idinvernadero = int(jsonATomar['codigoInvernadero']),
+                idinvernadero = idAtomarLista[0].idpanel,
                 nivelenergia = float(jsonATomar['energia']),
                 niveltanqueagua = float(jsonATomar['nivelTanque']),
                 comentario = 'meme',
