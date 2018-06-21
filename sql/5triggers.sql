@@ -221,7 +221,7 @@ if mailFlag:
 			text = msg.as_string()
 		
 			server.sendmail(fromaddr, toaddr, text)
-			break
+			
 		except Exception as e:
 			print(e)
 		server.quit()
@@ -297,7 +297,7 @@ if mailFlag:
 			text = msg.as_string()
 			
 			server.sendmail(fromaddr, toaddr, text)
-			break
+			
 		except Exception as e:
 			print(e)
 		server.quit()
@@ -562,7 +562,7 @@ if vals[0]["cont"] < 1:
 		msg["To"] = toaddr
 		msg["Subject"] = "[ALERTA] Nueva recepción de datos en " + dest["nombrei"] + ", Zona: "+ dest["nombrez"]
 		 
-		body = "Se ha establecido la conexión con el módulo de semillas: " + dest["nombrem"]
+		body = "Se ha establecido la conexión con el módulo de semillas: " + dest["nombrem"] + "."
 		msg.attach(MIMEText(body, "plain"))
 		
 		try: 
@@ -594,7 +594,7 @@ from email.mime.text import MIMEText
 
 idZona = TD["new"]["idzona"]
 
-prep_q = plpy.prepare("SELECT COUNT(*) as cont from app_historiazona WHERE idmodulo = $1", ["int"])
+prep_q = plpy.prepare("SELECT COUNT(*) as cont from app_historiazona WHERE idzona = $1", ["int"])
 vals= plpy.execute(prep_q, [idZona])
 
 
@@ -613,7 +613,7 @@ if vals[0]["cont"] < 1:
 		msg["To"] = toaddr
 		msg["Subject"] = "[ALERTA] Nueva recepción de datos en " + dest["nombrei"]
 		 
-		body = "Se ha establecido la conexión con la zona: " + dest["nombrez"]
+		body = "Se ha establecido la conexión con la zona: " + dest["nombrez"] + "."
 		msg.attach(MIMEText(body, "plain"))
 		
 		try: 
@@ -665,7 +665,7 @@ if vals[0]["cont"] < 1:
 		msg["To"] = toaddr
 		msg["Subject"] = "[ALERTA] Nueva recepción de datos en " + dest["nombrei"] + ", Zona: "+ dest["nombrez"]
 		 
-		body = "Se ha establecido la conexión con la planta: " + dest["nombrecomun"]
+		body = "Se ha establecido la conexión con la planta: " + dest["nombrecomun"] + "."
 		msg.attach(MIMEText(body, "plain"))
 		
 		try: 
@@ -705,6 +705,7 @@ vals= plpy.execute(prep_q, [idInvernadero])
 if vals[0]["cont"] < 1:
 
 	prep_q = plpy.prepare("SELECT DISTINCT u.correo, i.nombre as nombrei from app_usuario u INNER JOIN app_usuarioxinvernadero ui on u.idusuario = ui.idusuario INNER JOIN app_invernadero i on ui.idinvernadero = i.idinvernadero WHERE i.idinvernadero = $1 AND u.idrol = 1" , ["int"])
+	infoMails= plpy.execute(prep_q, [idInvernadero])
 
 	fromaddr = "alertas.invernaderos.pucp@gmail.com"
 
@@ -716,7 +717,7 @@ if vals[0]["cont"] < 1:
 		msg["To"] = toaddr
 		msg["Subject"] = "[ALERTA] Nueva recepción de datos"
 		 
-		body = "Se ha establecido la conexión con el invernadero: " + dest["nombrei"]
+		body = "Se ha establecido la conexión con el invernadero: " + dest["nombrei"] + "."
 		msg.attach(MIMEText(body, "plain"))
 		
 		try: 

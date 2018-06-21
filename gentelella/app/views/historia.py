@@ -26,15 +26,17 @@ def selectID(actual_id):
 
 def try_float(value):
     try:
-        float(value)
+        return float(value)
     except ValueError:
         print ("No es un float")
+        return value
 
 def try_int(value):
     try:
-        int(value)
+        return int(value)
     except ValueError:
         print ("No es un int")
+        return value
 
 @csrf_exempt
 def prueba(request, template=None, extra_context=None):
@@ -118,14 +120,18 @@ def prueba(request, template=None, extra_context=None):
         elif jsonATomar['tipoJson'] == 2:
             nuevoid = selectID(Historiazona.objects.all().aggregate(Max('idhistoriazona'))['idhistoriazona__max']) + 1
             
+            print(jsonATomar)
+
             if 'temperaturaZona' not in jsonATomar:
-                    jsonATomar['temperaturaZona'] = None
+                jsonATomar['temperaturaZona'] = None
 
             if 'phZona' not in jsonATomar:
                 jsonATomar['phZona'] = None
 
             if 'concentracionCO2' not in jsonATomar:
                 jsonATomar['concentracionCO2'] = None
+
+
 
             #looking for the lost id
             idAtomarLista= Zona.objects.filter(codigozonajson=int(jsonATomar['codigoZona']))
@@ -161,7 +167,7 @@ def prueba(request, template=None, extra_context=None):
             for jsonPanel in jsonATomar['listaPanelesLuz']:
                 nuevopanelid = selectID(Historiapanel.objects.all().aggregate(Max('idhistoriapanel'))['idhistoriapanel__max']) + 1
                 
-                if 'encendido' not in jsonPlanta:
+                if 'encendido' not in jsonPanel:
                     jsonPanel['encendido'] = None
 
 
@@ -191,7 +197,7 @@ def prueba(request, template=None, extra_context=None):
 
             nuevaHInvernadero = Historiainvernadero.objects.create(
                 idhistoriainvernadero = nuevoid,
-                idinvernadero = idAtomarLista[0].idpanel,
+                idinvernadero = idAtomarLista[0].idinvernadero,
                 nivelenergia = float(jsonATomar['energia']),
                 niveltanqueagua = float(jsonATomar['nivelTanque']),
                 comentario = 'meme',
