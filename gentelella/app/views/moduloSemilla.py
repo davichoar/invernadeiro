@@ -158,7 +158,7 @@ def validarRangoCondiciones(actual,min,max):
     actual = float(actual)
     min = float(min)
     max = float(max)
-    if (actual > min) and (actual < max):
+    if (actual >= min) and (actual <= max):
         return True
     else:
         return False
@@ -533,7 +533,7 @@ def grabarData(request,idModulo):
 
     if tempIdeal != "":
         tempIdeal = float(tempIdeal)
-        if (tempIdeal > tempMin) and (tempIdeal < tempMax):
+        if (tempIdeal >= tempMin) and (tempIdeal <= tempMax):
             print("Temperatura Ideal Valida")
         else:
             return "La temperatura ideal debe ser un valor entre la mínima y la máxima."
@@ -548,7 +548,7 @@ def grabarData(request,idModulo):
 
     if humTierraIdeal != "":
         humTierraIdeal = float(humTierraIdeal)
-        if (humTierraIdeal > humTierraMin) and (humTierraIdeal < humTierraMax):
+        if (humTierraIdeal >= humTierraMin) and (humTierraIdeal <= humTierraMax):
             print("Humedad Tierra Ideal Valida")
         else:
             return "La humedad de la tierra ideal debe ser un valor entre el mínimo y el máximo."
@@ -563,7 +563,7 @@ def grabarData(request,idModulo):
 
     if humAmbIdeal != "":
         humAmbIdeal = float(humAmbIdeal)
-        if (humAmbIdeal > humAmbMin) and (humAmbIdeal < humAmbMax):
+        if (humAmbIdeal >= humAmbMin) and (humAmbIdeal <= humAmbMax):
             print("Humedad Ambiente Ideal Valida")
         else:
             return "La humedad del ambiente ideal debe ser un valor entre el mínimo y el máximo."
@@ -578,7 +578,7 @@ def grabarData(request,idModulo):
 
     if co2Ideal != "":
         co2Ideal = float(co2Ideal)
-        if (co2Ideal > co2Min) and (co2Ideal < co2Max):
+        if (co2Ideal >= co2Min) and (co2Ideal <= co2Max):
             print("CO2 Ideal Valida")
         else:
             return "La concentración de CO2 ideal debe ser un valor entre el mínimo y el máximo."
@@ -593,7 +593,7 @@ def grabarData(request,idModulo):
 
     if nivelAguaIdeal != "":
         nivelAguaIdeal = float(nivelAguaIdeal)
-        if (nivelAguaIdeal > nivelAguaMin) and (nivelAguaIdeal < nivelAguaMax):
+        if (nivelAguaIdeal >= nivelAguaMin) and (nivelAguaIdeal <= nivelAguaMax):
             print("Nivel del Agua Ideal Valida")
         else:
             return "EL nivel del agua ideal debe ser un valor entre el mínimo y el máximo."
