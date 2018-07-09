@@ -134,7 +134,7 @@ def validarRangoCondiciones(actual,min,max):
     actual = float(actual)
     min = float(min)
     max = float(max)
-    if (actual > min) and (actual < max):
+    if (actual >= min) and (actual <= max):
         return True
     else:
         return False
@@ -581,7 +581,7 @@ def grabarData(request,idZona):
         if tempMin is None or tempMax is None:
             return "Para ingresar una temperatura ideal debe ingresar un valor mínimo y máximo"
         tempIdeal = float(tempIdeal)
-        if (tempIdeal > tempMin) and (tempIdeal < tempMax):
+        if (tempIdeal >= tempMin) and (tempIdeal <= tempMax):
             print("Temperatura Ideal Valida")
         else:
             return "La temperatura ideal debe ser un valor entre la mínima y la máxima."
@@ -598,7 +598,7 @@ def grabarData(request,idZona):
         if phMin is None or phMax is None:
             return "Para ingresar una ph ideal debe ingresar un valor mínimo y máximo"
         phIdeal = float(phIdeal)
-        if (phIdeal > phMin) and (phIdeal < phMax):
+        if (phIdeal >= phMin) and (phIdeal <= phMax):
             print("pH Valido")
         else:
             return "El pH ideal debe ser un valor entre el mínimo y el máximo."
@@ -616,7 +616,7 @@ def grabarData(request,idZona):
         if co2Min is None or co2Max is None:
             return "Para ingresar una concentración de CO2 ideal debe ingresar un valor mínimo y máximo"
         co2Ideal = float(co2Ideal)
-        if (co2Ideal > co2Min) and (co2Ideal < co2Max):
+        if (co2Ideal >= co2Min) and (co2Ideal <= co2Max):
             print("CO2 Valido")
         else:
             return "El CO2 ideal debe ser un valor entre el mínimo y el máximo."
@@ -633,7 +633,7 @@ def grabarData(request,idZona):
         if humedadMin is None or humedadMax is None:
             return "Para ingresar una humedad ideal debe ingresar un valor mínimo y máximo"
         humedadIdeal = float(humedadIdeal)
-        if (humedadIdeal > humedadMin) and (humedadIdeal < humedadMax):
+        if (humedadIdeal >= humedadMin) and (humedadIdeal <= humedadMax):
             print("Humedad Válida")
         else:
             return "La humedad ideal debe ser un valor entre el mínimo y el máximo."

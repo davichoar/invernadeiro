@@ -191,7 +191,7 @@ def validarRangoCondiciones(actual,min,max):
     actual = float(actual)
     min = float(min)
     max = float(max)
-    if (actual > min) and (actual < max):
+    if (actual >= min) and (actual <= max):
         return True
     else:
         return False
@@ -423,7 +423,7 @@ def grabarData(request,idPlanta):
 
     if humedadIdeal != "":
         humedadIdeal = float(humedadIdeal)
-        if (humedadIdeal > humedadMin) and (humedadIdeal < humedadMax):
+        if (humedadIdeal >= humedadMin) and (humedadIdeal <= humedadMax):
             print("Humedad Ideal Valida")
         else:
             return "La humedad ideal debe ser un valor entre la mínima y la máxima"
