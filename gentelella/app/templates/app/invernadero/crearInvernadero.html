@@ -235,9 +235,9 @@
             mostrarModal('Debe ingresar un administrador para el invernadero.');
             return;
         }
-        aguaMin = document.getElementById("aguaMin").value;
-        aguaMax = document.getElementById("aguaMax").value;
-        aguaIdeal = document.getElementById("aguaIdeal").value;
+        aguaMin = Number(document.getElementById("aguaMin").value);
+        aguaMax = Number(document.getElementById("aguaMax").value);
+        aguaIdeal = Number(document.getElementById("aguaIdeal").value);
         if (aguaMin == '' || aguaMax == '') {
             mostrarModal('Debe ingresar los valores para el mínimo y el máximo del nivel de tanque de agua.');
             return;
@@ -251,9 +251,9 @@
             mostrarModal('Los valores para el mínimo, ideal y máximo del nivel de tanque de agua no son válidos.');
             return;        
         }
-        energiaMin = document.getElementById("energiaMin").value;
-        energiaMax = document.getElementById("energiaMax").value;
-        energiaIdeal = document.getElementById("energiaIdeal").value;
+        energiaMin = Number(document.getElementById("energiaMin").value);
+        energiaMax = Number(document.getElementById("energiaMax").value);
+        energiaIdeal = Number(document.getElementById("energiaIdeal").value);
         if (energiaMin == '' || energiaMax == '') {
             mostrarModal('Debe ingresar los valores para el mínimo y el máximo del nivel de energía.');
             return;
@@ -267,9 +267,9 @@
             mostrarModal('Los valores para el mínimo, ideal y máximo del nivel de energía no son válidos.');
             return;        
         }
-        phaguaMin = document.getElementById("phaguamin").value;
-        phaguaMax = document.getElementById("phaguamax").value;
-        phaguaIdeal = document.getElementById("phaguaideal").value;
+        phaguaMin = Number(document.getElementById("phaguamin").value);
+        phaguaMax = Number(document.getElementById("phaguamax").value);
+        phaguaIdeal = Number(document.getElementById("phaguaideal").value);
         if (phaguaMin == '' || phaguaMax == '') {
             mostrarModal('Debe ingresar los valores para el mínimo y el máximo del nivel de pH del agua.');
             return;
@@ -282,6 +282,22 @@
         } else if (!(phaguaMin <= phaguaIdeal && phaguaIdeal <= phaguaMax)) {
             mostrarModal('Los valores para el mínimo, ideal y máximo del nivel de pH del agua no son válidos.');
             return;        
+        }
+        if (document.getElementById("area").value < 0) {
+            mostrarModal('Debe ingresar un valor válido para el área');
+            return;
+        }
+        if (aguaMin < 0 || aguaIdeal < 0 || aguaMax < 0) {
+            mostrarModal('No puede ingresar valores negativos para el mínimo, ideal y máximo del nivel de tanque de agua.');
+            return;            
+        }
+        if (phaguaMin < 0 || phaguaIdeal < 0 || phaguaMax < 0) {
+            mostrarModal('No puede ingresar valores negativos para el mínimo, ideal y máximo del nivel de pH del agua.');
+            return;            
+        }
+        if (energiaMin < 0 || energiaIdeal < 0 || energiaMax < 0) {
+            mostrarModal('No puede ingresar valores negativos para el mínimo, ideal y máximo del nivel de energía.');
+            return;            
         }
        document.getElementById("nuevoInvernadero").submit();
        return;        

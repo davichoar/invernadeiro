@@ -70,7 +70,7 @@
                  <div class="form-group">
                   <label class="control-label col-md-3 col-sm-3 col-xs-12">Módulo de Semillas *</label>
                   <div class="col-md-6 col-sm-6 col-xs-12">
-                    <select id = "modulo" class="form-control" name="modulo" onchange="cambiarMax(this)">
+                    <select id = "modulo" class="form-control" name="modulo" onchange="cambiarMax(this)" readonly>
                       <option value="-1" {% if  semilla.idmodulo  == -1 %} selected {% endif %} disabled>- Seleccione -</option>
                       {% for fmodulo in listaModulos %}
                       <option value="{{fmodulo.idmodulo}}" {% if modulo.idmodulo == fmodulo.idmodulo %} selected {% endif %} >{{fmodulo.nombre}}</option>
@@ -82,14 +82,14 @@
                   <label class="control-label col-md-3 col-sm-3 col-xs-12" for="posx"> Columna
                   </label>
                   <div class="col-md-2 col-sm-2 col-xs-6">
-                    <input  type="number" id="posx" name="posx" value="{{historia.posx}}" min="1" max="{{modulo.columnas}}" step="1" class="form-control col-md-7 col-xs-12">
+                    <input  type="number" id="posx" name="posx" value="{{historia.posx}}" min="1" max="{{modulo.columnas}}" step="1" class="form-control col-md-7 col-xs-12" readonly>
                   </div>
                 </div>
                 <div class="item form-group">
                   <label class="control-label col-md-3 col-sm-3 col-xs-12" for="posy"> Fila
                   </label>
                   <div class="col-md-2 col-sm-2 col-xs-6">
-                    <input  type="number" id="posy" name="posy" value="{{historia.posy}}" min="1" max="{{modulo.filas}}" step="1" class="form-control col-md-7 col-xs-12">
+                    <input  type="number" id="posy" name="posy" value="{{historia.posy}}" min="1" max="{{modulo.filas}}" step="1" class="form-control col-md-7 col-xs-12" readonly>
                   </div>
                 </div>
                <div class="ln_solid"></div>

@@ -170,10 +170,18 @@
   <script src="/static/vendors/pnotify/dist/pnotify.nonblock.js"></script>
   <script>
   function validarContrasenasYRol() {
-        if (document.getElementById("nombre").value == '' || document.getElementById("apepato").value == '' || document.getElementById("apemato").value == '') {
+        var nombre = document.getElementById("nombre").value;
+        var apePato = document.getElementById("apepato").value;
+        var apeMato = document.getElementById("apemato").value;
+        if (nombre == '' || apePato == '' || apeMato == '') {
            mostrarModal('Debe ingresar el nombre completo del usuario.');
            return;
         }
+        var regexNombre = /^[A-Za-z\s]+$/;
+        if (!regexNombre.test(nombre) || !regexNombre.test(apePato) || !regexNombre.test(apeMato)) {
+            mostrarModal('Los nombres o apellidos ingresados no son válidos');
+            return;
+        }        
         fechaNacimiento = document.getElementById("fechanac").value;
         if (fechaNacimiento == '') {
            mostrarModal('Debe ingresar la fecha de nacimiento del usuario.');
@@ -195,15 +203,16 @@
             mostrarModal('Las contraseñas deben coincidir.');
             return;
         }
-        if (document.getElementById("correo").value == '') {
+        var correo = document.getElementById("correo").value;
+        if (correo == '') {
             mostrarModal('Debe ingresar el correo del usuario.');
             return;
         }
-        //var re = /\S+@\S+\.\S+/;
-        //if (!re.test(document.getElementById("correo"))) {
-        //   mostrarModal('El correo ingresado no es válido.');
-        //   return;
-        //}
+        var regexCorreo = /\S+@\S+\.\S+/;
+        if (!regexCorreo.test(correo)) {
+           mostrarModal('El correo ingresado no es válido.');
+           return;
+        }
         if (document.getElementById("rol").value == -1) {
             mostrarModal('Debe seleccionar un rol para el usuario.');
             return;
@@ -231,10 +240,21 @@
     var month = parseInt(parts[1], 10);
     var year = parseInt(parts[2], 10);
 
+    var now = new Date();
     // Check the ranges of month and year
-    if(year < 1900 || year > (new Date()).getFullYear() || month == 0 || month > 12)
+    if(year < 1900 || year > now.getFullYear() || month == 0 || month > 12)
         return false;
 
+    if (year == now.getFullYear()) {
+        if (month > (now.getMonth() + 1)) 
+            return false;
+        if (month == (now.getMonth() + 1)) {
+            if (day > now.getDate()) {
+                return false;
+            }
+        }
+    }
+        
     var monthLength = [ 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 ];
 
     // Adjust for leap years
